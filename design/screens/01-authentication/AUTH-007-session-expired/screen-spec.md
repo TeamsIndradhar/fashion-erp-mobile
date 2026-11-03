@@ -1,0 +1,37 @@
+# AUTH-007 — Session expired
+
+| Field | Value |
+|---|---|
+| Category | Authentication (`01-authentication`) |
+| Status | **READY_FOR_REVIEW** (batch 1) |
+| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
+| Prototype | `design/prototypes/index.html?screen=AUTH-007` |
+| Required permission | `—` |
+
+## Purpose
+Shown when refresh fails (idle/absolute expiry, revoked, password changed elsewhere, account inactive). Message depends on the server code.
+
+## User types / ERP roles
+- All tenant users
+
+## Header and navigation
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
+
+## Data / API
+| Endpoint | Kind |
+|---|---|
+| `POST /api/mobile/v1/auth/refresh → 401` | NEW thin mobile route (designed in docs/05) |
+
+## Available actions
+- Sign in again
+
+## Validation
+- —
+
+## Navigation destinations
+- AUTH-002
+
+## UI components
+Shared components only (see `design/design-system/COMPONENTS.md`). Demo data in the mockup is marked "DEMO DATA".
+

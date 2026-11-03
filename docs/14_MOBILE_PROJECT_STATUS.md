@@ -1,23 +1,22 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 0 in progress** (user: "continue next phase", 2026-11-03). Docs moved to this separate repo (`fashion-erp-mobile`, D-002 APPROVED). No app code, no backend change, no migration; nothing installed in either repo.
+**Overall:** **Phase 0 (design & feasibility) in progress.** Design batch 1 is **READY FOR REVIEW** (81 of 117 screens mocked, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
 
-## Phase tracker
+## Phase tracker (revision 3 — see `11` table)
 
 | Phase | Name | Status | Gate |
 |---|---|---|---|
-| — | Documentation (00–14), rev 2 | ✅ Drafted | ⏳ individual decisions still PROPOSED except D-002 |
-| 0 | Documentation approval & feasibility (spikes A/B/C) | 🔄 In progress — Spike A partly done (`docs/spikes/face-verification.md`, accuracy test needs consented photos); Spike B desk research done (`docs/spikes/integrity.md`, device tests need accounts + phones); Spike C protocol + sheet ready (`docs/spikes/factory-gps.md`, `factory-gps-sheet.csv`), visit not done | — |
-| 1 | Backend auth (in `fashion-erp`) | ⬜ | — |
-| 2 | Mobile project setup | ⬜ | — |
-| 3 | Login & secure sessions | ⬜ | — |
-| 4 | GPS, permissions & device integrity | ⬜ | — |
-| 5 | Check-in / check-out | ⬜ | — |
-| 6 | Risk engine & history | ⬜ | — |
-| 7 | Android & iOS testing | ⬜ | — |
-| 8 | Production release | ⬜ | — |
+| 0 | Design & feasibility | 🔄 Design batch 1 ready for review (`design/approvals/DESIGN_REVIEW.md`); batch 2 (36 screens) not started; Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
+| 1 | Backend authentication (in `fashion-erp`) | ⬜ | — |
+| 2 | Mobile foundation | ⬜ | — |
+| 3 | Common employee features | ⬜ | — |
+| 4 | Worker & supervisor | ⬜ | — |
+| 5 | Other authorized modules | ⬜ | — |
+| 6 | Admin & owner dashboards | ⬜ | — |
+| 7 | Security & testing | ⬜ | — |
+| 8 | Builds & release | ⬜ | — |
 
 Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user · ❌ blocked
 
@@ -54,6 +53,14 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Phase 0, design batch 1
+**Goal:** role-based UI/UX design blueprint (user brief "Design first, coding later").
+**Done:** ERP audit for design (`design/screen-inventory/ERP_AUDIT_FOR_DESIGN.md`: 15 roles, 59 modules, 14 actions, 13 packages, ~75 web pages, APIs, 13 gaps); design system (9 docs, colours sampled from the reference screenshots); 7 user flows; 117-screen inventory with permission + API mapping; 81 screen mockups (PNG + spec + interactions + states) in 14 categories; clickable prototype; approvals docs; roadmap revision 3.
+**Verified (executed):** PNG export via headless Chrome; spot-checked EMP-001, EMP-002, AUTH-002 renders (fixed two layout issues); doc generator run (117 screens).
+**Not done:** batch 2 (36 screens); 360 × 640 and 430 × 932 frame exports; Spikes A/B/C field work.
+**Questions for the user:** D-D03…D-D09 (`design/approvals/CHANGE_REQUESTS.md`), plus earlier Q-01…Q-21.
+**Next step:** user reviews batch 1 → change requests → revise → approval; then batch 2.
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 0, accounts
 **Done:** user decided the company creates and owns the developer accounts (Q-08 partly answered); wrote `docs/setup/accounts-checklist.md` (D-U-N-S, Play Console, Google Cloud + service account, Apple Developer + App Attest App ID, Expo org, test phones, list of non-secret ids to send back).

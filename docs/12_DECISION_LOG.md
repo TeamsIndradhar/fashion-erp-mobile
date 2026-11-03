@@ -42,6 +42,9 @@
 | D-034 | Mock-location signal from `expo-location` `mocked` on both Android and iOS (no custom module) | PROPOSED (Spike B) | documented for both platforms; still client-reported (WEAK) | spikes/integrity.md |
 | D-035 | Developer Options / USB debugging / wireless debugging via one small custom Expo Module returning `null` when unreadable; `jail-monkey` only if device tests prove it reliable | PROPOSED (Spike B) | no Expo API exists; wireless-debugging key is undocumented | spikes/integrity.md |
 | D-036 | App ID / bundle ID = **`in.indradhar.fashionerp`** (Android `applicationId` and iOS `bundleIdentifier`); dev/preview variants `in.indradhar.fashionerp.dev` / `.preview` | **APPROVED 2026-11-03 (user)** | reverse of company domain `indradhar.in`; cannot change after first upload; used in Play Integrity package check and App Attest rpId (`<TeamID>.in.indradhar.fashionerp`) | 10 §3 |
+| D-D01 | One app; dashboards, bottom nav and the Modules list are built from the user's **permission keys + entitlements** (from `GET /me`), never from role names. Categories (employee, worker, supervisor, managers, admin, owner) are design scenarios only | PROPOSED (design brief) | roles are per company and customizable; per-user GRANT/DENY overrides exist | design/screen-inventory |
+| D-D02 | Design in batches: batch 1 = 81 screens (auth, common employee, worker, supervisor, every manager home + first list, admin, owner, shared); batch 2 = 36 remaining module screens | PROPOSED | brief allows batches; keeps review manageable | design/approvals/DESIGN_REVIEW.md |
+| D-D03 … D-D09 | Open design questions (punch style, expense permission for workers, external unit, supervisor HR rights, admin view-only, nav label, first implementation scope) | OPEN | see `design/approvals/CHANGE_REQUESTS.md` | design/approvals |
 
 ## Open questions — need the user's answer
 
@@ -74,6 +77,7 @@
 | Date | Change | By |
 |---|---|---|
 | 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | Design phase (role-based UI/UX brief): D-D01, D-D02 proposed; D-D03…D-D09 open; scope widened from "login + attendance" to full-app **design** (implementation scope still per approval) | Claude Code |
 | 2026-11-03 | D-036 APPROVED: app ID in.indradhar.fashionerp | user |
 | 2026-11-03 | Q-08 partly answered: company creates/owns developer accounts | user |
 | 2026-11-03 | Spike B desk research: added D-033, D-034, D-035 (PROPOSED) | Claude Code |

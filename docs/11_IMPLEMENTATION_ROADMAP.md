@@ -2,9 +2,25 @@
 
 Every phase ends at a **user review gate**. The next phase starts only after the gate is marked Approved in `14_MOBILE_PROJECT_STATUS.md`. Branch per phase: `phase-<n>-<slug>` from `main`; never pushed to `main` by an agent.
 
+> **Revision 3 (2026-11-03) — role-based design brief.** The phase list is re-cut to the brief. Nothing below is approved; implementation of any screen needs its design approved first (`design/approvals/`).
+>
+> | New phase | Content | Detailed tasks (this document) |
+> |---|---|---|
+> | **0 Design & feasibility** | ERP audit, screen inventory, permission/API mapping, design system, mockups, clickable prototype, spikes A/B/C, approvals | Phase 0 below + `design/` |
+> | **1 Backend authentication** | Mobile bearer adapter, tokens, refresh rotation, device registration, logout/revocation, `GET /me` with permission keys (gap G-01) | Phase 1 below |
+> | **2 Mobile foundation** | Expo project, navigation, theme + shared components from the approved design system, API client, secure storage, errors, logging | Phase 2 below |
+> | **3 Common employee features** | Login, profile, attendance (punch flow incl. GPS/integrity/risk), reports, expense request + status, notifications | old Phases 3–6 below |
+> | **4 Worker & supervisor** | Assigned work, progress submission, hand back, approvals, team views where permitted | new — after design approval of 03/04 |
+> | **5 Other authorized modules** | Production, inventory, purchase, sales/CRM, accounts, HRMS, dispatch — only screens whose design, APIs and permissions are approved; backend gaps decided first | new |
+> | **6 Admin & owner dashboards** | Company overview, KPIs (needs numeric KPI API, G-03), approvals (G-04), reports | new |
+> | **7 Security & testing** | Auth, permission, API, GPS, anti-fraud, Android/iOS, regression | old Phase 7 below |
+> | **8 Builds & release** | APK/AAB, IPA, TestFlight, store submission | old Phase 8 below |
+>
+> The detailed sections below were written for the attendance-first plan; their tasks, acceptance criteria and checklists still apply to the matching new phases.
+
 ```mermaid
 flowchart LR
-  P0["0 Docs approval\n& feasibility"] --> P1["1 Tooling isolation\n& backend auth"]
+  P0["0 Design &\nfeasibility"] --> P1["1 Backend auth"]
   P1 --> P2["2 Mobile project setup"]
   P2 --> P3["3 Login & sessions"]
   P3 --> P4["4 GPS, permissions\n& device integrity"]

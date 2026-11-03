@@ -6,4 +6,5 @@ This repository follows a **documentation-first, approval-gated** process. These
 2. Work only on the current approved phase (`docs/11_IMPLEMENTATION_ROADMAP.md`). Stop at the phase gate and wait for the user's approval.
 3. Ask the user when a decision is not already approved. Never redesign approved architecture or expand scope on your own.
 4. Backend changes belong in the `fashion-erp` repository and follow its `CLAUDE.md`.
-5. Never commit secrets. Report incomplete or failed work honestly.
+5. UI work: follow `design/design-system/`, the screen inventory (`design/screen-inventory/`) and only **approved** mockups (`design/approvals/APPROVED_SCREENS.md`). Never change the theme or a shared component without a change request.
+6. Never commit secrets. Report incomplete or failed work honestly.
