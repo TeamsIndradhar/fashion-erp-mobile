@@ -8,7 +8,7 @@ Decision (2026-11-03): **the company creates and owns all accounts** (Q-08). Cre
 
 - [ ] **D-U-N-S number** for the company (free from Dun & Bradstreet; can take a few days to a couple of weeks). Both Google (organisation account) and Apple (organisation enrolment) ask for it.
 - [ ] A shared company email for the accounts (e.g. `mobile-apps@<company domain>`), not a personal mailbox.
-- [ ] Decide the app name shown in stores and the app ID. **Proposal:** `in.indradhar.fashionerp` (reverse of the company domain `indradhar.in`). This ID cannot be changed after the first upload — please confirm.
+- [x] App ID decided; [ ] app name shown in stores still to decide. **Confirmed (D-036):** `in.indradhar.fashionerp` (reverse of the company domain `indradhar.in`). Use exactly this in Play Console and the Apple App ID — it cannot be changed after the first upload.
 
 ## 1. Google Play Console (Android distribution + Play Integrity)
 

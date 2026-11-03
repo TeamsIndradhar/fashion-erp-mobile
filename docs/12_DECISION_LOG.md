@@ -41,6 +41,7 @@
 | D-033 | Use **`@expo/app-integrity`** (official Expo; Play Integrity standard request + App Attest) instead of writing our own native module; pin the version; wrap behind `src/device/integrity.ts`; fallback = small custom Expo Module | PROPOSED (Spike B) | official, covers both platforms; risk: alpha since SDK 54, API may change | spikes/integrity.md |
 | D-034 | Mock-location signal from `expo-location` `mocked` on both Android and iOS (no custom module) | PROPOSED (Spike B) | documented for both platforms; still client-reported (WEAK) | spikes/integrity.md |
 | D-035 | Developer Options / USB debugging / wireless debugging via one small custom Expo Module returning `null` when unreadable; `jail-monkey` only if device tests prove it reliable | PROPOSED (Spike B) | no Expo API exists; wireless-debugging key is undocumented | spikes/integrity.md |
+| D-036 | App ID / bundle ID = **`in.indradhar.fashionerp`** (Android `applicationId` and iOS `bundleIdentifier`); dev/preview variants `in.indradhar.fashionerp.dev` / `.preview` | **APPROVED 2026-11-03 (user)** | reverse of company domain `indradhar.in`; cannot change after first upload; used in Play Integrity package check and App Attest rpId (`<TeamID>.in.indradhar.fashionerp`) | 10 §3 |
 
 ## Open questions — need the user's answer
 
@@ -53,7 +54,7 @@
 | Q-05 | Self-service forgot password needed later? | later | not v1 |
 | Q-06 | Map later? | later | later |
 | Q-07 | Phone fleet: personal, company-owned, shared? Min OS? Devices without Google Play services? | Phase 0/2 | personal + company, one user per device |
-| Q-08 | Distribution (public vs private), app name, bundle id, Apple Team ID. **Partly answered 2026-11-03: the company will create and own the Play Console, Google Cloud, Apple Developer and Expo accounts** (checklist `docs/setup/accounts-checklist.md`; proposed bundle id `in.indradhar.fashionerp`, to confirm). Still open: distribution type, app name, bundle id confirmation | Phase 2/4 | public listing under the company's org accounts |
+| Q-08 | Distribution (public vs private), app name, bundle id, Apple Team ID. **Partly answered 2026-11-03: the company will create and own the Play Console, Google Cloud, Apple Developer and Expo accounts** (checklist `docs/setup/accounts-checklist.md`; app ID `in.indradhar.fashionerp` **APPROVED** (D-036)). Still open: distribution type, store app name | Phase 2/4 | public listing under the company's org accounts |
 | Q-09 | Hosting: single SaaS URL or per-customer servers? Staging URL? Number of server instances? **Partly answered 2026-11-03: production URL = `https://erp.indradhar.in/`** (health check OK, HTTPS + HSTS, behind nginx). Still open: is this the one URL for all customer companies, staging URL, instance count. | Phase 1 | use it as the fixed production base URL if it serves all companies |
 | Q-10 | Separate mobile permission? Refuse login without attendance access? | Phase 1 | no; show "not enabled" screen |
 | Q-11 | Hindi in v1? | Phase 2 | English, Hindi-ready |
@@ -73,6 +74,7 @@
 | Date | Change | By |
 |---|---|---|
 | 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | D-036 APPROVED: app ID in.indradhar.fashionerp | user |
 | 2026-11-03 | Q-08 partly answered: company creates/owns developer accounts | user |
 | 2026-11-03 | Spike B desk research: added D-033, D-034, D-035 (PROPOSED) | Claude Code |
 | 2026-11-03 | D-002 APPROVED: app + docs moved to separate repo `fashion-erp-mobile` (user); B-16 dropped; Q-17 partly resolved | user / Claude Code |

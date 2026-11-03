@@ -30,7 +30,7 @@ Secrets go in the deployment's secret store, never in git. Documented in `fashio
 
 `app.config.ts`: `EXPO_PUBLIC_API_BASE_URL` per profile (production `https://erp.indradhar.in`; staging UNKNOWN); `APP_VARIANT` (`development`/`preview`/`production`) → bundle id suffix and name so builds install side by side; privacy notice URL.
 
-Identifiers: UNKNOWN until Q-08 (example `com.indradhar.fashionerp`, `.dev`, `.preview`). The **App Attest rpId uses the exact Team ID + bundle id**; the **Play Integrity package name** must match — fix them before Phase 4.
+Identifiers (D-036, APPROVED): `in.indradhar.fashionerp`; variants `in.indradhar.fashionerp.dev`, `in.indradhar.fashionerp.preview`. The **App Attest rpId uses the exact Team ID + bundle id**; the **Play Integrity package name** must match — fix them before Phase 4.
 
 Permissions:
 - iOS: `NSLocationWhenInUseUsageDescription`, `NSCameraUsageDescription`; App Attest entitlement (`com.apple.developer.devicecheck.appattest-environment`).

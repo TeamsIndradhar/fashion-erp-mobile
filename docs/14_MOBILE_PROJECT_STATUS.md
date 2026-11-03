@@ -57,7 +57,7 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 0, accounts
 **Done:** user decided the company creates and owns the developer accounts (Q-08 partly answered); wrote `docs/setup/accounts-checklist.md` (D-U-N-S, Play Console, Google Cloud + service account, Apple Developer + App Attest App ID, Expo org, test phones, list of non-secret ids to send back).
-**Waiting on the company:** accounts + confirmed bundle id (proposal `in.indradhar.fashionerp`) + test phones → then Spike B device tests.
+**Waiting on the company:** accounts (app ID `in.indradhar.fashionerp` approved, D-036) + test phones → then Spike B device tests.
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 0, Spike B (desk research)
 **Branch / commit:** `fashion-erp-mobile` `main`
