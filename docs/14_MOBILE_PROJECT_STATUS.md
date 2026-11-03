@@ -9,7 +9,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no re
 | Phase | Name | Status | Gate |
 |---|---|---|---|
 | — | Documentation (00–14), rev 2 | ✅ Drafted | ⏳ individual decisions still PROPOSED except D-002 |
-| 0 | Documentation approval & feasibility (spikes A/B/C) | 🔄 In progress — Spike A partly done (`docs/spikes/face-verification.md`, accuracy test needs consented photos); Spike B desk research done (`docs/spikes/integrity.md`, device tests need accounts + phones); Spike C not started (needs factory visit) | — |
+| 0 | Documentation approval & feasibility (spikes A/B/C) | 🔄 In progress — Spike A partly done (`docs/spikes/face-verification.md`, accuracy test needs consented photos); Spike B desk research done (`docs/spikes/integrity.md`, device tests need accounts + phones); Spike C protocol + sheet ready (`docs/spikes/factory-gps.md`, `factory-gps-sheet.csv`), visit not done | — |
 | 1 | Backend auth (in `fashion-erp`) | ⬜ | — |
 | 2 | Mobile project setup | ⬜ | — |
 | 3 | Login & secure sessions | ⬜ | — |

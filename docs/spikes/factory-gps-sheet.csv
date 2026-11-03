@@ -1,0 +1,2 @@
+date,spot_code,building,floor,area,phone_model,os,gps_app,wifi_on,reading_no,time,lat,lng,accuracy_m,notes
+2026-11-05,B1-F0-GATE,Block 1,0,Gate (example row - delete),Redmi 12,Android 14,<gps app name>,yes,1,10:15:00,28.000000,77.000000,8,open sky
