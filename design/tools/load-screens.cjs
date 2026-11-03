@@ -4,13 +4,14 @@ const path = require("path");
 const vm = require("vm");
 
 const PROTO = path.join(__dirname, "..", "prototypes");
-const FILES = ["components.js", "screens-auth-employee.js", "screens-work.js", "screens-mgmt.js", "screens-batch2.js"];
+const FILES = ["components.js", "approvals.js", "screens-auth-employee.js", "screens-work.js", "screens-mgmt.js", "screens-batch2.js"];
 
 function loadScreens() {
   globalThis.SCREENS = [];
   delete globalThis.REG;
   for (const f of FILES) vm.runInThisContext(fs.readFileSync(path.join(PROTO, f), "utf8"), { filename: f });
-  const list = globalThis.SCREENS.map((s) => ({ status: s.render ? "READY_FOR_REVIEW" : "NOT_STARTED", batch: s.render ? 1 : 2, ...s }));
+  const appr = new Set(((globalThis.APPROVED || {}).ids) || []);
+  const list = globalThis.SCREENS.map((s) => ({ status: appr.has(s.id) ? "APPROVED" : s.render ? "READY_FOR_REVIEW" : "NOT_STARTED", batch: s.render ? 1 : 2, ...s }));
   const ids = new Set();
   for (const s of list) {
     if (ids.has(s.id)) throw new Error("Duplicate screen id " + s.id);

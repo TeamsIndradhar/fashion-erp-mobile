@@ -8,49 +8,49 @@ Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.c
 
 | ID | Screen | Status | Batch |
 |---|---|---|---|
-| AUTH-001 | Splash | READY_FOR_REVIEW | 1 |
-| AUTH-002 | Login | READY_FOR_REVIEW | 1 |
-| AUTH-003 | Login – loading / invalid credentials | READY_FOR_REVIEW | 1 |
-| AUTH-004 | Login – too many attempts | READY_FOR_REVIEW | 1 |
-| AUTH-005 | Forgot password (info) | READY_FOR_REVIEW | 1 |
-| AUTH-006 | Set your own password (temporary password) | READY_FOR_REVIEW | 1 |
-| AUTH-007 | Session expired | READY_FOR_REVIEW | 1 |
-| AUTH-008 | Logout confirmation | READY_FOR_REVIEW | 1 |
-| AUTH-009 | Verifying this phone (device registration) | READY_FOR_REVIEW | 1 |
-| AUTH-010 | Update required | READY_FOR_REVIEW | 1 |
-| AUTH-011 | Account / company suspended | READY_FOR_REVIEW | 1 |
+| AUTH-001 | Splash | APPROVED | 1 |
+| AUTH-002 | Login | APPROVED | 1 |
+| AUTH-003 | Login – loading / invalid credentials | APPROVED | 1 |
+| AUTH-004 | Login – too many attempts | APPROVED | 1 |
+| AUTH-005 | Forgot password (info) | APPROVED | 1 |
+| AUTH-006 | Set your own password (temporary password) | APPROVED | 1 |
+| AUTH-007 | Session expired | APPROVED | 1 |
+| AUTH-008 | Logout confirmation | APPROVED | 1 |
+| AUTH-009 | Verifying this phone (device registration) | APPROVED | 1 |
+| AUTH-010 | Update required | APPROVED | 1 |
+| AUTH-011 | Account / company suspended | APPROVED | 1 |
 
 ## Common Employee (31/31)
 
 | ID | Screen | Status | Batch |
 |---|---|---|---|
-| EMP-001 | Employee Home | READY_FOR_REVIEW | 1 |
-| EMP-002 | Attendance Dashboard | READY_FOR_REVIEW | 1 |
-| EMP-003 | Location permission | READY_FOR_REVIEW | 1 |
-| EMP-004 | GPS verification (weak GPS) | READY_FOR_REVIEW | 1 |
-| EMP-005 | Punch – selfie | READY_FOR_REVIEW | 1 |
-| EMP-006 | Punch In confirmation | READY_FOR_REVIEW | 1 |
-| EMP-007 | Punch success | READY_FOR_REVIEW | 1 |
-| EMP-008 | Punch Out confirmation | READY_FOR_REVIEW | 1 |
-| EMP-009 | Punch sent for review (suspicious / outside) | READY_FOR_REVIEW | 1 |
-| EMP-010 | Security warning (blocked / phone not allowed) | READY_FOR_REVIEW | 1 |
-| EMP-011 | Attendance monthly report | READY_FOR_REVIEW | 1 |
-| EMP-012 | Attendance history (day list) | READY_FOR_REVIEW | 1 |
-| EMP-013 | Attendance day details | READY_FOR_REVIEW | 1 |
-| EMP-014 | Add attendance remark | READY_FOR_REVIEW | 1 |
+| EMP-001 | Employee Home | APPROVED | 1 |
+| EMP-002 | Attendance Dashboard | APPROVED | 1 |
+| EMP-003 | Location permission | APPROVED | 1 |
+| EMP-004 | GPS verification (weak GPS) | APPROVED | 1 |
+| EMP-005 | Punch – selfie | APPROVED | 1 |
+| EMP-006 | Punch In confirmation | APPROVED | 1 |
+| EMP-007 | Punch success | APPROVED | 1 |
+| EMP-008 | Punch Out confirmation | APPROVED | 1 |
+| EMP-009 | Punch sent for review (suspicious / outside) | APPROVED | 1 |
+| EMP-010 | Security warning (blocked / phone not allowed) | APPROVED | 1 |
+| EMP-011 | Attendance monthly report | APPROVED | 1 |
+| EMP-012 | Attendance history (day list) | APPROVED | 1 |
+| EMP-013 | Attendance day details | APPROVED | 1 |
+| EMP-014 | Add attendance remark | APPROVED | 1 |
 | EMP-015 | My Requests (hub) | READY_FOR_REVIEW | 1 |
 | EMP-016 | Expense request form | READY_FOR_REVIEW | 1 |
 | EMP-017 | My expense requests (history) | READY_FOR_REVIEW | 1 |
 | EMP-018 | Expense request details / status | READY_FOR_REVIEW | 1 |
 | EMP-019 | Salary advance request | READY_FOR_REVIEW | 1 |
-| EMP-020 | Notifications | READY_FOR_REVIEW | 1 |
-| EMP-021 | Notification details | READY_FOR_REVIEW | 1 |
-| EMP-022 | My Profile | READY_FOR_REVIEW | 1 |
-| EMP-023 | Change password | READY_FOR_REVIEW | 1 |
-| EMP-024 | Settings | READY_FOR_REVIEW | 1 |
-| EMP-025 | My devices | READY_FOR_REVIEW | 1 |
-| EMP-026 | Help & Support | READY_FOR_REVIEW | 1 |
-| EMP-027 | About app | READY_FOR_REVIEW | 1 |
+| EMP-020 | Notifications | APPROVED | 1 |
+| EMP-021 | Notification details | APPROVED | 1 |
+| EMP-022 | My Profile | APPROVED | 1 |
+| EMP-023 | Change password | APPROVED | 1 |
+| EMP-024 | Settings | APPROVED | 1 |
+| EMP-025 | My devices | APPROVED | 1 |
+| EMP-026 | Help & Support | APPROVED | 1 |
+| EMP-027 | About app | APPROVED | 1 |
 | EMP-028 | Leave request form + my leave | READY_FOR_REVIEW | 2 |
 | EMP-029 | Attendance correction request | READY_FOR_REVIEW | 2 |
 | EMP-030 | My salary slips | READY_FOR_REVIEW | 2 |
@@ -186,9 +186,9 @@ Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.c
 
 | ID | Screen | Status | Batch |
 |---|---|---|---|
-| SHR-001 | Component sheet | READY_FOR_REVIEW | 1 |
-| SHR-002 | All Modules (permission-driven) | READY_FOR_REVIEW | 1 |
-| SHR-003 | Standard states | READY_FOR_REVIEW | 1 |
-| SHR-004 | Module not enabled for company | READY_FOR_REVIEW | 1 |
-| SHR-005 | Voice note (record instead of typing) | READY_FOR_REVIEW | 1 |
+| SHR-001 | Component sheet | APPROVED | 1 |
+| SHR-002 | All Modules (permission-driven) | APPROVED | 1 |
+| SHR-003 | Standard states | APPROVED | 1 |
+| SHR-004 | Module not enabled for company | APPROVED | 1 |
+| SHR-005 | Voice note (record instead of typing) | APPROVED | 1 |
 

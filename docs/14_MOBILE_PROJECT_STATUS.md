@@ -24,7 +24,7 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 
 17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
 
-1. **Approve the release-1 screen designs** (AUTH-001…011, EMP-001…014, EMP-020…027, SHR-001…005) — or send changes. This unlocks Phase 1.
+1. ✅ Release-1 screen designs **APPROVED** 2026-11-03 (38 screens, `design/approvals/APPROVED_SCREENS.md`). Next: go-ahead to start **Phase 1 (backend authentication in `fashion-erp`)**.
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
@@ -54,6 +54,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Release-1 designs approved
+**Done:** user approved the 38 release-1 screens; `design/prototypes/approvals.js` lists them; prototype shows APPROVED; `SCREEN_APPROVAL_STATUS.md` and `APPROVED_SCREENS.md` updated.
+**Phase 1 readiness:** its blocking questions (Q-03, Q-04, Q-09, Q-10, Q-16, Q-18) are answered and its screens approved. Phase 0 spikes A/B/C still wait for user inputs (photos, accounts/phones, factory visit) — they block phase 1b (face) and the anti-fraud parts of phase 3, not Phase 1.
+**Next step:** user go-ahead to start Phase 1.
 
 ### Handoff — 2026-11-03 — Claude Code — D-037 server-side face verification added to plan
 **User decisions:** fix SW-1 with a server-side face match on every punch (web + mobile) — APPROVED; user will provide 3–5 volunteers' photos later for the accuracy test.

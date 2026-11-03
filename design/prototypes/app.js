@@ -10,7 +10,8 @@
   };
   const STATUS_COLOR = { READY_FOR_REVIEW: "#1ca454", NOT_STARTED: "#c6c3dc", APPROVED: "#4130cc", CHANGES_REQUESTED: "#e02130" };
   const KIND = { E: ["EXISTING (via adapter)", "#0b973d"], N: ["NEW mobile route (docs/05)", "#4130cc"], G: ["BACKEND_GAP — APPROVAL_REQUIRED", "#e02130"] };
-  const screens = globalThis.SCREENS.map((s) => ({ status: s.render ? "READY_FOR_REVIEW" : "NOT_STARTED", batch: s.render ? 1 : 2, ...s }));
+  const appr = new Set(((globalThis.APPROVED || {}).ids) || []);
+  const screens = globalThis.SCREENS.map((s) => ({ status: appr.has(s.id) ? "APPROVED" : s.render ? "READY_FOR_REVIEW" : "NOT_STARTED", batch: s.render ? 1 : 2, ...s }));
   screens.sort((a, b) => a.cat.localeCompare(b.cat) || a.id.localeCompare(b.id, undefined, { numeric: true }));
   const params = new URLSearchParams(location.search);
   let current = params.get("screen") || screens[0].id;
@@ -33,7 +34,7 @@
   function spec(s) {
     const list = (arr) => (arr && arr.length ? `<ul>${arr.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : "<p class='muted'>—</p>");
     return `<h2>${s.id} · ${esc(s.title)}</h2>
-      <div style="margin:6px 0 10px"><span class="pill ${s.status === "READY_FOR_REVIEW" ? "success" : "neutral"}">${s.status}</span> <span class="pill neutral">Batch ${s.batch}</span></div>
+      <div style="margin:6px 0 10px"><span class="pill ${s.status === "APPROVED" ? "info" : s.status === "READY_FOR_REVIEW" ? "success" : "neutral"}">${s.status}</span> <span class="pill neutral">Batch ${s.batch}</span></div>
       <div class="muted">${CATS[s.cat]} · ${DESIGN_VERSION}</div>
       <h3>Purpose</h3><p>${esc(s.purpose || "—")}</p>
       <h3>User types / ERP roles</h3>${list(s.roles)}

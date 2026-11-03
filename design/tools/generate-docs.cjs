@@ -159,6 +159,6 @@ Only the user can set APPROVED (record it in \`design/approvals/APPROVED_SCREENS
 
 | Screen | Title | Status | Batch | Approved by / date |
 |---|---|---|---|---|
-${screens.map((s) => `| ${s.id} | ${md(s.title)} | ${s.status} | ${s.batch} | — |`).join("\n")}
+${screens.map((s) => `| ${s.id} | ${md(s.title)} | ${s.status} | ${s.batch} | ${s.status === "APPROVED" ? `${globalThis.APPROVED.by}, ${globalThis.APPROVED.date}` : "—"} |`).join("\n")}
 `);
 console.log(`Docs generated: ${total} screens (${designed} designed, ${total - designed} pending), ${gaps.length} with gaps`);
