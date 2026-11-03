@@ -1,22 +1,23 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 1 (backend mobile authentication) done — waiting for user review.** Code on `fashion-erp` branch `mobile/phase-1-auth` @ `be1b197e` (pushed to GitHub, not merged, no PR yet); migration `20261103180000_mobile_auth` applied to the **dev** DB only. Release 1 = Login + Attendance; its 38 screens are approved. Phase 0 spikes still wait for user inputs. No mobile app code yet. 119 screens designed (AUTH-012 in-app update added, CR-003).
+**Overall:** Phase 1 (backend mobile auth) **merged into `fashion-erp` `main`** (`b804bbcf`). **Phase 2 (Expo app foundation) done** and the **login/session part of Phase 3 done**, plus read-only attendance screens (today, month, day, day remark). **Punching from the phone is not built yet** — it needs the mobile punch backend (challenge, locations, punch route) in `fashion-erp`, which is next. App not yet run on a real phone or emulator (no Android SDK on this PC; no developer accounts yet). D-039: no phase gates, agents push to `main`.
 
-Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
+Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fashion-erp-mobile`, branch `main`).
 
 ## Phase tracker (revision 3 — see `11` table)
 
 | Phase | Name | Status | Gate |
 |---|---|---|---|
-| 0 | Design & feasibility | 🔄 Design v1.2 ready for review — all 118 screens designed (`design/approvals/DESIGN_REVIEW.md`); Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
-| 1 | Backend authentication (in `fashion-erp`) | ✅ Done — branch `mobile/phase-1-auth` @ `be1b197e` (pushed to GitHub 2026-11-03, not merged, no PR yet) | ⏳ waiting for user review |
-| 2 | Mobile foundation | ⬜ | — |
-| 3 | Common employee features | ⬜ | — |
+| 0 | Design & feasibility | 🔄 119 screens designed, release-1 screens (38) approved; Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | waiting for user inputs (photos, accounts/phones, factory visit) |
+| 1 | Backend authentication (in `fashion-erp`) | ✅ Done — merged to `fashion-erp` `main` (`b804bbcf`); migration `20261103180000_mobile_auth` applied to the **dev DB only** | — (D-039) |
+| 1b | Server-side face verification (in `fashion-erp`) | ⬜ waits for volunteer photos (accuracy test / threshold) | user input |
+| 2 | Mobile foundation | ✅ Done — Expo SDK 58 app, expo-router, theme tokens, shared components, API client, SecureStore token store, single-flight refresh, app-config + Update Required, offline banner, Jest/ESLint/TS | — (D-039) |
+| 3 | Common employee features | 🔄 Login, forced/voluntary password change, profile, devices, sign out (all) done; attendance today/month/day + remark done (read-only); **punch flow not started** (needs backend) | — |
 | 4 | Worker & supervisor | ⬜ | — |
 | 5 | Other authorized modules | ⬜ | — |
 | 6 | Admin & owner dashboards | ⬜ | — |
 | 7 | Security & testing | ⬜ | — |
-| 8 | Builds & release | ⬜ | — |
+| 8 | Builds & release | ⬜ needs developer accounts (Q-08) | user input |
 
 Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user · ❌ blocked
 
@@ -24,11 +25,14 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 
 17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
 
-1. ✅ Release-1 screen designs **APPROVED** 2026-11-03 (38 screens, `design/approvals/APPROVED_SCREENS.md`). Next: go-ahead to start **Phase 1 (backend authentication in `fashion-erp`)**.
+1. ✅ Release-1 screen designs approved (38 screens). Phases now run without gates (D-039).
+1a. **Server deploy:** run migration `20261103180000_mobile_auth` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far).
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
-## Backend work identified (none started)
+## Backend work identified
+
+✅ Done in Phase 1: B-01…B-05 (auth routes), B-10 (auth codes), B-11, B-12 (auth audit), B-13, B-15 (auth env vars), B-24. Next: B-06, B-07, B-19, B-05 (punch routes), B-09 stub.
 
 B-01 `mobile_sessions` · B-02 `mobile_devices` · B-03 mobile-auth module · B-04 bearer adapter + shared live checks + allowlist · B-05 new mobile routes · B-06 `hrms_attendance_punch_meta` · B-07 HMAC challenge · B-08 integrity verifiers · B-09 risk engine + policy columns · B-10 error codes · B-11 per-IP limit · B-12 audit · B-13 revoke on reset/suspend · B-14 cleanup job · B-15 env vars · ~~B-16~~ (dropped) · B-17 reviewer reasons in Outdoor screen · **B-18 server-side face verification (approved, D-037)** · B-19 `punch()` options param · B-20 device admin (optional) · ~~B-21~~ (not needed) · ~~B-22~~ (dropped) · **B-23 role permission changes (approved)** · **B-24 AGENTS.md pointer (approved)**. Details: `06`.
 
@@ -54,6 +58,14 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Phase 2 done + Phase 3 login/session + attendance read-only
+**Branch / commit:** `fashion-erp-mobile` `main` (pushed, D-039). `fashion-erp`: Phase 1 merged to `main` (`b804bbcf`).
+**Done:** Expo SDK 58 project at the repo root (`app/` expo-router screens, `src/`): theme tokens from the design system; components (AppText, Button, TextField, Screen, Card, HeroCard, Banner, ListRow, OfflineBanner); `api/client.ts` (bearer, X-App-Version/Platform/Request-Id, 15 s timeout, ERP error envelope → `ApiError`, one replay after refresh); `auth/session.ts` single-flight refresh; `auth/tokenStore.ts` (SecureStore, this device only); installation UUID; app-config + Update Required (AUTH-010); screens: splash (AUTH-001), login (AUTH-002/003/004/005/007 notices), set own password (AUTH-006 / EMP-023, re-login after change), suspended (AUTH-011), home (EMP-001), profile + sign out / sign out all phones (EMP-022 / AUTH-008), my devices (EMP-025), attendance dashboard + month list (EMP-002/011/012, read-only), day details + remark (EMP-013/014). `app.config.ts` variants (dev/preview/prod ids per D-036, permissions per docs/10, blocked background location / QUERY_ALL_PACKAGES / storage), `eas.json`. D-039/D-040/D-041 logged.
+**Verified (executed):** `tsc --noEmit` clean; `eslint .` clean; `jest` 22/22 (single-flight refresh, token store, client headers/refresh-replay/revoked/timeout/offline/426, IST dates, versions, validation, log scrubbing); `expo export --platform android` bundles (2.8 MB Hermes); `expo config` resolves dev/prod ids.
+**Not verified:** never run on an Android emulator, Android phone or iPhone (no Android SDK on this PC, no Apple/Expo accounts); not tested against the live ERP server from a phone. Hero gradient is a solid colour (expo-linear-gradient not added); Inter font not bundled (system font).
+**Not built:** punching from the phone (EMP-003…010) — needs backend B-05 punch routes, B-06, B-07, B-19 first; notifications (EMP-020/021); help/about/settings (EMP-024/026/027); device registration/integrity (AUTH-009, needs accounts); optional update sheet AUTH-012.
+**Next step:** backend punch slice in `fashion-erp` (punch-challenge, locations, idempotent punch route calling `punch()`), then the app's punch flow (location, camera, face).
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 1 done (backend mobile auth) + in-app update design
 **Branch / commit:** fashion-erp `mobile/phase-1-auth` @ `be1b197e` (30 files; not pushed, not merged). Migration `20261103180000_mobile_auth` applied to the dev DB (prisma migrate resolve) + rollback SQL.

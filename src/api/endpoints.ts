@@ -1,0 +1,40 @@
+import type { ApiClient } from "./client";
+import type {
+  AppConfig,
+  AttendanceDay,
+  AttendanceMonth,
+  AttendanceToday,
+  DeviceInfo,
+  LoginResponse,
+  MeResponse,
+  MobileDevice,
+  RefreshResponse,
+} from "./types";
+
+/** Typed calls for the routes in docs/05 (release 1 = login + attendance). */
+export function createEndpoints(api: ApiClient) {
+  return {
+    appConfig: () => api.get<AppConfig>("/api/mobile/v1/app-config", { auth: false }),
+    login: (email: string, password: string, device: DeviceInfo) =>
+      api.post<LoginResponse>("/api/mobile/v1/auth/login", { email, password, device }, { auth: false }),
+    refresh: (refreshToken: string) => api.post<RefreshResponse>("/api/mobile/v1/auth/refresh", { refreshToken }, { auth: false }),
+    logout: () => api.post<{ ok: true }>("/api/mobile/v1/auth/logout"),
+    logoutAll: () => api.post<{ revoked: number }>("/api/mobile/v1/auth/logout-all"),
+    me: () => api.get<MeResponse>("/api/mobile/v1/me"),
+    devices: () => api.get<MobileDevice[]>("/api/mobile/v1/devices"),
+    removeDevice: (id: string) => api.del<{ ok: true }>(`/api/mobile/v1/devices/${encodeURIComponent(id)}`),
+    changePassword: (currentPassword: string, newPassword: string) =>
+      api.post<{ ok: true }>("/api/v1/account/change-password", { currentPassword, newPassword }),
+
+    attendanceToday: () => api.get<AttendanceToday>("/api/v1/attendance/me/today"),
+    attendanceMonth: (month: string) => api.get<AttendanceMonth>(`/api/v1/attendance/me/month?month=${encodeURIComponent(month)}`),
+    attendanceDay: (date: string) => api.get<AttendanceDay>(`/api/v1/attendance/me/day?date=${encodeURIComponent(date)}`),
+    setDayRemark: (date: string, remark: string) =>
+      api.request<{ dateKey: string; remark: string | null; remarkAt: string | null }>("/api/v1/attendance/me/remark", {
+        method: "PUT",
+        body: { date, remark },
+      }),
+  };
+}
+
+export type Endpoints = ReturnType<typeof createEndpoints>;
