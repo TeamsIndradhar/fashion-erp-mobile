@@ -4,7 +4,7 @@
 |---|---|
 | Category | Supervisor / Team Leader (`04-supervisor`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SUP-001` |
 | Required permission | `production.approve (approvals card); hrms_attendance_team.view (team attendance card, not held by PRODUCTION_SUPERVISOR by default)` |
@@ -26,7 +26,8 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `GET /api/mobile/v1/me` | NEW thin mobile route (designed in docs/05) |
 | `GET /api/v1/job-order-progress-entries/pending` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/attendance/summary?date=` | EXISTING (via mobile auth adapter) |
-| `Team dashboard counts (team size, active JOs) — server-rendered only` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `GET /api/v1/attendance/team-day?date (team size + present, only if permitted)` | EXISTING (via mobile auth adapter) |
+| `GET /api/v1/production-orders?pageSize=1 (meta.totalCount = active orders in scope)` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
 - Punch

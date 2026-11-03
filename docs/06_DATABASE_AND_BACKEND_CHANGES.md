@@ -23,11 +23,11 @@ Every item needs approval. All schema changes are **additive** (new tables/enums
 | B-15 | env vars (`10` §2) | configuration | 1 |
 | B-16 | ~~root tooling excludes~~ — **dropped 2026-11-03**: app moved to its own repository (D-002 APPROVED), nothing to exclude in `fashion-erp` | — | — |
 | B-17 | web Outdoor screen shows risk reasons for mobile punches (read from B-06) | reviewers must see *why* a punch was flagged | 6 |
-| B-18 | server-side face verification (+ liveness) — **only if Q-01 chooses it** | SW-1 | 5 |
+| B-18 | ~~not needed — D-012: face check same as the web~~ server-side face verification (+ liveness) | SW-1 | 5 |
 | B-19 | `punch()` gets one optional trailing `options` param: `{ meta?, forceReview? }`, used inside its existing `$transaction`; web calls unchanged | write metadata atomically; route SUSPICIOUS punches to review | 5 |
 | B-20 | (optional) web Admin: list/revoke a user's mobile devices; approve pending devices | HR device control | 7 |
 | B-21 | (conditional) `AttendanceSettings.requireFaceOnMobile` | only if Q-01 picks "selfie-only on mobile" | 5 |
-| B-22 | Voice-note attachment targets for production progress entries / hand-backs, attendance day remark, leave requests, attendance corrections, outdoor clarification, approval remarks (CR-001, gap G-14) — add entries to `src/core/attachments/attachment-targets.ts` with each record's own scope rule; payment requests already supported | users who cannot type (user request) | 3–5 |
+| B-22 | ~~DROPPED 2026-11-03 (CR-002: voice only where the backend already supports it)~~ Voice-note attachment targets for production progress entries / hand-backs, attendance day remark, leave requests, attendance corrections, outdoor clarification, approval remarks (CR-001, gap G-14) — add entries to `src/core/attachments/attachment-targets.ts` with each record's own scope rule; payment requests already supported | users who cannot type (user request) | 3–5 |
 
 ## 2. `mobile_sessions` (B-01)
 

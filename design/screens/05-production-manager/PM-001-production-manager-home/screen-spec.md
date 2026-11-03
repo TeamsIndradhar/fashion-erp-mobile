@@ -4,7 +4,7 @@
 |---|---|
 | Category | Production Manager (`05-production-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=PM-001` |
 | Required permission | `production.view (+view_all); reports.view for KPIs` |
@@ -26,7 +26,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `GET /api/v1/reports/dashboard/executive-dashboard (formatted strings)` | EXISTING (via mobile auth adapter) |
-| `Numeric KPI endpoint` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `KPI values shown exactly as the report returns them (already formatted, e.g. ₹1,234.00) — no parsing, no new API` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/job-order-progress-entries/pending` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/reports/production-planning/delayed-production-orders` | EXISTING (via mobile auth adapter) |
 

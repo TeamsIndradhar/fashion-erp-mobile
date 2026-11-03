@@ -1,4 +1,4 @@
-# Screen approval status (Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03)
+# Screen approval status (Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03)
 
 Statuses: NOT_STARTED → DESIGN_IN_PROGRESS → READY_FOR_REVIEW → CHANGES_REQUESTED → APPROVED → IMPLEMENTED → VERIFIED.
 Only the user can set APPROVED (record it in `design/approvals/APPROVED_SCREENS.md`).

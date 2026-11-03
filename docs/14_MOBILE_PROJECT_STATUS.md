@@ -54,6 +54,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-03 — Claude Code — CR-002 (design v1.3)
+**User decisions:** voice note only where the ERP backend already supports it; face check same as the web; "decide the rest".
+**Done:** voice removed from 9 screens (kept on EMP-016, EMP-018, ACC-003, SHR-005); EMP-005 face step = web method (D-012 APPROVED, Q-01 answered, B-18 not needed, spike A superseded); all other gaps redesigned onto existing APIs/reports (`design/screen-inventory/ERP_AUDIT_FOR_DESIGN.md` §8) → **0 screens with backend gaps**; B-22 dropped; docs 01/04/05/06/08/12 updated; 19 screens + responsive re-exported.
+**Remaining backend work:** only the already-planned mobile adapter/attendance items in `docs/06`.
+
 ### Handoff — 2026-11-03 — Claude Code — Design batch 2 + phone sizes (v1.2)
 **Done:** all 36 batch-2 screens designed (`design/prototypes/screens-batch2.js`; routes verified in `fashion-erp/src/app/api/v1`); 118/118 screens designed; small/large phone exports for 10 key screens (`design/screens/responsive/`, tool `design/tools/export-responsive.cjs`); small-screen fixes (button pair overflow, compact hero); design v1.2; review doc updated.
 **Not done:** user review/approval; real-device rendering checks (Phase 2/7).

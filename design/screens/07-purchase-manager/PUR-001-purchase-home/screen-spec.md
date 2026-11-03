@@ -4,7 +4,7 @@
 |---|---|
 | Category | Purchase Manager (`07-purchase-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=PUR-001` |
 | Required permission | `purchase_order.view` |
@@ -26,7 +26,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 |---|---|
 | `GET /api/v1/purchase-orders?status=` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/reports/purchase/pending-purchase-order` | EXISTING (via mobile auth adapter) |
-| `Pending GRN status` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Approve POs

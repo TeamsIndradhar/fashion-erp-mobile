@@ -1,6 +1,6 @@
 /* Prototype viewer. ?screen=ID shows one screen; &bare=1 renders only the phone screen (used for PNG export). */
 (function () {
-  const DESIGN_VERSION = "Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03";
+  const DESIGN_VERSION = "Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03";
   const CATS = {
     "01-authentication": "01 · Authentication", "02-common-employee": "02 · Common Employee", "03-production-worker": "03 · Production Worker",
     "04-supervisor": "04 · Supervisor", "05-production-manager": "05 · Production Manager", "06-inventory-manager": "06 · Inventory Manager",

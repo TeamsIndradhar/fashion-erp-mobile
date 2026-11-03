@@ -7,4 +7,4 @@
 - Keyboard-aware scrolling; on long forms the submit button is sticky at the bottom.
 - Submit shows loading and blocks double submit; on error the input is kept and the server message is shown at the top.
 - Drafts are not stored on the phone in v1 (no offline write).
-- **Voice instead of typing (CR-001):** every remark/reason/description field is a `RemarkField` ("type or record") and every upload area offers a voice note next to photo/file. Approvers see and play the voice note on the detail screen.
+- **Voice instead of typing (CR-001, narrowed by CR-002):** `RemarkField` ("type or record") is used only on records whose ERP backend already stores voice notes (expense / payment requests and related accounts records). Other remark fields are text-only until the backend supports voice there.

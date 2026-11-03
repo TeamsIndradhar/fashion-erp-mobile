@@ -4,7 +4,7 @@
 |---|---|
 | Category | Common Employee (`02-common-employee`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EMP-019` |
 | Required permission | `hrms_salary_advance.create (all self-service roles)` |
@@ -30,7 +30,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 |---|---|
 | `GET/POST /api/v1/salary/advances` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/salary/advances/{id}/cancel` | EXISTING (via mobile auth adapter) |
-| `Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Submit

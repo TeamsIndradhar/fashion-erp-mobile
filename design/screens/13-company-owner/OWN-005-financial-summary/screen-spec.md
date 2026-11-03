@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Owner (`13-company-owner`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=OWN-005` |
 | Required permission | `financial_reports.view + reports.view` |
@@ -27,7 +27,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `GET /api/v1/reports/receivables/customer-outstanding` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/reports/payables/supplier-outstanding` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/reports/expenses/financial-accounts-balances` | EXISTING (via mobile auth adapter) |
-| `Cash-position KPI` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Open each report

@@ -106,6 +106,8 @@ Recommendation: a first; then c if the field test shows genuine employees still 
 
 ## 7. Face verification
 
+> **Decided 2026-11-03 (D-012, user): same as the web app.** On-device match against the employee's enrolled photos with the company `faceMatchThreshold` / `faceMatchFrames`, then `facePhotoId` is sent with the punch and the server keeps its existing ownership check. No server-side matching, no new setting. Known weakness SW-1 accepted; managers can still review selfies. The options below are kept for history.
+
 Existing web model: browser match → `facePhotoId` sent → server only checks ownership (SW-1). Server rejects punches without `facePhotoId` when `requireFace = true` (the default).
 
 Consequences for mobile:

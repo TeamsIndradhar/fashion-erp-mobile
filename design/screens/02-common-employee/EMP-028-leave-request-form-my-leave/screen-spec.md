@@ -4,7 +4,7 @@
 |---|---|
 | Category | Common Employee (`02-common-employee`) |
 | Status | **READY_FOR_REVIEW** (batch 2) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EMP-028` |
 | Required permission | `hrms_leave.view / create` |
@@ -28,12 +28,11 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `GET /api/v1/leave-requests/balance?employeeId&leaveTypeId&year` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/leave-requests` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/leave-requests?mine=true` | EXISTING (via mobile auth adapter) |
-| `Voice note on leave request (LEAVE_REQUEST target)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Pick leave type
 - Pick dates + duration
-- Type or record reason
+- Type reason
 - Submit
 
 ## Validation

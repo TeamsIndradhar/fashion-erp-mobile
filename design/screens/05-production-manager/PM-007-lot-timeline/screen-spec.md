@@ -4,7 +4,7 @@
 |---|---|
 | Category | Production Manager (`05-production-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 2) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=PM-007` |
 | Required permission | `production.view` |
@@ -26,7 +26,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 |---|---|
 | `GET /api/v1/lots/{id}/timeline` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/lots/{id}/genealogy` | EXISTING (via mobile auth adapter) |
-| `Lot list API` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Open stage

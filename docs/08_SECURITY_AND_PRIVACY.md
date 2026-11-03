@@ -117,6 +117,8 @@ Note: routing a device-risk punch through the *outdoor* queue reuses existing ap
 
 ## 7. Face verification analysis
 
+> **Decided 2026-11-03 (D-012, user): same as the web app** (on-device match, `facePhotoId`, existing server check; SW-1 accepted). Analysis below kept for history.
+
 | Option | Assurance | Liveness | Cost / effort | Privacy | Risk |
 |---|---|---|---|---|---|
 | Copy web model (on-device match, send `facePhotoId`) | **low** — client can skip match (SW-1) | none | medium (RN face libs, model size on low-end phones) | enrolled photos downloaded to phone in memory | false sense of security |

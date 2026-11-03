@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Owner (`13-company-owner`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=OWN-001` |
 | Required permission | `reports.view + financial_reports.view (business cards); module views for others` |
@@ -24,7 +24,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `GET /api/v1/reports/dashboard/executive-dashboard` | EXISTING (via mobile auth adapter) |
-| `Numeric KPI endpoint (values come as formatted strings today)` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `Values shown as the report returns them (formatted strings) — no new API` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
 - Open analytics

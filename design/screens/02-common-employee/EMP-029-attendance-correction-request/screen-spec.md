@@ -4,7 +4,7 @@
 |---|---|
 | Category | Common Employee (`02-common-employee`) |
 | Status | **READY_FOR_REVIEW** (batch 2) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EMP-029` |
 | Required permission | `hrms_attendance_regularization.create` |
@@ -27,12 +27,11 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `POST /api/v1/attendance-corrections` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/attendance-corrections/{id}/documents (file)` | EXISTING (via mobile auth adapter) |
 | `GET /api/v1/attendance-corrections?mine=true` | EXISTING (via mobile auth adapter) |
-| `Voice note on correction (audio on documents route unverified)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Pick type
 - Pick date/time
-- Type or record reason
+- Type reason
 - Attach proof
 - Submit
 

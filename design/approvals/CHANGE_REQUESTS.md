@@ -4,6 +4,7 @@ Format: `CR-nnn | date | screen ID(s) | requested change | requested by | status
 
 | CR | Date | Screens | Change | By | Status |
 |---|---|---|---|---|---|
+| CR-002 | 2026-11-03 | EMP-014, EMP-019, EMP-028, EMP-029, EMP-031, WRK-004, WRK-007, SUP-005, HR-004, SHR-005 | Voice note only where the ERP backend already supports it (remove elsewhere); face check same as the web; resolve other gaps with existing APIs | User | DONE (Design v1.3) |
 | CR-001 | 2026-11-03 | All remark/reason fields and upload areas — designed now on EMP-014, EMP-016, EMP-018, EMP-019, WRK-004, WRK-007, SUP-005, new SHR-005; batch-2 screens (leave, correction, outdoor clarification, approvals, support) must follow the same rule | Add a **voice recording** option next to every upload / remark ("type or record"), e.g. expense and production work, because some users can't type | User | DONE in design (Design v1.1). Backend: existing for payment requests; **BACKEND_GAP** for production entries, attendance remark, leave/corrections/outdoor clarification, approval remarks, hand-back (G-14) |
 
 ## Open design decisions (need the user)

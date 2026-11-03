@@ -4,7 +4,7 @@
 |---|---|
 | Category | Supervisor / Team Leader (`04-supervisor`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SUP-006` |
 | Required permission | `production.view (view_all or team)` |
@@ -24,7 +24,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `GET /api/v1/production-orders (scoped)` | EXISTING (via mobile auth adapter) |
-| `Team job-order list / team pending counts` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `GET /api/v1/production-orders/{id} (job orders inside each order — no separate job-order list needed)` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
 - Open job order

@@ -34,3 +34,7 @@ Server-side matching with the library the ERP already uses looks **technically f
 ## Next step
 
 User decision: may we run the accuracy test with 3–5 consenting volunteers' photos (kept only in the scratchpad, deleted after the test)? Then finish this report with numbers and a recommendation for Q-01.
+
+## Superseded (2026-11-03)
+
+The user decided face check works **the same as the web app** (D-012 APPROVED): match on the phone, send `facePhotoId`, existing server check. Server-side matching is not needed; the accuracy test with volunteer photos is no longer required. Remaining Phase 0 item for face: confirm the on-device approach for React Native (run the same face-api models in the app, e.g. via a WebView or a TensorFlow.js/React Native runtime) — a small spike in Phase 2.

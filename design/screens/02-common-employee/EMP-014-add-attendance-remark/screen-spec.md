@@ -4,7 +4,7 @@
 |---|---|
 | Category | Common Employee (`02-common-employee`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EMP-014` |
 | Required permission | `hrms_attendance.create` |
@@ -29,7 +29,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `PUT /api/v1/attendance/me/remark {date, remark}` | EXISTING (via mobile auth adapter) |
-| `Voice note on attendance day remark — no attachment target yet (CR-001)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Save

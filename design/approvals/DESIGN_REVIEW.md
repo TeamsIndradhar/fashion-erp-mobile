@@ -1,4 +1,4 @@
-# Design review — Design v1.2 (batches 1 + 2, CR-001), 2026-11-03
+# Design review — Design v1.3 (batches 1 + 2, CR-001, CR-002), 2026-11-03
 
 **Status: READY FOR YOUR REVIEW. Nothing is approved yet. No app code exists.**
 
@@ -12,7 +12,7 @@
 ## Scope
 - **118 screens, all designed** (batch 1: 82 incl. SHR-005 voice note; batch 2: 36).
 - Batch 2 added: leave request, correction request, salary slips, outdoor-rejection accept/clarify; job order (manager), job work, QC (report view), lot timeline, sampling, contractor home; stock ledger, material-request issue (roll picker), FG stock, stock movements, barcode scanner; PO details/approve, goods receipts; SO details + lifecycle, CRM leads, customers, buyer enquiries; payout, invoices, AR/AP aging; company attendance, correction / overtime approvals, employee directory; dispatch details, carton scan; employee summary, users (view only); owner production / inventory / people analytics, alerts.
-- **CR-001 voice notes** applied to every remark/reason field and upload area in both batches.
+- **CR-001 / CR-002:** voice notes only where the ERP backend supports them; face check like the web; former gaps redesigned onto existing APIs.
 
 ## Consistency audit (Claude, v1.2)
 
@@ -22,13 +22,14 @@
 | Colours only from tokens; gradient only on hero cards | Pass |
 | Bottom nav consistent per user type; hidden on forms / full-screen flows | Pass |
 | Every screen has ID, permission, API mapping (E/N/G), states, spec files | Pass — 118/118 generated |
-| "Type or record" voice option on remark fields and uploads | Pass on all designed forms; backend gap G-14 noted where the ERP has no voice target |
+| Voice note | Only where the ERP backend already stores voice (EMP-016, EMP-018, ACC-003, SHR-005) — CR-002 |
 | Demo data marked | Pass |
 | Reference fidelity | Pass — EMP-001 = reference 2, EMP-002 = reference 1 (D-D03 open) |
 | 360 × 640 (small Android) | Pass after fixes: Punch In/Out pair no longer overflows; hero, punch button and today's times fit; shortcut row needs a short scroll on home screens |
 | 430 × 932 (large) | Pass — layouts stretch, no gaps |
 | Text clipping | Long sub-labels use ellipsis; full text available on the detail screens |
-| Fake APIs | None — 24 screens touch a backend gap and say so (see `API_SCREEN_MAPPING.md`) |
+| Backend gaps | **0** — all screens use existing ERP APIs/reports or the already-planned mobile adapter routes (`ERP_AUDIT_FOR_DESIGN.md` §8) |
+| Face check | Same as the web app (D-012) — EMP-005 |
 | Not verified | Real device rendering (fonts, safe areas, Dynamic Island) — happens in Phase 2/7; screen-reader labels are specified but not testable in a static prototype |
 
 ## Decisions needed from you

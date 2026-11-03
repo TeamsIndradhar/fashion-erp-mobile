@@ -1,8 +1,8 @@
-# All screens (Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03)
+# All screens (Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03)
 
 Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.cjs` — do not edit by hand.
 
-**118 screens** · **118 designed (batch 1, READY_FOR_REVIEW)** · **0 pending (batch 2, NOT_STARTED)** · 24 screens touch a BACKEND_GAP.
+**118 screens** · **118 designed (batch 1, READY_FOR_REVIEW)** · **0 pending (batch 2, NOT_STARTED)** · 0 screens touch a BACKEND_GAP.
 
 ## Authentication (11/11)
 

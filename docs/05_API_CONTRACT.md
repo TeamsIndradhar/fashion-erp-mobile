@@ -90,7 +90,7 @@ Body `{ "date": "2026-11-02", "remark": "Client visit" }` (`dayRemarkSchema`, ma
 ### `GET /api/v1/attendance/sessions/{id}/selfie/{in|out}` — REUSE WITH ADAPTER
 Image bytes, `Cache-Control: private, max-age=300`; scope via `assertHrmsEmployeeInScope()` (own sessions for self-service users).
 
-### `GET /api/v1/attendance/face-photos/file/{photoId}` — REUSE WITH ADAPTER, **only if on-device face matching is approved** (Q-01)
+### `GET /api/v1/attendance/face-photos/file/{photoId}` — REUSE WITH ADAPTER — needed: face match runs on the phone like the web (D-012)
 
 ---
 
@@ -166,7 +166,7 @@ Stateless HMAC-signed payload `{ challengeId, mobileSessionId, purpose, type, ex
 | `latitude`, `longitude`, `accuracy` | yes | client-reported | fed to `punch()` unchanged |
 | `locationTimestamp` | yes | client-reported | stale-fix signal |
 | `selfie` (JPEG) | yes | server checks type/size/magic bytes | |
-| `facePhotoId` | depends on Q-01 / `requireFace` | client-reported (SW-1) | |
+| `facePhotoId` | when `requireFace` (matched on the phone like the web, D-012) | client-reported (SW-1, accepted) | |
 | `integrityToken` (Android) / `assertion` (iOS) | yes when available | **server-verified** | bound to SHA-256(challenge + clientPunchId + type) |
 | `signals` (JSON) | yes | **client-reported, untrusted** | `{ mocked, developerOptions, adbEnabled, adbWifiEnabled, emulatorHeuristic, rootHeuristic, jailbreakHeuristic, debuggerAttached, locationProvider }` — each `true/false/null` (null = unknown/unsupported) |
 | `address` | no | client | empty in v1 |

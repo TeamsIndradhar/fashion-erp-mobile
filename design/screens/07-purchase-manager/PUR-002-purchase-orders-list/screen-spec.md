@@ -4,7 +4,7 @@
 |---|---|
 | Category | Purchase Manager (`07-purchase-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=PUR-002` |
 | Required permission | `purchase_order.view; approve button needs purchase_order.approve` |

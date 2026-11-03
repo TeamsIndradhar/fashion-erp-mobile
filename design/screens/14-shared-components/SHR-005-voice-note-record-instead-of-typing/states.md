@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: CR-001: for users who cannot type. Every remark/reason field and every upload area offers 'type or record'. Recording is optional; text stays available. Max 2 minutes (web recorder allows 5).
+Screen-specific: CR-001: for users who cannot type. Offered only on records whose ERP backend already stores voice notes (expense / payment requests, expenses, advances, transfers, payments, credit notes); other remark fields stay text-only (user decision 2026-11-03). Recording is optional; text stays available. Max 2 minutes (web recorder allows 5).
 

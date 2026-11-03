@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Owner (`13-company-owner`) |
 | Status | **READY_FOR_REVIEW** (batch 2) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=OWN-007` |
 | Required permission | `per alert's module` |
@@ -23,7 +23,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `Alert aggregation endpoint` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `Built in the app from the listed reports (one call each, only for modules the user can see)` | EXISTING (via mobile auth adapter) |
 | `Sources: delayed-production-orders, low-stock-report, customer-outstanding, pending-dispatch reports` | EXISTING (via mobile auth adapter) |
 
 ## Available actions

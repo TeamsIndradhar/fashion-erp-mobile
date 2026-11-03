@@ -4,7 +4,7 @@
 |---|---|
 | Category | Authentication (`01-authentication`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=AUTH-005` |
 | Required permission | `none` |
@@ -21,7 +21,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `none — ERP has no self-service reset (admin reset only)` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `Existing process: admin resets the password (resetUserPassword) → temporary password → forced change (AUTH-006)` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
 - Close

@@ -89,3 +89,21 @@ Additional gaps: G-10 no push notifications (needs a push-token table + sender);
 - **Voice-enabled targets today:** EXPENSE, EXPENSE_PAYMENT, EMPLOYEE_ADVANCE, EMPLOYEE_ADVANCE_SETTLEMENT, INTERNAL_TRANSFER, **PAYMENT_REQUEST**, SUPPLIER_CREDIT_NOTE, PAYMENT.
 - **G-14 (BACKEND_GAP — APPROVAL_REQUIRED):** no attachment target for production progress entries / job-order hand-backs, attendance day remark, leave requests (`LEAVE_REQUEST` enum value exists, no target), attendance corrections (`ATTENDANCE_CORRECTION` exists, own documents route — audio support unverified), outdoor clarification proof (image/PDF only), approval/reject remarks, support tickets (unverified). The ERP design makes adding a target small: "a module added here gets file upload, voice recording, preview and delete for free" (comment in `attachment-targets.ts`) — each still needs its own scope rule (e.g. worker sees only own entries).
 - **Mobile:** recording needs the **microphone permission** (Android `RECORD_AUDIO`, iOS `NSMicrophoneUsageDescription`), asked only when the user first taps record.
+
+## 8. Gap resolutions (user decision 2026-11-03: "voice only where the backend has it; face check like the web; decide the rest")
+
+| Gap | Resolution | Backend change? |
+|---|---|---|
+| G-14 voice notes on production entries, attendance remark, leave, corrections, clarification, approval remarks, hand-back | **Dropped.** Voice note kept only where the ERP already stores it (PAYMENT_REQUEST, EXPENSE, EXPENSE_PAYMENT, EMPLOYEE_ADVANCE(_SETTLEMENT), INTERNAL_TRANSFER, PAYMENT, SUPPLIER_CREDIT_NOTE). Other remark fields are text-only. Screens with voice: EMP-016, EMP-018, ACC-003, SHR-005 | No |
+| Face check (Q-01) | **Same as the web:** match on the phone against enrolled photos (company `faceMatchThreshold`, `faceMatchFrames`), send `facePhotoId`; server keeps its existing ownership check. Known weakness SW-1 accepted by the user; selfie review by managers remains | No |
+| G-03 numeric KPIs | Show report values **as the report returns them** (formatted strings) — no parsing | No |
+| G-04 pending approvals / alerts aggregation | Built in the app: one existing list/report call per module the user may see; counts from `meta.totalCount` | No |
+| G-08 company / team counts | `employees?pageSize=1`, `users`, `customers?pageSize=1` (meta.totalCount); team size from `attendance/team-day`; headcount by department from report `hr/department-wise-employees` | No |
+| G-05 job-order / lot list | Job orders shown inside production orders; lot timeline opened from a production or job order | No |
+| G-06 QC list / pending count | QC screen uses existing QC reports only; no pending count | No |
+| G-07 pending GRN | Use `purchase/pending-purchase-order` report | No |
+| Cash-flow KPI | Dropped; show `expenses/financial-accounts-balances` (bank & cash balances) only | No |
+| Self-service forgot password | Existing admin-reset process explained (AUTH-005) | No |
+| HR-005 risk reasons | Part of the already-planned mobile anti-fraud backend (docs/06 B-17), not an extra gap | Planned (N) |
+
+Result: **0 screens depend on an unplanned backend gap.** The only backend work remains the mobile adapter/attendance items already listed in `docs/06` (bearer auth, `GET /me`, devices, punch challenge/punch route, punch meta, risk engine).

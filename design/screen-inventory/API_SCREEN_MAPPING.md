@@ -1,4 +1,4 @@
-# Screen → API mapping (Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03)
+# Screen → API mapping (Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03)
 
 Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N** new thin mobile route already designed in `docs/05_API_CONTRACT.md` · **G** `BACKEND_GAP — APPROVAL_REQUIRED` (no fake responses will be built in its place).
 
@@ -10,7 +10,7 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | AUTH-002 | `POST /api/mobile/v1/auth/login (calls existing authenticateTenantUser())` | N |
 | AUTH-003 | `POST /api/mobile/v1/auth/login → 401 INVALID_LOGIN` | N |
 | AUTH-004 | `Existing lockout (rateLimiter.ts, 5 tries / 15 min) via login adapter` | E |
-| AUTH-005 | `none — ERP has no self-service reset (admin reset only)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| AUTH-005 | `Existing process: admin resets the password (resetUserPassword) → temporary password → forced change (AUTH-006)` | E |
 | AUTH-006 | `POST /api/v1/account/change-password (existing changeOwnPassword())` | E |
 | AUTH-006 | `POST /api/mobile/v1/auth/login (re-sign-in with new password)` | N |
 | AUTH-007 | `POST /api/mobile/v1/auth/refresh → 401` | N |
@@ -26,7 +26,8 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-002 | `GET /api/mobile/v1/attendance/locations` | N |
 | EMP-003 | `none (OS permission)` | E |
 | EMP-004 | `none (device GPS); limit from attendance/me/today rules.gpsAccuracyMeters` | E |
-| EMP-005 | `camera only; face step per decision Q-01 (OPEN)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| EMP-005 | `GET /api/v1/attendance/face-photos/file/{photoId} (enrolled photos, existing)` | E |
+| EMP-005 | `Face match on the phone, same as the web (FacePunchCamera: threshold + frames from attendance/me/today rules) → facePhotoId sent with the punch` | E |
 | EMP-006 | `POST /api/mobile/v1/attendance/punch-challenge` | N |
 | EMP-006 | `POST /api/mobile/v1/attendance/punch (calls existing punch())` | N |
 | EMP-007 | `POST /api/mobile/v1/attendance/punch-challenge` | N |
@@ -41,7 +42,6 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-013 | `GET /api/v1/attendance/me/day?date=YYYY-MM-DD` | E |
 | EMP-013 | `GET /api/v1/attendance/sessions/{id}/selfie/{in\|out}` | E |
 | EMP-014 | `PUT /api/v1/attendance/me/remark {date, remark}` | E |
-| EMP-014 | `Voice note on attendance day remark — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-015 | `GET /api/v1/payment-requests?view=mine` | E |
 | EMP-015 | `GET /api/v1/salary/advances` | E |
 | EMP-015 | `GET /api/v1/leave-requests?mine=true` | E |
@@ -54,7 +54,6 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-018 | `GET /api/v1/record-attachments/PAYMENT_REQUEST/{id} (bill photo + voice note)` | E |
 | EMP-019 | `GET/POST /api/v1/salary/advances` | E |
 | EMP-019 | `POST /api/v1/salary/advances/{id}/cancel` | E |
-| EMP-019 | `Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-020 | `GET /api/v1/notifications` | E |
 | EMP-020 | `POST /api/v1/notifications/mark-all-read` | E |
 | EMP-021 | `PATCH /api/v1/notifications/{id}/read` | E |
@@ -70,18 +69,15 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-028 | `GET /api/v1/leave-requests/balance?employeeId&leaveTypeId&year` | E |
 | EMP-028 | `POST /api/v1/leave-requests` | E |
 | EMP-028 | `GET /api/v1/leave-requests?mine=true` | E |
-| EMP-028 | `Voice note on leave request (LEAVE_REQUEST target)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-029 | `POST /api/v1/attendance-corrections` | E |
 | EMP-029 | `POST /api/v1/attendance-corrections/{id}/documents (file)` | E |
 | EMP-029 | `GET /api/v1/attendance-corrections?mine=true` | E |
-| EMP-029 | `Voice note on correction (audio on documents route unverified)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-030 | `GET /api/v1/salary/history?year` | E |
 | EMP-030 | `GET /api/v1/salary/history/slips/{lineId}/pdf` | E |
 | EMP-030 | `PUT /api/v1/salary/history/lines/{lineId}/response` | E |
 | EMP-031 | `GET /api/v1/attendance/outdoor-rejections?mine=true` | E |
 | EMP-031 | `POST /api/v1/attendance/outdoor-rejections/{id}/accept` | E |
 | EMP-031 | `POST /api/v1/attendance/outdoor-rejections/{id}/clarify (reason + proof image/PDF)` | E |
-| EMP-031 | `Voice clarification` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-001 | `GET /api/mobile/v1/me` | N |
 | WRK-001 | `GET /api/v1/attendance/me/today` | E |
 | WRK-001 | `GET /api/v1/job-orders/my-assignments` | E |
@@ -89,32 +85,30 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | WRK-003 | `GET /api/v1/job-orders/{id}` | E |
 | WRK-003 | `GET /api/v1/job-orders/{id}/slips` | E |
 | WRK-004 | `POST /api/v1/job-orders/{id}/self-progress` | E |
-| WRK-004 | `Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-005 | `POST /api/v1/job-orders/{id}/self-progress → 201` | E |
 | WRK-006 | `GET /api/v1/job-order-progress-entries/mine` | E |
 | WRK-007 | `POST /api/v1/job-order-assignments/{id}/handback {quantity, reason}` | E |
-| WRK-007 | `Voice note on hand-back reason — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-008 | `GET /api/v1/lots/{id}` | E |
 | WRK-009 | `GET /api/v1/piece-rate-earnings` | E |
 | WRK-010 | `GET /api/v1/job-orders/my-assignments → error (not linked / self-entry off)` | E |
 | SUP-001 | `GET /api/mobile/v1/me` | N |
 | SUP-001 | `GET /api/v1/job-order-progress-entries/pending` | E |
 | SUP-001 | `GET /api/v1/attendance/summary?date=` | E |
-| SUP-001 | `Team dashboard counts (team size, active JOs) — server-rendered only` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| SUP-001 | `GET /api/v1/attendance/team-day?date (team size + present, only if permitted)` | E |
+| SUP-001 | `GET /api/v1/production-orders?pageSize=1 (meta.totalCount = active orders in scope)` | E |
 | SUP-002 | `GET /api/v1/attendance/team-day?date=` | E |
 | SUP-003 | `GET /api/v1/attendance/team-month?month=&view=team` | E |
 | SUP-004 | `GET /api/v1/job-order-progress-entries/pending` | E |
 | SUP-005 | `POST /api/v1/job-order-progress-entries/{id}/approve {approvalRemark?}` | E |
 | SUP-005 | `POST /api/v1/job-order-progress-entries/{id}/reject (remark required)` | E |
 | SUP-005 | `PATCH /api/v1/job-order-progress-entries/{id}` | E |
-| SUP-005 | `Voice note on progress entries / approval remarks — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | SUP-006 | `GET /api/v1/production-orders (scoped)` | E |
-| SUP-006 | `Team job-order list / team pending counts` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| SUP-006 | `GET /api/v1/production-orders/{id} (job orders inside each order — no separate job-order list needed)` | E |
 | SUP-007 | `GET /api/v1/reports/production/worker-output-register?period=` | E |
 | SUP-007 | `GET /api/v1/reports/production/line-wise-production` | E |
 | EXT-001 | `GET /api/v1/job-work-orders?contractorId (scoped by getAllowedContractorId)` | E |
 | PM-001 | `GET /api/v1/reports/dashboard/executive-dashboard (formatted strings)` | E |
-| PM-001 | `Numeric KPI endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| PM-001 | `KPI values shown exactly as the report returns them (already formatted, e.g. ₹1,234.00) — no parsing, no new API` | E |
 | PM-001 | `GET /api/v1/job-order-progress-entries/pending` | E |
 | PM-001 | `GET /api/v1/reports/production-planning/delayed-production-orders` | E |
 | PM-002 | `GET /api/v1/production-orders?page&pageSize&search&status` | E |
@@ -127,10 +121,8 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | PM-005 | `GET /api/v1/job-work-orders/receipts/pending` | E |
 | PM-006 | `GET /api/v1/reports/quality/qc-inspection-register` | E |
 | PM-006 | `GET /api/v1/reports/quality/defect-wise-analysis` | E |
-| PM-006 | `QC inspection list API / QC-pending count` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PM-007 | `GET /api/v1/lots/{id}/timeline` | E |
 | PM-007 | `GET /api/v1/lots/{id}/genealogy` | E |
-| PM-007 | `Lot list API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PM-008 | `GET /api/v1/sampling` | E |
 | PM-008 | `POST /api/v1/sampling/versions/{versionId}/decision` | E |
 | INV-001 | `GET /api/v1/reports/inventory/low-stock-report` | E |
@@ -149,7 +141,6 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | INV-007 | `GET /api/v1/barcodes/resolve/{code}` | E |
 | PUR-001 | `GET /api/v1/purchase-orders?status=` | E |
 | PUR-001 | `GET /api/v1/reports/purchase/pending-purchase-order` | E |
-| PUR-001 | `Pending GRN status` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PUR-002 | `GET /api/v1/purchase-orders` | E |
 | PUR-003 | `GET /api/v1/purchase-orders/{id}` | E |
 | PUR-003 | `POST /api/v1/purchase-orders/{id}/approve` | E |
@@ -193,7 +184,7 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | HR-005 | `GET /api/v1/attendance/outdoor` | E |
 | HR-005 | `POST /api/v1/attendance/outdoor (approve)` | E |
 | HR-005 | `POST /api/v1/attendance/outdoor/{sessionId}/reject` | E |
-| HR-005 | `risk reasons from hrms_attendance_punch_meta (B-17)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| HR-005 | `risk reasons from hrms_attendance_punch_meta (planned mobile backend, docs/06 B-17)` | N |
 | HR-006 | `GET /api/v1/attendance/overtime` | E |
 | HR-006 | `POST /api/v1/attendance/overtime/{id}/approve\|reject` | E |
 | HR-007 | `GET /api/v1/employees` | E |
@@ -204,20 +195,19 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | DSP-003 | `GET/POST /api/v1/dispatches/{id}/cartons` | E |
 | DSP-003 | `GET /api/v1/barcodes/resolve/{code}` | E |
 | ADM-001 | `GET /api/mobile/v1/me (permission keys)` | N |
-| ADM-001 | `Company counts (employees, users, customers) — server-rendered only` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
-| ADM-001 | `Cross-module pending approvals` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| ADM-001 | `GET /api/v1/employees?pageSize=1, /api/v1/users, /api/v1/customers?pageSize=1 (meta.totalCount)` | E |
+| ADM-001 | `One list call per module the user can approve (counts from meta.totalCount)` | E |
 | ADM-001 | `GET /api/v1/reports/mis/daily-mis?date=` | E |
-| ADM-002 | `Aggregated pending-approvals endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | ADM-002 | `Per-module lists: payment-requests?view=approve, job-order-progress-entries/pending, leave-requests?status=PENDING, attendance/outdoor, attendance-corrections, purchase-orders, material-requests` | E |
 | ADM-003 | `GET /api/v1/employees` | E |
 | ADM-003 | `GET /api/v1/attendance/summary?date` | E |
-| ADM-003 | `Headcount by department API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| ADM-003 | `GET /api/v1/reports/hr/department-wise-employees` | E |
 | ADM-004 | `GET /api/v1/users` | E |
 | ADM-005 | `GET /api/v1/reports/{category}/{key}` | E |
 | ADM-006 | `GET /api/v1/reports/{category}/{key}?dateFrom&dateTo…` | E |
 | ADM-006 | `GET …/export/{xlsx\|csv\|pdf}` | E |
 | OWN-001 | `GET /api/v1/reports/dashboard/executive-dashboard` | E |
-| OWN-001 | `Numeric KPI endpoint (values come as formatted strings today)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| OWN-001 | `Values shown as the report returns them (formatted strings) — no new API` | E |
 | OWN-002 | `GET /api/v1/reports/business-performance/monthly-sales-trend` | E |
 | OWN-002 | `GET /api/v1/reports/business-performance/top-customers-by-revenue` | E |
 | OWN-002 | `GET /api/v1/reports/business-performance/top-styles-by-revenue` | E |
@@ -231,41 +221,17 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | OWN-005 | `GET /api/v1/reports/receivables/customer-outstanding` | E |
 | OWN-005 | `GET /api/v1/reports/payables/supplier-outstanding` | E |
 | OWN-005 | `GET /api/v1/reports/expenses/financial-accounts-balances` | E |
-| OWN-005 | `Cash-position KPI` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | OWN-006 | `GET /api/v1/reports/attendance/monthly-attendance-summary` | E |
 | OWN-006 | `GET /api/v1/leave-requests?status=PENDING` | E |
-| OWN-007 | `Alert aggregation endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| OWN-007 | `Built in the app from the listed reports (one call each, only for modules the user can see)` | E |
 | OWN-007 | `Sources: delayed-production-orders, low-stock-report, customer-outstanding, pending-dispatch reports` | E |
 | SHR-001 | `none` | E |
 | SHR-002 | `GET /api/mobile/v1/me (viewable modules + action sets)` | N |
 | SHR-003 | `none` | E |
 | SHR-004 | `existing EntitlementService via PermissionService` | E |
 | SHR-005 | `GET/POST /api/v1/record-attachments/{module}/{recordId} (existing; audio webm/ogg/mp3/m4a/wav/aac accepted)` | E |
-| SHR-005 | `Targets missing for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| SHR-005 | `Voice only where the ERP already stores it: payment requests (expense requests), expenses, employee advances, internal transfers, payments, supplier credit notes` | E |
 
 ## Screens with a backend gap
-- AUTH-005 Forgot password (info): none — ERP has no self-service reset (admin reset only)
-- EMP-005 Punch – selfie: camera only; face step per decision Q-01 (OPEN)
-- EMP-014 Add attendance remark: Voice note on attendance day remark — no attachment target yet (CR-001)
-- EMP-019 Salary advance request: Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)
-- EMP-028 Leave request form + my leave: Voice note on leave request (LEAVE_REQUEST target)
-- EMP-029 Attendance correction request: Voice note on correction (audio on documents route unverified)
-- EMP-031 Outside punch rejected — accept or clarify: Voice clarification
-- WRK-004 Submit production progress: Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)
-- WRK-007 Hand back pieces: Voice note on hand-back reason — no attachment target yet (CR-001)
-- SUP-001 Supervisor Home: Team dashboard counts (team size, active JOs) — server-rendered only
-- SUP-005 Approve / reject progress entry: Voice note on progress entries / approval remarks — no attachment target yet (CR-001)
-- SUP-006 Team work status: Team job-order list / team pending counts
-- PM-001 Production Manager Home: Numeric KPI endpoint
-- PM-006 QC inspections (report view): QC inspection list API / QC-pending count
-- PM-007 Lot timeline: Lot list API
-- PUR-001 Purchase Home: Pending GRN status
-- HR-005 Outside / flagged punch review: risk reasons from hrms_attendance_punch_meta (B-17)
-- ADM-001 Company Admin Dashboard: Company counts (employees, users, customers) — server-rendered only; Cross-module pending approvals
-- ADM-002 Pending approvals (all modules): Aggregated pending-approvals endpoint
-- ADM-003 Employee summary: Headcount by department API
-- OWN-001 Owner Dashboard: Numeric KPI endpoint (values come as formatted strings today)
-- OWN-005 Financial summary: Cash-position KPI
-- OWN-007 Alerts center: Alert aggregation endpoint
-- SHR-005 Voice note (record instead of typing): Targets missing for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks
+
 

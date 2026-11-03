@@ -4,7 +4,7 @@
 |---|---|
 | Category | HR Manager (`10-hr-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=HR-005` |
 | Required permission | `hrms_attendance_outdoor.approve / reject` |
@@ -27,7 +27,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `GET /api/v1/attendance/outdoor` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/attendance/outdoor (approve)` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/attendance/outdoor/{sessionId}/reject` | EXISTING (via mobile auth adapter) |
-| `risk reasons from hrms_attendance_punch_meta (B-17)` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `risk reasons from hrms_attendance_punch_meta (planned mobile backend, docs/06 B-17)` | NEW thin mobile route (designed in docs/05) |
 
 ## Available actions
 - Approve (→ REMOTE)

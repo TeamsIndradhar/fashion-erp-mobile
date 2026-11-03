@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Admin (`12-company-admin`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.3 · Batches 1+2 (+CR-001/CR-002) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=ADM-002` |
 | Required permission | `approve on each module (shown per permission)` |
@@ -23,7 +23,6 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `Aggregated pending-approvals endpoint` | BACKEND_GAP — APPROVAL_REQUIRED |
 | `Per-module lists: payment-requests?view=approve, job-order-progress-entries/pending, leave-requests?status=PENDING, attendance/outdoor, attendance-corrections, purchase-orders, material-requests` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
