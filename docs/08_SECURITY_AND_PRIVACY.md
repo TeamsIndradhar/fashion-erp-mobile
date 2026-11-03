@@ -117,7 +117,7 @@ Note: routing a device-risk punch through the *outdoor* queue reuses existing ap
 
 ## 7. Face verification analysis
 
-> **Decided 2026-11-03 (D-012, user): same as the web app** (on-device match, `facePhotoId`, existing server check; SW-1 accepted). Analysis below kept for history.
+> **Decided 2026-11-03 (D-012 + D-037, user): phone/browser match like the web for feedback + server-side face match on every punch (closes SW-1); no match → review, never silently accepted.** Analysis below kept for history.
 
 | Option | Assurance | Liveness | Cost / effort | Privacy | Risk |
 |---|---|---|---|---|---|

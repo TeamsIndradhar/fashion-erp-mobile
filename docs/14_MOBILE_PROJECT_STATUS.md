@@ -54,6 +54,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-03 — Claude Code — D-037 server-side face verification added to plan
+**User decisions:** fix SW-1 with a server-side face match on every punch (web + mobile) — APPROVED; user will provide 3–5 volunteers' photos later for the accuracy test.
+**Done:** D-037 in decision log (D-012 row corrected); B-18 re-enabled with details in `06`; roadmap: new phase 1b + Spike A accuracy test task; docs 01/04/08 and audit §8 updated; EMP-005 and HR-005 designs updated ("server re-checks", "Face not matched (server)") and re-exported.
+**Waiting on the user:** volunteer photos (3 enrolment + 4–5 selfies each, different light) → accuracy test → threshold → phase 1b.
+
 ### Handoff — 2026-11-03 — Claude Code — CR-002 (design v1.3)
 **User decisions:** voice note only where the ERP backend already supports it; face check same as the web; "decide the rest".
 **Done:** voice removed from 9 screens (kept on EMP-016, EMP-018, ACC-003, SHR-005); EMP-005 face step = web method (D-012 APPROVED, Q-01 answered, B-18 not needed, spike A superseded); all other gaps redesigned onto existing APIs/reports (`design/screen-inventory/ERP_AUDIT_FOR_DESIGN.md` §8) → **0 screens with backend gaps**; B-22 dropped; docs 01/04/05/06/08/12 updated; 19 screens + responsive re-exported.

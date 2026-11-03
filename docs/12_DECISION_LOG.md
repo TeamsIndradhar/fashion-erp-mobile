@@ -17,7 +17,8 @@
 | D-009 | Foreground location only; never background | PROPOSED | privacy, store policy | 04 §4 |
 | D-010 | Idempotent punch (`clientPunchId`), lookup before challenge check; metadata in new `hrms_attendance_punch_meta` | PROPOSED | safe retries; attendance tables untouched | 04 §8, 06 §4 |
 | D-011 | Server-side risk engine: reasons with strengths (INFO/WEAK/STRONG/CRITICAL), levels NORMAL/SUSPICIOUS/HIGH_RISK by corroboration rules; SUSPICIOUS → existing outdoor review; HIGH_RISK → review during pilot, block only if approved | PROPOSED | explainable, configurable; no single weak signal decides | 08 §6 |
-| D-012 | Face verification on mobile | **OPEN** (Spike A, Q-01) | existing model trusts client (SW-1); not mandatory without approval | 04 §7, 08 §7 |
+| D-012 | Face check on the phone works **the same as the web app**: on-device match against enrolled photos (company threshold + frames), `facePhotoId` sent with the punch | **APPROVED 2026-11-03 (user)**; extended by D-037 | user choice; gives instant feedback | 04 §7, 08 §7 |
+| D-037 | **Server-side face verification** on every punch (web **and** mobile): server computes the selfie's face descriptor and compares it with the employee's stored enrolled-photo descriptors using the ERP's existing `@vladmandic/face-api` (Node wasm backend). Server decides; the phone/browser match stays only for instant feedback. **No match → punch recorded but sent to review** (never silently accepted, not blocked). Accuracy test with 3–5 consenting volunteers before go-live | **APPROVED 2026-11-03 (user)** — test photos to be provided by the user later | closes SW-1; feasibility shown in Spike A (Node 24 + wasm, ~0.2 s model load, 0.1–0.5 s detection, ~365 MB RAM) | 06 B-18, spikes/face-verification.md |
 | D-013 | API types hand-written in `src/api/types.ts`; contract fixtures from server tests | PROPOSED | app can't import server code | 02 §2 |
 | D-014 | Tokens + installation id only in SecureStore (this-device-only) | PROPOSED | Keychain/Keystore | 03 §3 |
 | D-015 | No map in v1 | PROPOSED | scope, keys/tiles policy | 07 |
@@ -78,6 +79,7 @@
 | Date | Change | By |
 |---|---|---|
 | 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | D-037 APPROVED: server-side face verification on every punch (web + mobile), no match → review; accuracy test with volunteer photos (to be provided) | user / Claude Code |
 | 2026-11-03 | User: voice only where backend has it (D-D10 narrowed); face check same as web (D-012 APPROVED, Q-01 answered); other gaps resolved with existing APIs (design v1.3) | user / Claude Code |
 | 2026-11-03 | Design phase (role-based UI/UX brief): D-D01, D-D02 proposed; D-D03…D-D09 open; scope widened from "login + attendance" to full-app **design** (implementation scope still per approval) | Claude Code |
 | 2026-11-03 | D-036 APPROVED: app ID in.indradhar.fashionerp | user |

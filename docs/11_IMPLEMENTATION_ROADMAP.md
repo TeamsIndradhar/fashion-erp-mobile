@@ -7,6 +7,7 @@ Every phase ends at a **user review gate**. The next phase starts only after the
 > | New phase | Content | Detailed tasks (this document) |
 > |---|---|---|
 > | **0 Design & feasibility** | ERP audit, screen inventory, permission/API mapping, design system, mockups, clickable prototype, spikes A/B/C, approvals | Phase 0 below + `design/` |
+> | **1b Server-side face verification (D-037)** | In `fashion-erp`: face descriptors for enrolled photos (additive), face-verify service (existing face-api, Node wasm), `punch()` uses the server result (no match → review), same check on web punch; tests; accuracy threshold from Spike A. Must be live **before** mobile punching goes to employees | B-18 in `06` |
 > | **1 Backend authentication** | Mobile bearer adapter, tokens, refresh rotation, device registration, logout/revocation, `GET /me` with permission keys (gap G-01) | Phase 1 below |
 > | **2 Mobile foundation** | Expo project, navigation, theme + shared components from the approved design system, API client, secure storage, errors, logging | Phase 2 below |
 > | **3 Common employee features** | Login, profile, attendance (punch flow incl. GPS/integrity/risk), reports, expense request + status, notifications | old Phases 3–6 below |
@@ -38,7 +39,7 @@ flowchart LR
 
 **Tasks**
 1. User review of docs 00–14; answers to blocking questions (`12`): Q-01, Q-02, Q-03, Q-04, Q-07, Q-08, Q-09, Q-10, Q-13, Q-16, Q-17, Q-18.
-2. **Spike A — face verification:** server-side match feasibility on our Node server; on-device options; liveness vendors (cost/privacy). Report `docs/spikes/face-verification.md`.
+2. **Spike A — face verification:** server-side match feasibility on our Node server (✅ speed/memory done). **Remaining (D-037): accuracy test** with 3–5 consenting volunteers (3 enrolment photos + 4–5 selfies each, indoor / outdoor / factory light) — measure false rejects and false accepts at the company threshold; photos kept only on the test machine and deleted after. Report `docs/spikes/face-verification.md`.
 3. **Spike B — integrity & device signals:** Play Integrity (standard request, server decode, quota), App Attest (register + assertion, server verification), iOS `isSimulatedBySoftware`, Android `Settings.Global` dev/ADB/wireless-ADB readability across Android versions, choose community wrapper vs custom Expo Module. Throwaway dev build on real devices. Report `docs/spikes/integrity.md`.
 4. **Spike C — factory GPS field test** (`09` §5) including the 200–225 m floor issue; native vs browser. Report `docs/spikes/factory-gps.md`.
 5. Confirm accounts/owners (Expo, Play Console, Google Cloud, Apple), bundle id and Team ID.

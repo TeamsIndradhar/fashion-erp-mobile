@@ -95,7 +95,7 @@ Additional gaps: G-10 no push notifications (needs a push-token table + sender);
 | Gap | Resolution | Backend change? |
 |---|---|---|
 | G-14 voice notes on production entries, attendance remark, leave, corrections, clarification, approval remarks, hand-back | **Dropped.** Voice note kept only where the ERP already stores it (PAYMENT_REQUEST, EXPENSE, EXPENSE_PAYMENT, EMPLOYEE_ADVANCE(_SETTLEMENT), INTERNAL_TRANSFER, PAYMENT, SUPPLIER_CREDIT_NOTE). Other remark fields are text-only. Screens with voice: EMP-016, EMP-018, ACC-003, SHR-005 | No |
-| Face check (Q-01) | **Same as the web:** match on the phone against enrolled photos (company `faceMatchThreshold`, `faceMatchFrames`), send `facePhotoId`; server keeps its existing ownership check. Known weakness SW-1 accepted by the user; selfie review by managers remains | No |
+| Face check (Q-01) | **Same as the web:** match on the phone against enrolled photos (company `faceMatchThreshold`, `faceMatchFrames`), send `facePhotoId`; **plus server-side face match on every punch (D-037)** — no match → review. Closes SW-1 | Yes — B-18 (approved) |
 | G-03 numeric KPIs | Show report values **as the report returns them** (formatted strings) — no parsing | No |
 | G-04 pending approvals / alerts aggregation | Built in the app: one existing list/report call per module the user may see; counts from `meta.totalCount` | No |
 | G-08 company / team counts | `employees?pageSize=1`, `users`, `customers?pageSize=1` (meta.totalCount); team size from `attendance/team-day`; headcount by department from report `hr/department-wise-employees` | No |

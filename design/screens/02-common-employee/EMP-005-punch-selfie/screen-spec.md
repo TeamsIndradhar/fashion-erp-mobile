@@ -10,7 +10,7 @@
 | Required permission | `hrms_attendance.create` |
 
 ## Purpose
-Live selfie for every punch (existing rule). Face is matched on the phone exactly like the web app (enrolled photos, company threshold and frame count); the matched facePhotoId goes with the punch.
+Live selfie for every punch (existing rule). Face is matched on the phone exactly like the web app (enrolled photos, company threshold and frame count); the matched facePhotoId goes with the punch, and the server re-checks the face (D-037); if the server does not match, the punch is recorded and sent for review.
 
 ## User types / ERP roles
 - MERCHANDISER
@@ -30,6 +30,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 |---|---|
 | `GET /api/v1/attendance/face-photos/file/{photoId} (enrolled photos, existing)` | EXISTING (via mobile auth adapter) |
 | `Face match on the phone, same as the web (FacePunchCamera: threshold + frames from attendance/me/today rules) → facePhotoId sent with the punch` | EXISTING (via mobile auth adapter) |
+| `Server re-checks the selfie against enrolled photos on every punch (D-037, B-18)` | NEW thin mobile route (designed in docs/05) |
 
 ## Available actions
 - Capture

@@ -23,7 +23,7 @@ Every item needs approval. All schema changes are **additive** (new tables/enums
 | B-15 | env vars (`10` §2) | configuration | 1 |
 | B-16 | ~~root tooling excludes~~ — **dropped 2026-11-03**: app moved to its own repository (D-002 APPROVED), nothing to exclude in `fashion-erp` | — | — |
 | B-17 | web Outdoor screen shows risk reasons for mobile punches (read from B-06) | reviewers must see *why* a punch was flagged | 6 |
-| B-18 | ~~not needed — D-012: face check same as the web~~ server-side face verification (+ liveness) | SW-1 | 5 |
+| B-18 | **Server-side face verification (D-037, APPROVED):** (a) new additive table/columns to store each enrolled photo's face descriptor, computed once on enrolment (and back-filled for existing photos); (b) a face-verify service using the existing `@vladmandic/face-api` Node wasm build + `sharp` to decode the selfie; (c) `punch()` gets the server match result — no match / no face → session recorded with review status (same review queue as outside punches) and reason `FACE_NOT_MATCHED`; (d) web punch gets the same check; (e) new root dependencies `@tensorflow/tfjs@4.22.0` + `@tensorflow/tfjs-backend-wasm@4.22.0` (approval with D-037). Liveness not included | SW-1 (client-trusted face match) | before mobile go-live; accuracy test first |
 | B-19 | `punch()` gets one optional trailing `options` param: `{ meta?, forceReview? }`, used inside its existing `$transaction`; web calls unchanged | write metadata atomically; route SUSPICIOUS punches to review | 5 |
 | B-20 | (optional) web Admin: list/revoke a user's mobile devices; approve pending devices | HR device control | 7 |
 | B-21 | (conditional) `AttendanceSettings.requireFaceOnMobile` | only if Q-01 picks "selfie-only on mobile" | 5 |

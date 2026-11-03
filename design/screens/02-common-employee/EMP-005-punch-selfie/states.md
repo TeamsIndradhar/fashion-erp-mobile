@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Live selfie for every punch (existing rule). Face is matched on the phone exactly like the web app (enrolled photos, company threshold and frame count); the matched facePhotoId goes with the punch.
+Screen-specific: Live selfie for every punch (existing rule). Face is matched on the phone exactly like the web app (enrolled photos, company threshold and frame count); the matched facePhotoId goes with the punch, and the server re-checks the face (D-037); if the server does not match, the punch is recorded and sent for review.
 

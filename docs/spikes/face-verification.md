@@ -38,3 +38,7 @@ User decision: may we run the accuracy test with 3–5 consenting volunteers' ph
 ## Superseded (2026-11-03)
 
 The user decided face check works **the same as the web app** (D-012 APPROVED): match on the phone, send `facePhotoId`, existing server check. Server-side matching is not needed; the accuracy test with volunteer photos is no longer required. Remaining Phase 0 item for face: confirm the on-device approach for React Native (run the same face-api models in the app, e.g. via a WebView or a TensorFlow.js/React Native runtime) — a small spike in Phase 2.
+
+## Update (2026-11-03, later) — D-037 approved
+
+The user approved **server-side face verification on every punch** (web + mobile) in addition to the phone/browser match. Server-side matching is therefore needed again, and the **accuracy test is required** before go-live. The user will provide photos of 3–5 consenting volunteers later (3 enrolment photos + 4–5 selfies each, different light). Test plan: compute descriptors on the server with the same models as the web, compare same-person and different-person pairs, report false-reject and false-accept rates at threshold 0.45 (company default) and nearby values, and the time per punch on this machine. Photos stay on the test machine and are deleted after the test.

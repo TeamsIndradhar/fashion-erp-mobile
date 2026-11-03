@@ -28,6 +28,7 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-004 | `none (device GPS); limit from attendance/me/today rules.gpsAccuracyMeters` | E |
 | EMP-005 | `GET /api/v1/attendance/face-photos/file/{photoId} (enrolled photos, existing)` | E |
 | EMP-005 | `Face match on the phone, same as the web (FacePunchCamera: threshold + frames from attendance/me/today rules) → facePhotoId sent with the punch` | E |
+| EMP-005 | `Server re-checks the selfie against enrolled photos on every punch (D-037, B-18)` | N |
 | EMP-006 | `POST /api/mobile/v1/attendance/punch-challenge` | N |
 | EMP-006 | `POST /api/mobile/v1/attendance/punch (calls existing punch())` | N |
 | EMP-007 | `POST /api/mobile/v1/attendance/punch-challenge` | N |

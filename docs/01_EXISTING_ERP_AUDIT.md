@@ -184,7 +184,7 @@ CSP (incl. OSM tiles), `Permissions-Policy: camera=(self), microphone=(self), ge
 
 | Id | Weakness | Where | Impact on mobile | Handling |
 |---|---|---|---|---|
-| SW-1 | Face matching runs only in the browser; server trusts the client's `facePhotoId` | `attendance-punch.service.ts:41-46`, `FacePunchCamera.tsx` | copying this model to mobile gives no real face assurance | do not copy blindly; decision Q-01 / D-012 |
+| SW-1 | Face matching runs only in the browser; server trusts the client's `facePhotoId` | `attendance-punch.service.ts:41-46`, `FacePunchCamera.tsx` | copying this model to mobile gives no real face assurance | **fix approved (D-037):** server-side face match on every punch, web + mobile; no match → review |
 | SW-2 | Coordinates and `accuracy` are client-reported; a modified client can send any point with accuracy 5 m | `punch/route.ts`, `punch()` `:34` | GPS alone can't prove presence | integrity attestation + server signals + risk engine (`08` §4–6) |
 | SW-3 | Login lockout is in-memory per process; resets on restart; not shared across instances | `rateLimiter.ts` | weaker brute-force protection | add per-IP limit (B-11); Redis limiter if multi-instance (Q-09) |
 | SW-4 | Punch response returns raw session incl. selfie storage keys | `punch()` return | info exposure | mobile route returns `toMySessionView()` shape |
