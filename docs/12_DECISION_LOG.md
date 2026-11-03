@@ -2,6 +2,33 @@
 
 **Single source of truth for mobile decisions.** If any other document disagrees, this file wins and the other document must be corrected. Every decision is **PROPOSED** until the user approves it; then set **APPROVED (date)**. Technical recommendations are not business policy until approved. Never delete a row — supersede it.
 
+## User approvals — round of 2026-11-03 (answers in chat)
+
+These answers override the PROPOSED status of the rows they mention below.
+
+| Topic | User's answer | Rows now APPROVED / ANSWERED |
+|---|---|---|
+| Punch style | Keep both: round "Tap to Punch" on Home, Punch In / Out pair on the Attendance screen | D-D03 |
+| Expense requests for workers / supervisors / warehouse users | **Yes** — give them `payment_requests.create` (role configuration, B-23) | D-D04 |
+| Bottom-nav label | "Alerts" | D-D08 |
+| First implementation release | **Login + Attendance** (login, punch with GPS + face + anti-fraud, history, remark, profile, notifications list). Other modules follow in later releases | D-D09 |
+| HIGH_RISK punches | Review first (monitor mode, 4–6 weeks pilot), block only later after looking at data | Q-02, D-011, D-032 |
+| Devices per employee | 2 active phones, no HR approval for a new device | Q-16, D-024 |
+| Login + session | Email + password; access 15 min, refresh 30 days idle, 90 days max | Q-03, Q-04, D-004, D-005 |
+| Users without attendance permission | May sign in; they see only what they are allowed; attendance shows "not enabled" | Q-10, D-022 |
+| Supervisors' HR rights | **Yes** — team attendance + leave / correction approvals for PRODUCTION_SUPERVISOR (role configuration, B-23) | D-D06 |
+| Contractor (EXTERNAL_UNIT_USER) | Later release | D-D05 |
+| Admin users / roles on mobile | View only; editing stays on the web | D-D07 |
+| `fashion-erp/AGENTS.md` / `GEMINI.md` conflict | Add one pointer line ("for mobile work follow `fashion-erp-mobile/docs/13`") when the first backend phase starts | Q-17, D-020 |
+| Hosting | One server for all companies (`https://erp.indradhar.in`) → fixed base URL in the app, no server-address screen | Q-09 |
+| Distribution | Public Google Play / App Store listing (one app for all customer companies) | Q-08 (app store name still open) |
+| Language | English first, Hindi later (strings kept in one file) | Q-11 |
+| Mobile login technique | Existing ERP APIs + thin bearer adapter + route allowlist | Q-18, D-003, D-006 |
+| Face check | Same as the web on the phone + server-side match on every punch | Q-01, D-012, D-037 |
+| Voice notes | Only where the ERP already stores them | D-D10 |
+
+**Still open:** Q-05 self-service forgot password (not in v1), Q-06 map (later), Q-07 phone fleet / minimum OS, Q-12 crash-reporting vendor, Q-13 weak indoor GPS fallback (after the factory test), Q-14 push notifications (later), Q-15 selfie / location retention and privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see (recommended: neutral message), Q-21 fixed temporary password in the web ERP, store app name, and approval of the design screens themselves.
+
 ## Decisions
 
 | Id | Decision | Status | Rationale / alternatives | Docs |
@@ -79,6 +106,7 @@
 | Date | Change | By |
 |---|---|---|
 | 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | Approval round: 17 topics answered by the user (see "User approvals" table at the top) | user / Claude Code |
 | 2026-11-03 | D-037 APPROVED: server-side face verification on every punch (web + mobile), no match → review; accuracy test with volunteer photos (to be provided) | user / Claude Code |
 | 2026-11-03 | User: voice only where backend has it (D-D10 narrowed); face check same as web (D-012 APPROVED, Q-01 answered); other gaps resolved with existing APIs (design v1.3) | user / Claude Code |
 | 2026-11-03 | Design phase (role-based UI/UX brief): D-D01, D-D02 proposed; D-D03…D-D09 open; scope widened from "login + attendance" to full-app **design** (implementation scope still per approval) | Claude Code |

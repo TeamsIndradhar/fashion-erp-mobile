@@ -13,11 +13,15 @@ Every phase ends at a **user review gate**. The next phase starts only after the
 > | **3 Common employee features** | Login, profile, attendance (punch flow incl. GPS/integrity/risk), reports, expense request + status, notifications | old Phases 3–6 below |
 > | **4 Worker & supervisor** | Assigned work, progress submission, hand back, approvals, team views where permitted | new — after design approval of 03/04 |
 > | **5 Other authorized modules** | Production, inventory, purchase, sales/CRM, accounts, HRMS, dispatch — only screens whose design, APIs and permissions are approved; backend gaps decided first | new |
-> | **6 Admin & owner dashboards** | Company overview, KPIs (needs numeric KPI API, G-03), approvals (G-04), reports | new |
+> | **6 Admin & owner dashboards** | Company overview, KPIs (report values shown as returned), approvals (per-module counts), reports | new |
 > | **7 Security & testing** | Auth, permission, API, GPS, anti-fraud, Android/iOS, regression | old Phase 7 below |
 > | **8 Builds & release** | APK/AAB, IPA, TestFlight, store submission | old Phase 8 below |
 >
 > The detailed sections below were written for the attendance-first plan; their tasks, acceptance criteria and checklists still apply to the matching new phases.
+>
+> **Release 1 scope (user decision D-D09, 2026-11-03): Login + Attendance.** Phases 1 → 1b → 2 → 3 (attendance part only) → 7 → 8.
+> Screens in release 1 (their designs must be approved before Phase 2): AUTH-001…011; EMP-001…014 (home, attendance, punch flow, history, day, remark); EMP-020…027 (notifications, profile, password, settings, devices, help, about); SHR-001…005.
+> Later releases: release 2 = expense requests (EMP-015…019 + B-23 role change), leave / correction / salary slips (EMP-028…031), worker & supervisor (03, 04 + B-23); release 3+ = manager modules, admin, owner, contractor (D-D05).
 
 ```mermaid
 flowchart LR

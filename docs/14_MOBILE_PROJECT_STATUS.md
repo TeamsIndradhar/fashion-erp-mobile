@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 0 (design & feasibility) in progress.** Design v1.2 is **READY FOR REVIEW** (118 of 118 screens designed, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
+**Overall:** **Phase 0 (design & feasibility) in progress.** 17 decisions answered 2026-11-03; release 1 = Login + Attendance. Design v1.3 is **READY FOR REVIEW** (118 of 118 screens designed, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
 
@@ -22,14 +22,15 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 
 ## Waiting on the user
 
-1. Review docs 00–14 (rev 2).
-2. Approve or change decisions D-001 … D-032 (all PROPOSED; D-012 OPEN).
-3. Answer blocking questions (Q-09 partly answered: production URL `https://erp.indradhar.in/`, verified live): Q-01, Q-02, Q-03, Q-04, Q-07, Q-08, Q-09 (rest), Q-10, Q-13, Q-16, **Q-17 (AGENTS.md/GEMINI.md conflict)**, Q-18.
-4. Separate security finding outside mobile scope: Q-21 (fixed temporary password).
+17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
+
+1. **Approve the release-1 screen designs** (AUTH-001…011, EMP-001…014, EMP-020…027, SHR-001…005) — or send changes. This unlocks Phase 1.
+2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
+3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
 ## Backend work identified (none started)
 
-B-01 `mobile_sessions` · B-02 `mobile_devices` · B-03 mobile-auth module · B-04 bearer adapter + shared live checks + allowlist · B-05 new mobile routes · B-06 `hrms_attendance_punch_meta` · B-07 HMAC challenge · B-08 integrity verifiers · B-09 risk engine + policy columns · B-10 error codes · B-11 per-IP limit · B-12 audit · B-13 revoke on reset/suspend · B-14 cleanup job · B-15 env vars · ~~B-16~~ (dropped, separate repo) · B-17 reviewer reasons in Outdoor screen · B-18 server face match (if chosen) · B-19 `punch()` options param · B-20 device admin (optional) · B-21 `requireFaceOnMobile` (conditional). Details: `06`.
+B-01 `mobile_sessions` · B-02 `mobile_devices` · B-03 mobile-auth module · B-04 bearer adapter + shared live checks + allowlist · B-05 new mobile routes · B-06 `hrms_attendance_punch_meta` · B-07 HMAC challenge · B-08 integrity verifiers · B-09 risk engine + policy columns · B-10 error codes · B-11 per-IP limit · B-12 audit · B-13 revoke on reset/suspend · B-14 cleanup job · B-15 env vars · ~~B-16~~ (dropped) · B-17 reviewer reasons in Outdoor screen · **B-18 server-side face verification (approved, D-037)** · B-19 `punch()` options param · B-20 device admin (optional) · ~~B-21~~ (not needed) · ~~B-22~~ (dropped) · **B-23 role permission changes (approved)** · **B-24 AGENTS.md pointer (approved)**. Details: `06`.
 
 ## Security weaknesses found in the existing ERP
 
