@@ -19,6 +19,8 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | AUTH-009 | `POST /api/mobile/v1/devices/register (Play Integrity / App Attest)` | N |
 | AUTH-010 | `GET /api/mobile/v1/app-config → minAppVersion / 426` | N |
 | AUTH-011 | `Existing live check → 403 ACCOUNT_SUSPENDED / PERMISSION_DENIED` | E |
+| AUTH-012 | `GET /api/mobile/v1/app-config → latestAppVersion (built in Phase 1)` | E |
+| AUTH-012 | `Per-platform versions, store links and release notes in app-config (B-25, proposed)` | N |
 | EMP-001 | `GET /api/mobile/v1/me` | N |
 | EMP-001 | `GET /api/v1/attendance/me/today` | E |
 | EMP-001 | `GET /api/v1/notifications?unreadOnly=true` | E |

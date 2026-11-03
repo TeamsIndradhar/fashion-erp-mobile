@@ -250,3 +250,6 @@ body.sm {
   .kpi b { font-size: 17px; }
 }
 .hero .muted { color: rgba(255, 255, 255, .8); }
+
+/* Icon tile used outside tiles/lists (e.g. sheets). */
+.it { display: grid; place-items: center; border-radius: 12px; flex: none; }

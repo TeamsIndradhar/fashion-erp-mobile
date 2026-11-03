@@ -16,6 +16,7 @@ Only the user can set APPROVED (record it in `design/approvals/APPROVED_SCREENS.
 | AUTH-009 | Verifying this phone (device registration) | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |
 | AUTH-010 | Update required | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |
 | AUTH-011 | Account / company suspended | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |
+| AUTH-012 | Update available (in-app update) | READY_FOR_REVIEW | 1 | — |
 | EMP-001 | Employee Home | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |
 | EMP-002 | Attendance Dashboard | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |
 | EMP-003 | Location permission | APPROVED | 1 | User (chat: Approve release-1 screens), 2026-11-03 |

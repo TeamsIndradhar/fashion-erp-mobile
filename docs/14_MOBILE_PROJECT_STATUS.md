@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 0 (design & feasibility) in progress.** 17 decisions answered 2026-11-03; release 1 = Login + Attendance. Design v1.3 is **READY FOR REVIEW** (118 of 118 screens designed, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
+**Overall:** **Phase 1 (backend mobile authentication) done — waiting for user review.** Code on `fashion-erp` branch `mobile/phase-1-auth` @ `be1b197e` (not pushed, not merged); migration `20261103180000_mobile_auth` applied to the **dev** DB only. Release 1 = Login + Attendance; its 38 screens are approved. Phase 0 spikes still wait for user inputs. No mobile app code yet. 119 screens designed (AUTH-012 in-app update added, CR-003).
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
 
@@ -9,7 +9,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no re
 | Phase | Name | Status | Gate |
 |---|---|---|---|
 | 0 | Design & feasibility | 🔄 Design v1.2 ready for review — all 118 screens designed (`design/approvals/DESIGN_REVIEW.md`); Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
-| 1 | Backend authentication (in `fashion-erp`) | ⬜ | — |
+| 1 | Backend authentication (in `fashion-erp`) | ✅ Done — branch `mobile/phase-1-auth` @ `be1b197e` (not pushed / not merged) | ⏳ waiting for user review |
 | 2 | Mobile foundation | ⬜ | — |
 | 3 | Common employee features | ⬜ | — |
 | 4 | Worker & supervisor | ⬜ | — |
@@ -54,6 +54,14 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Phase 1 done (backend mobile auth) + in-app update design
+**Branch / commit:** fashion-erp  @  (30 files; not pushed, not merged). Migration  applied to the dev DB (prisma migrate resolve) + rollback SQL.
+**Done:** bearer adapter in  (+ shared ),  / , tokens (15 min / 30 d / 90 d, rotation, reuse revoke), proxy allowlist, 8 routes under  (app-config, auth/login, refresh, logout, logout-all, me, devices, devices/[id]), 6 error codes, per-IP limit, revoke on admin reset / suspend, AGENTS.md + GEMINI.md pointer (B-24), . Not in Phase 1 (by plan): B-23 role permission changes (release 2), integrity/punch routes (later phases).
+**Verified (executed):** unit tests 167/167 for auth + admin areas; full suite 3904 passed, 1 failed (CRM dashboard UI test — passes alone, 8/8; timing flake under load, unrelated);  clean; ESLint clean on changed files; live dev-server flow 15/15 (login ok/wrong, /me, existing attendance API with bearer, non-allowlisted API 403, old version 426, garbage token 401, refresh rotation, old access 401, devices, logout → access + refresh 401, web without cookie unchanged); web /attendance/my works in the browser.
+**Side effects:** the live check created one test device + (logged-out) session for admin@indradhar.com in the dev DB; the worktree now has its own  (npm ci) and a local  copy (both git-ignored).
+**In-app update (user message):** designed AUTH-012 (optional update sheet), D-038 PROPOSED (Play immediate/flexible, App Store link on iPhone, OTA for JS fixes), B-25 proposed (per-platform app-config), docs 10 §5a.
+**Next step:** user reviews Phase 1 (and decides merge/push), approves D-038 / AUTH-012; then Phase 2 (Expo app foundation) and, when photos arrive, Phase 1b (server face check).
 
 ### Handoff — 2026-11-03 — Claude Code — Release-1 designs approved
 **Done:** user approved the 38 release-1 screens; `design/prototypes/approvals.js` lists them; prototype shows APPROVED; `SCREEN_APPROVAL_STATUS.md` and `APPROVED_SCREENS.md` updated.

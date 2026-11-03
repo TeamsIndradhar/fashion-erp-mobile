@@ -15,6 +15,7 @@ Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A scr
 | AUTH-009 | Verifying this phone (device registration) | `session` | All tenant users |
 | AUTH-010 | Update required | `none` | All tenant users |
 | AUTH-011 | Account / company suspended | `—` | All tenant users |
+| AUTH-012 | Update available (in-app update) | `none` | All tenant users |
 | EMP-001 | Employee Home | `hrms_attendance.view (attendance card); shortcuts per permission` | MERCHANDISER; PRODUCTION_SUPERVISOR; PRODUCTION_WORKER; ACCOUNTS_EXECUTIVE; WAREHOUSE_USER; + HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
 | EMP-002 | Attendance Dashboard | `hrms_attendance.view; punch needs hrms_attendance.create` | MERCHANDISER; PRODUCTION_SUPERVISOR; PRODUCTION_WORKER; ACCOUNTS_EXECUTIVE; WAREHOUSE_USER; + HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
 | EMP-003 | Location permission | `hrms_attendance.create` | MERCHANDISER; PRODUCTION_SUPERVISOR; PRODUCTION_WORKER; ACCOUNTS_EXECUTIVE; WAREHOUSE_USER; + HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |

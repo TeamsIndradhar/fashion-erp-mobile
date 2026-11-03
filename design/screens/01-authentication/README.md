@@ -15,4 +15,5 @@ Who: Everyone before sign-in. Categories are design scenarios — visibility is 
 | AUTH-009 | [Verifying this phone (device registration)](AUTH-009-verifying-this-phone-device-registration/screen-spec.md) | APPROVED | `session` | [png](AUTH-009-verifying-this-phone-device-registration/screen.png) |
 | AUTH-010 | [Update required](AUTH-010-update-required/screen-spec.md) | APPROVED | `none` | [png](AUTH-010-update-required/screen.png) |
 | AUTH-011 | [Account / company suspended](AUTH-011-account-company-suspended/screen-spec.md) | APPROVED | `—` | [png](AUTH-011-account-company-suspended/screen.png) |
+| AUTH-012 | [Update available (in-app update)](AUTH-012-update-available-in-app-update/screen-spec.md) | READY_FOR_REVIEW | `none` | [png](AUTH-012-update-available-in-app-update/screen.png) |
 

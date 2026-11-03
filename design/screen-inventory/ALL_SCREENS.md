@@ -2,9 +2,9 @@
 
 Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.cjs` — do not edit by hand.
 
-**118 screens** · **118 designed (batch 1, READY_FOR_REVIEW)** · **0 pending (batch 2, NOT_STARTED)** · 0 screens touch a BACKEND_GAP.
+**119 screens** · **119 designed (batch 1, READY_FOR_REVIEW)** · **0 pending (batch 2, NOT_STARTED)** · 0 screens touch a BACKEND_GAP.
 
-## Authentication (11/11)
+## Authentication (12/12)
 
 | ID | Screen | Status | Batch |
 |---|---|---|---|
@@ -19,6 +19,7 @@ Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.c
 | AUTH-009 | Verifying this phone (device registration) | APPROVED | 1 |
 | AUTH-010 | Update required | APPROVED | 1 |
 | AUTH-011 | Account / company suspended | APPROVED | 1 |
+| AUTH-012 | Update available (in-app update) | READY_FOR_REVIEW | 1 |
 
 ## Common Employee (31/31)
 

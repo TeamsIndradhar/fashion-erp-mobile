@@ -60,6 +60,16 @@ Permissions:
 ```
 `preview` is submitted to Play internal testing / TestFlight (needed for real integrity verdicts). Signing keys: EAS-managed; Android upload key backed up by the account owner; Play App Signing on. OTA (EAS Update) only for JS fixes within the same `runtimeVersion`, never for changes that need new server endpoints or native modules.
 
+## 5a. In-app update (D-038, PROPOSED)
+
+| Case | Trigger | Android | iPhone |
+|---|---|---|---|
+| Forced | installed < `minAppVersion` (app-config; server also answers 426) | AUTH-010 + Google Play in-app update **immediate** flow | AUTH-010 + open App Store page |
+| Optional | installed < `latestAppVersion` | AUTH-012 sheet + Play in-app update **flexible** flow (downloads inside the app, "Restart to update") | AUTH-012 sheet → App Store page |
+| Small JS fix | new EAS Update for the same `runtimeVersion` | downloaded silently, applied on next launch | same |
+
+Notes: Play in-app updates work only for builds installed from Google Play (internal testing track counts). "Later" on an optional update is remembered for 24 h. Raise `MOBILE_MIN_APP_VERSION` only after the new version is live in both stores (§6).
+
 ## 6. Versioning and release order
 
 ```mermaid
