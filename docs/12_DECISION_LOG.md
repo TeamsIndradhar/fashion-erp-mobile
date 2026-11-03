@@ -38,6 +38,9 @@
 | D-030 | Mobile punch uses a new thin route calling the existing `punch()` (not the web punch route), plus an optional `options` param on `punch()` | PROPOSED | mobile contract needs challenge/integrity/idempotency; web route untouched | 01 §6, 06 §6 |
 | D-031 | Every new npm dependency (root or mobile) is logged here with reason; root additions need approval | PROPOSED | supply-chain control | 02 §1 |
 | D-032 | Risk policy starts in monitor mode (HIGH_RISK → review) for a pilot period before any BLOCK | PROPOSED (Q-02) | calibrate false positives | 08 §6.3 |
+| D-033 | Use **`@expo/app-integrity`** (official Expo; Play Integrity standard request + App Attest) instead of writing our own native module; pin the version; wrap behind `src/device/integrity.ts`; fallback = small custom Expo Module | PROPOSED (Spike B) | official, covers both platforms; risk: alpha since SDK 54, API may change | spikes/integrity.md |
+| D-034 | Mock-location signal from `expo-location` `mocked` on both Android and iOS (no custom module) | PROPOSED (Spike B) | documented for both platforms; still client-reported (WEAK) | spikes/integrity.md |
+| D-035 | Developer Options / USB debugging / wireless debugging via one small custom Expo Module returning `null` when unreadable; `jail-monkey` only if device tests prove it reliable | PROPOSED (Spike B) | no Expo API exists; wireless-debugging key is undocumented | spikes/integrity.md |
 
 ## Open questions — need the user's answer
 
@@ -70,6 +73,7 @@
 | Date | Change | By |
 |---|---|---|
 | 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | Spike B desk research: added D-033, D-034, D-035 (PROPOSED) | Claude Code |
 | 2026-11-03 | D-002 APPROVED: app + docs moved to separate repo `fashion-erp-mobile` (user); B-16 dropped; Q-17 partly resolved | user / Claude Code |
 | 2026-11-03 | User gave production URL `https://erp.indradhar.in/` (Q-09 partly answered) | user / Claude Code |
 | 2026-11-03 | Rev 2 (master blueprint): D-003 revised to adapter + reuse of existing routes; D-011 risk engine; D-020 revised (stop and report); added D-024…D-032, Q-16…Q-21; roadmap renumbered to the user's Phase 0–8 structure | Claude Code |

@@ -143,7 +143,7 @@ Unchanged: punch is not blocked by shift times; lateness (`computeIsLateIst()`, 
 | Permission | FINE + COARSE; user may choose Approximate (12+) | While Using / Allow Once; Precise toggle (14+) |
 | Background | `ACCESS_BACKGROUND_LOCATION` never declared | no "Always" purpose string |
 | Enable GPS | system dialog possible | instructions only |
-| Mock signal per fix | `Location.isMock()` (API 31+) / `isFromMockProvider()` (18–30); exposed by `expo-location` as `mocked` | `CLLocation.sourceInformation.isSimulatedBySoftware` (iOS 15+); Expo exposure UNKNOWN → custom module |
+| Mock signal per fix | `Location.isMock()` (API 31+) / `isFromMockProvider()` (18–30); exposed by `expo-location` as `mocked` | `CLLocation.sourceInformation.isSimulatedBySoftware` (iOS 15+); also exposed by `expo-location` as `mocked` (software-simulated; per Expo docs, D-034) |
 | Integrity | Play Integrity | App Attest |
 | First fix | depends on Google Play services | usually fast |
 

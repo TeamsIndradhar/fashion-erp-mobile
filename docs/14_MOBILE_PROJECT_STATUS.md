@@ -9,7 +9,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no re
 | Phase | Name | Status | Gate |
 |---|---|---|---|
 | — | Documentation (00–14), rev 2 | ✅ Drafted | ⏳ individual decisions still PROPOSED except D-002 |
-| 0 | Documentation approval & feasibility (spikes A/B/C) | 🔄 In progress — Spike A partly done (`docs/spikes/face-verification.md`); Spike B, Spike C not started | — |
+| 0 | Documentation approval & feasibility (spikes A/B/C) | 🔄 In progress — Spike A partly done (`docs/spikes/face-verification.md`, accuracy test needs consented photos); Spike B desk research done (`docs/spikes/integrity.md`, device tests need accounts + phones); Spike C not started (needs factory visit) | — |
 | 1 | Backend auth (in `fashion-erp`) | ⬜ | — |
 | 2 | Mobile project setup | ⬜ | — |
 | 3 | Login & secure sessions | ⬜ | — |
@@ -54,6 +54,16 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Phase 0, Spike B (desk research)
+**Branch / commit:** `fashion-erp-mobile` `main`
+**Goal:** feasibility of app integrity and device signals from documentation.
+**Done:** `docs/spikes/integrity.md`; D-033 (`@expo/app-integrity`), D-034 (`expo-location` `mocked` on both platforms), D-035 (custom module for developer/ADB settings) — all PROPOSED; updated `02` dependency table, `04` §11, `08` §4–5.
+**Verified (executed):** web research only (sources listed in the report). **No device test run.**
+**Not done:** all device tests in `docs/spikes/integrity.md` §6 — need Play Console + Google Cloud project + service account, Apple Developer account, test phones.
+**Questions for the user:** who owns / will create the Google Play Console, Google Cloud and Apple Developer accounts (Q-08); `@expo/app-integrity` is alpha — OK to plan on it (D-033)?
+**Next step:** Spike C field-test sheet; device tests once accounts and phones are available.
+**Read first:** `docs/spikes/integrity.md`, `docs/12`.
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 0 (start) + repo move
 **Branch / commit:** `fashion-erp-mobile` `main` (initial commit); in `fashion-erp`, branch `docs/mobile-app` gets a commit removing `mobile/docs` (moved here).

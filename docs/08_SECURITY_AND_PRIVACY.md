@@ -1,6 +1,6 @@
 # 08 — Security, Anti-Fake Attendance and Privacy (PROPOSED)
 
-Platform facts below are from public Android/Apple/Google documentation as known at writing; anything that depends on exact OS/SDK behaviour is marked **verify in Spike B** (Phase 0) because APIs and verdict rules change (Google changed Play Integrity verdict rules in 2025).
+Platform facts below come from public Android/Apple/Google/Expo documentation; desk research for Spike B is recorded in `docs/spikes/integrity.md` (2026-11-03). Anything not yet tested on a real device is marked **verify**.
 
 ## 1. Assets
 
@@ -45,7 +45,7 @@ Passwords; access/refresh tokens; selfies and enrolled face photos; punch locati
 | App is debuggable | `ApplicationInfo.FLAG_DEBUGGABLE` on own app | public | custom module | release builds are never debuggable; a debuggable release means repackaging | covered better by Play Integrity |
 | Emulator | build/hardware heuristics | public | custom module | weak, easy to fake | WEAK; Play Integrity device verdict is the strong check |
 | Root | heuristics (su binary, test-keys, known root apps) | public file checks; package checks limited by package visibility | custom module or community lib (verify) | bypassable (Magisk hide) | WEAK |
-| **Play Integrity** | standard request (`StandardIntegrityManager`, warm-up + request with `requestHash`) or classic (`IntegrityManager`, nonce) | Google Play services required; app linked to a Google Cloud project in Play Console | native module (Spike B) | strongest Android signal **when verified on the server** | §4.1 |
+| **Play Integrity** (via `@expo/app-integrity`, D-033; details `docs/spikes/integrity.md`) | standard request (`StandardIntegrityManager`, warm-up + request with `requestHash`) or classic (`IntegrityManager`, nonce) | Google Play services required; app linked to a Google Cloud project in Play Console | native module (Spike B) | strongest Android signal **when verified on the server** | §4.1 |
 
 ### 4.1 Play Integrity details
 
@@ -60,8 +60,8 @@ There is no Developer Options/USB-debugging equivalent that apps can read.
 
 | Signal | API | Expo | Reliability | Use |
 |---|---|---|---|---|
-| Simulated location per fix | `CLLocation.sourceInformation.isSimulatedBySoftware` (iOS 15+) | not known to be exposed by `expo-location` — **UNKNOWN**, custom module | catches Xcode/developer-tool simulation; not all spoofing methods | WEAK |
-| **App Attest** | `DCAppAttestService` (iOS 14+): `generateKey` → `attestKey(keyId, clientDataHash)` once → `generateAssertion` per punch | native module (Spike B); not supported on Simulator (`isSupported == false`) | proves requests come from **our genuine app** on a genuine Apple device; does **not** prove location is real; not a jailbreak detector | server-verified, §5.1 |
+| Simulated location per fix | `CLLocation.sourceInformation.isSimulatedBySoftware` (iOS 15+) | exposed by `expo-location` as `mocked` (Expo docs; D-034) | catches Xcode/developer-tool simulation; not all spoofing methods | WEAK |
+| **App Attest** | `DCAppAttestService` (iOS 14+): `generateKey` → `attestKey(keyId, clientDataHash)` once → `generateAssertion` per punch | `@expo/app-integrity` (D-033); not supported on Simulator (`isSupported == false`) | proves requests come from **our genuine app** on a genuine Apple device; does **not** prove location is real; not a jailbreak detector | server-verified, §5.1 |
 | DeviceCheck | 2 bits per device per developer team, via server API with an Apple-issued key | native + server | useful to remember "this device was abused" across reinstalls | not in v1 (D-025) |
 | Jailbreak | file/sandbox/URL-scheme heuristics | custom module | bypassable | WEAK |
 | Debugger attached | `sysctl` `P_TRACED` | custom module | bypassable | WEAK |

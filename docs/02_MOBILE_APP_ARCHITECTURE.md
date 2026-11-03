@@ -15,15 +15,15 @@
 | Need | Candidate | Status |
 |---|---|---|
 | Routing | `expo-router` | first-party |
-| Location | `expo-location` (`LocationObject.mocked` on Android, `timestamp`, `accuracy`) | first-party; iOS simulated-location flag **not known to be exposed** → custom module (UNKNOWN) |
+| Location | `expo-location` (`LocationObject.mocked` on **Android and iOS**, `timestamp`, `accuracy`; permission `android.accuracy` fine/coarse, `ios.accuracy` full/reduced) | first-party — Spike B confirmed from docs (D-034) |
 | Camera | `expo-camera` | first-party |
 | Tokens | `expo-secure-store` | first-party |
 | Image resize | `expo-image-manipulator` | first-party |
 | Network state | `@react-native-community/netinfo` | community, Expo-supported |
 | Server state | `@tanstack/react-query` | pure JS |
 | Validation | `zod` v4 | pure JS |
-| Play Integrity (Android) | an Expo-compatible wrapper if one is maintained at Phase 0, else a small custom Expo Module calling `com.google.android.play.core.integrity` | **UNKNOWN which** — decided in Spike B |
-| App Attest (iOS) | Expo-compatible wrapper if maintained, else custom Expo Module calling `DCAppAttestService` | **UNKNOWN which** — Spike B |
+| Play Integrity (Android) | **`@expo/app-integrity`** (official Expo, alpha since SDK 54): `prepareIntegrityTokenProviderAsync`, `requestIntegrityCheckAsync(requestHash)` | PROPOSED D-033; pin version, wrap in `src/device/integrity.ts`; fallback custom Expo Module |
+| App Attest (iOS) | **`@expo/app-integrity`**: `isSupported`, `generateKeyAsync`, `attestKeyAsync`, `generateAssertionAsync` | PROPOSED D-033 (see `docs/spikes/integrity.md`) |
 | Android settings signals (developer options, ADB) | custom Expo Module (`Settings.Global`) | needs native code |
 | Face capture/match | open (Q-01) | Spike A |
 | Tests | `jest-expo`, React Native Testing Library, Maestro | standard |
