@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 1 (backend mobile authentication) done — waiting for user review.** Code on `fashion-erp` branch `mobile/phase-1-auth` @ `be1b197e` (not pushed, not merged); migration `20261103180000_mobile_auth` applied to the **dev** DB only. Release 1 = Login + Attendance; its 38 screens are approved. Phase 0 spikes still wait for user inputs. No mobile app code yet. 119 screens designed (AUTH-012 in-app update added, CR-003).
+**Overall:** **Phase 1 (backend mobile authentication) done — waiting for user review.** Code on `fashion-erp` branch `mobile/phase-1-auth` @ `be1b197e` (pushed to GitHub, not merged, no PR yet); migration `20261103180000_mobile_auth` applied to the **dev** DB only. Release 1 = Login + Attendance; its 38 screens are approved. Phase 0 spikes still wait for user inputs. No mobile app code yet. 119 screens designed (AUTH-012 in-app update added, CR-003).
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
 
@@ -9,7 +9,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no re
 | Phase | Name | Status | Gate |
 |---|---|---|---|
 | 0 | Design & feasibility | 🔄 Design v1.2 ready for review — all 118 screens designed (`design/approvals/DESIGN_REVIEW.md`); Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
-| 1 | Backend authentication (in `fashion-erp`) | ✅ Done — branch `mobile/phase-1-auth` @ `be1b197e` (not pushed / not merged) | ⏳ waiting for user review |
+| 1 | Backend authentication (in `fashion-erp`) | ✅ Done — branch `mobile/phase-1-auth` @ `be1b197e` (pushed to GitHub 2026-11-03, not merged, no PR yet) | ⏳ waiting for user review |
 | 2 | Mobile foundation | ⬜ | — |
 | 3 | Common employee features | ⬜ | — |
 | 4 | Worker & supervisor | ⬜ | — |
