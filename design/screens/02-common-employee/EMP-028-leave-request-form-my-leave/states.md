@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Apply leave (day durations, balance).
+Screen-specific: Apply for leave with day durations (Full, first/second half, quarters) and see balance; own requests below.
 

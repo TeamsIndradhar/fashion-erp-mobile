@@ -3,28 +3,28 @@
 | Field | Value |
 |---|---|
 | Category | Production Manager (`05-production-manager`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EXT-001` |
-| Required permission | `production.view/create (own contractor)` |
+| Required permission | `production.view / create (own contractor only)` |
 
 ## Purpose
-Discovered role, not in the brief — decision D-D05.
+Discovered role (not in the brief): contractor sees only their own job work. Included pending decision D-D05.
 
 ## User types / ERP roles
 - EXTERNAL_UNIT_USER
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `GET /api/v1/job-work-orders?contractorId=` | EXISTING (via mobile auth adapter) |
+| `GET /api/v1/job-work-orders?contractorId (scoped by getAllowedContractorId)` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
-- —
+- Open job work
 
 ## Validation
 - —

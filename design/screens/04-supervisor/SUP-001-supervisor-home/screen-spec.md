@@ -4,7 +4,7 @@
 |---|---|
 | Category | Supervisor / Team Leader (`04-supervisor`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SUP-001` |
 | Required permission | `production.approve (approvals card); hrms_attendance_team.view (team attendance card, not held by PRODUCTION_SUPERVISOR by default)` |

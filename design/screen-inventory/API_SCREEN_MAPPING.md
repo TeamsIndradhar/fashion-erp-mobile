@@ -1,4 +1,4 @@
-# Screen → API mapping (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
+# Screen → API mapping (Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03)
 
 Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N** new thin mobile route already designed in `docs/05_API_CONTRACT.md` · **G** `BACKEND_GAP — APPROVAL_REQUIRED` (no fake responses will be built in its place).
 
@@ -66,13 +66,22 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-025 | `DELETE /api/mobile/v1/devices/{id}` | N |
 | EMP-026 | `/api/v1/support-tickets (existing ERP support tickets — exact routes to verify)` | E |
 | EMP-027 | `GET /api/mobile/v1/app-config` | N |
+| EMP-028 | `GET /api/v1/leave-types` | E |
+| EMP-028 | `GET /api/v1/leave-requests/balance?employeeId&leaveTypeId&year` | E |
 | EMP-028 | `POST /api/v1/leave-requests` | E |
-| EMP-028 | `GET /api/v1/leave-requests/balance` | E |
+| EMP-028 | `GET /api/v1/leave-requests?mine=true` | E |
+| EMP-028 | `Voice note on leave request (LEAVE_REQUEST target)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-029 | `POST /api/v1/attendance-corrections` | E |
-| EMP-030 | `GET /api/v1/salary/history` | E |
+| EMP-029 | `POST /api/v1/attendance-corrections/{id}/documents (file)` | E |
+| EMP-029 | `GET /api/v1/attendance-corrections?mine=true` | E |
+| EMP-029 | `Voice note on correction (audio on documents route unverified)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| EMP-030 | `GET /api/v1/salary/history?year` | E |
 | EMP-030 | `GET /api/v1/salary/history/slips/{lineId}/pdf` | E |
+| EMP-030 | `PUT /api/v1/salary/history/lines/{lineId}/response` | E |
 | EMP-031 | `GET /api/v1/attendance/outdoor-rejections?mine=true` | E |
-| EMP-031 | `POST .../{id}/accept\|clarify` | E |
+| EMP-031 | `POST /api/v1/attendance/outdoor-rejections/{id}/accept` | E |
+| EMP-031 | `POST /api/v1/attendance/outdoor-rejections/{id}/clarify (reason + proof image/PDF)` | E |
+| EMP-031 | `Voice clarification` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-001 | `GET /api/mobile/v1/me` | N |
 | WRK-001 | `GET /api/v1/attendance/me/today` | E |
 | WRK-001 | `GET /api/v1/job-orders/my-assignments` | E |
@@ -103,7 +112,7 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | SUP-006 | `Team job-order list / team pending counts` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | SUP-007 | `GET /api/v1/reports/production/worker-output-register?period=` | E |
 | SUP-007 | `GET /api/v1/reports/production/line-wise-production` | E |
-| EXT-001 | `GET /api/v1/job-work-orders?contractorId=` | E |
+| EXT-001 | `GET /api/v1/job-work-orders?contractorId (scoped by getAllowedContractorId)` | E |
 | PM-001 | `GET /api/v1/reports/dashboard/executive-dashboard (formatted strings)` | E |
 | PM-001 | `Numeric KPI endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PM-001 | `GET /api/v1/job-order-progress-entries/pending` | E |
@@ -112,28 +121,41 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | PM-003 | `GET /api/v1/production-orders/{id} (incl. job orders)` | E |
 | PM-003 | `GET /api/v1/lots/{id}/timeline` | E |
 | PM-004 | `GET /api/v1/job-orders/{id}` | E |
-| PM-005 | `GET /api/v1/job-work-orders` | E |
-| PM-006 | `QC list API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| PM-004 | `POST /api/v1/job-orders/{id}/assignments` | E |
+| PM-004 | `GET /api/v1/job-orders/{id}/slips` | E |
+| PM-005 | `GET /api/v1/job-work-orders?contractorId&overdueOnly` | E |
+| PM-005 | `GET /api/v1/job-work-orders/receipts/pending` | E |
 | PM-006 | `GET /api/v1/reports/quality/qc-inspection-register` | E |
-| PM-007 | `Lot list API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| PM-006 | `GET /api/v1/reports/quality/defect-wise-analysis` | E |
+| PM-006 | `QC inspection list API / QC-pending count` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PM-007 | `GET /api/v1/lots/{id}/timeline` | E |
-| PM-008 | `sampling routes (to map)` | E |
+| PM-007 | `GET /api/v1/lots/{id}/genealogy` | E |
+| PM-007 | `Lot list API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| PM-008 | `GET /api/v1/sampling` | E |
+| PM-008 | `POST /api/v1/sampling/versions/{versionId}/decision` | E |
 | INV-001 | `GET /api/v1/reports/inventory/low-stock-report` | E |
 | INV-001 | `GET /api/v1/reports/inventory/stock-valuation` | E |
 | INV-001 | `GET /api/v1/material-requests?status=` | E |
 | INV-002 | `GET /api/v1/inventory/stock-balances?warehouseId&materialCategory&showZeroStock` | E |
-| INV-003 | `GET /api/v1/reports/inventory/stock-ledger` | E |
+| INV-003 | `GET /api/v1/reports/inventory/stock-ledger?materialId&warehouseId` | E |
 | INV-004 | `GET /api/v1/material-requests` | E |
+| INV-004 | `POST /api/v1/material-requests/{id}/approve` | E |
+| INV-004 | `GET /api/v1/material-requests/lines/{lineId}/available-rolls` | E |
+| INV-004 | `POST /api/v1/material-requests/lines/{lineId}/issue` | E |
 | INV-005 | `GET /api/v1/finished-goods-inventory/stock-list` | E |
+| INV-005 | `GET /api/v1/finished-goods-inventory/style-stock/{productId}` | E |
 | INV-006 | `GET /api/v1/stock-movements` | E |
-| INV-007 | `barcode resolve route (to map)` | E |
+| INV-006 | `POST /api/v1/stock-movements/{id}/receive` | E |
+| INV-007 | `GET /api/v1/barcodes/resolve/{code}` | E |
 | PUR-001 | `GET /api/v1/purchase-orders?status=` | E |
 | PUR-001 | `GET /api/v1/reports/purchase/pending-purchase-order` | E |
 | PUR-001 | `Pending GRN status` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | PUR-002 | `GET /api/v1/purchase-orders` | E |
 | PUR-003 | `GET /api/v1/purchase-orders/{id}` | E |
-| PUR-003 | `PO approve route (to map)` | E |
+| PUR-003 | `POST /api/v1/purchase-orders/{id}/approve` | E |
+| PUR-003 | `GET /api/v1/purchase-orders/{id}/pdf` | E |
 | PUR-004 | `GET /api/v1/goods-receipts` | E |
+| PUR-004 | `GET /api/v1/goods-receipts/{id}` | E |
 | SAL-001 | `GET /api/v1/reports/sales-orders/pending-orders` | E |
 | SAL-001 | `GET /api/v1/crm/dashboard?range=&widgets=` | E |
 | SAL-001 | `GET /api/v1/sales-orders` | E |
@@ -141,8 +163,11 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | SAL-003 | `GET /api/v1/sales-orders/{id}` | E |
 | SAL-003 | `GET /api/v1/reports/order-lifecycle/{salesOrderId}` | E |
 | SAL-004 | `GET /api/v1/crm/leads` | E |
+| SAL-004 | `CRM lead detail / activities routes (existing, under /api/v1/crm)` | E |
 | SAL-005 | `GET /api/v1/customers` | E |
-| SAL-006 | `buyer-enquiries routes (to map)` | E |
+| SAL-005 | `GET /api/v1/reports/customers/customer-outstanding` | E |
+| SAL-006 | `GET /api/v1/buyer-enquiries` | E |
+| SAL-006 | `POST /api/v1/buyer-enquiries/lines/{lineId}/convert` | E |
 | ACC-001 | `GET /api/v1/payment-requests/summary` | E |
 | ACC-001 | `GET /api/v1/reports/receivables/customer-outstanding` | E |
 | ACC-001 | `GET /api/v1/reports/payables/supplier-outstanding` | E |
@@ -153,25 +178,31 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | ACC-003 | `POST /api/v1/payment-requests/{id}/payouts` | E |
 | ACC-004 | `GET /api/v1/sales-invoices` | E |
 | ACC-004 | `GET /api/v1/purchase-invoices` | E |
-| ACC-005 | `receivables/* and payables/* reports` | E |
+| ACC-004 | `GET /api/v1/custom-invoices` | E |
+| ACC-005 | `GET /api/v1/reports/receivables/customer-outstanding` | E |
+| ACC-005 | `GET /api/v1/reports/payables/supplier-outstanding` | E |
 | HR-001 | `GET /api/v1/attendance/summary?date=` | E |
 | HR-001 | `GET /api/v1/leave-requests?status=PENDING` | E |
 | HR-001 | `GET /api/v1/attendance/outdoor` | E |
-| HR-002 | `GET /api/v1/attendance/team-day` | E |
-| HR-002 | `GET /api/v1/attendance/team-month` | E |
+| HR-002 | `GET /api/v1/attendance/team-day?date` | E |
+| HR-002 | `GET /api/v1/attendance/team-month?month&view=all` | E |
 | HR-003 | `GET /api/v1/leave-requests?status=PENDING` | E |
 | HR-003 | `POST /api/v1/leave-requests/{id}/approve\|reject` | E |
-| HR-004 | `GET /api/v1/attendance-corrections` | E |
+| HR-004 | `GET /api/v1/attendance-corrections?status=PENDING` | E |
+| HR-004 | `POST /api/v1/attendance-corrections/{id}/approve\|reject` | E |
 | HR-005 | `GET /api/v1/attendance/outdoor` | E |
 | HR-005 | `POST /api/v1/attendance/outdoor (approve)` | E |
 | HR-005 | `POST /api/v1/attendance/outdoor/{sessionId}/reject` | E |
 | HR-005 | `risk reasons from hrms_attendance_punch_meta (B-17)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
-| HR-006 | `attendance/overtime routes` | E |
+| HR-006 | `GET /api/v1/attendance/overtime` | E |
+| HR-006 | `POST /api/v1/attendance/overtime/{id}/approve\|reject` | E |
 | HR-007 | `GET /api/v1/employees` | E |
 | DSP-001 | `GET /api/v1/dispatches` | E |
 | DSP-001 | `GET /api/v1/reports/dispatch/pending-dispatch` | E |
-| DSP-002 | `GET /api/v1/dispatches` | E |
-| DSP-003 | `dispatch packing routes (to map)` | E |
+| DSP-002 | `GET /api/v1/dispatches/{id}` | E |
+| DSP-002 | `POST /api/v1/dispatches/{id}/pack\|confirm\|deliver\|hold\|cancel` | E |
+| DSP-003 | `GET/POST /api/v1/dispatches/{id}/cartons` | E |
+| DSP-003 | `GET /api/v1/barcodes/resolve/{code}` | E |
 | ADM-001 | `GET /api/mobile/v1/me (permission keys)` | N |
 | ADM-001 | `Company counts (employees, users, customers) — server-rendered only` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | ADM-001 | `Cross-module pending approvals` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
@@ -179,7 +210,8 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | ADM-002 | `Aggregated pending-approvals endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | ADM-002 | `Per-module lists: payment-requests?view=approve, job-order-progress-entries/pending, leave-requests?status=PENDING, attendance/outdoor, attendance-corrections, purchase-orders, material-requests` | E |
 | ADM-003 | `GET /api/v1/employees` | E |
-| ADM-003 | `company counts API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| ADM-003 | `GET /api/v1/attendance/summary?date` | E |
+| ADM-003 | `Headcount by department API` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | ADM-004 | `GET /api/v1/users` | E |
 | ADM-005 | `GET /api/v1/reports/{category}/{key}` | E |
 | ADM-006 | `GET /api/v1/reports/{category}/{key}?dateFrom&dateTo…` | E |
@@ -189,15 +221,21 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | OWN-002 | `GET /api/v1/reports/business-performance/monthly-sales-trend` | E |
 | OWN-002 | `GET /api/v1/reports/business-performance/top-customers-by-revenue` | E |
 | OWN-002 | `GET /api/v1/reports/business-performance/top-styles-by-revenue` | E |
-| OWN-003 | `production/production-achievement, production-rejection, line-wise-production` | E |
-| OWN-004 | `inventory/stock-valuation, low-stock-report, slow-moving-dead-stock` | E |
+| OWN-003 | `GET /api/v1/reports/production/production-achievement` | E |
+| OWN-003 | `GET /api/v1/reports/production/production-rejection` | E |
+| OWN-003 | `GET /api/v1/reports/production/line-wise-production` | E |
+| OWN-004 | `GET /api/v1/reports/inventory/stock-valuation` | E |
+| OWN-004 | `GET /api/v1/reports/inventory/low-stock-report` | E |
+| OWN-004 | `GET /api/v1/reports/inventory/slow-moving-dead-stock` | E |
 | OWN-005 | `GET /api/v1/reports/accounts/profit-and-loss` | E |
 | OWN-005 | `GET /api/v1/reports/receivables/customer-outstanding` | E |
 | OWN-005 | `GET /api/v1/reports/payables/supplier-outstanding` | E |
 | OWN-005 | `GET /api/v1/reports/expenses/financial-accounts-balances` | E |
 | OWN-005 | `Cash-position KPI` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
-| OWN-006 | `attendance/monthly-attendance-summary` | E |
-| OWN-007 | `Alert aggregation` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| OWN-006 | `GET /api/v1/reports/attendance/monthly-attendance-summary` | E |
+| OWN-006 | `GET /api/v1/leave-requests?status=PENDING` | E |
+| OWN-007 | `Alert aggregation endpoint` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
+| OWN-007 | `Sources: delayed-production-orders, low-stock-report, customer-outstanding, pending-dispatch reports` | E |
 | SHR-001 | `none` | E |
 | SHR-002 | `GET /api/mobile/v1/me (viewable modules + action sets)` | N |
 | SHR-003 | `none` | E |
@@ -210,21 +248,24 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 - EMP-005 Punch – selfie: camera only; face step per decision Q-01 (OPEN)
 - EMP-014 Add attendance remark: Voice note on attendance day remark — no attachment target yet (CR-001)
 - EMP-019 Salary advance request: Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)
+- EMP-028 Leave request form + my leave: Voice note on leave request (LEAVE_REQUEST target)
+- EMP-029 Attendance correction request: Voice note on correction (audio on documents route unverified)
+- EMP-031 Outside punch rejected — accept or clarify: Voice clarification
 - WRK-004 Submit production progress: Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)
 - WRK-007 Hand back pieces: Voice note on hand-back reason — no attachment target yet (CR-001)
 - SUP-001 Supervisor Home: Team dashboard counts (team size, active JOs) — server-rendered only
 - SUP-005 Approve / reject progress entry: Voice note on progress entries / approval remarks — no attachment target yet (CR-001)
 - SUP-006 Team work status: Team job-order list / team pending counts
 - PM-001 Production Manager Home: Numeric KPI endpoint
-- PM-006 QC inspections: QC list API
-- PM-007 Lot list / lot timeline: Lot list API
+- PM-006 QC inspections (report view): QC inspection list API / QC-pending count
+- PM-007 Lot timeline: Lot list API
 - PUR-001 Purchase Home: Pending GRN status
 - HR-005 Outside / flagged punch review: risk reasons from hrms_attendance_punch_meta (B-17)
 - ADM-001 Company Admin Dashboard: Company counts (employees, users, customers) — server-rendered only; Cross-module pending approvals
 - ADM-002 Pending approvals (all modules): Aggregated pending-approvals endpoint
-- ADM-003 Employee summary: company counts API
+- ADM-003 Employee summary: Headcount by department API
 - OWN-001 Owner Dashboard: Numeric KPI endpoint (values come as formatted strings today)
 - OWN-005 Financial summary: Cash-position KPI
-- OWN-007 Alerts center: Alert aggregation
+- OWN-007 Alerts center: Alert aggregation endpoint
 - SHR-005 Voice note (record instead of typing): Targets missing for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks
 

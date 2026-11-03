@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** **Phase 0 (design & feasibility) in progress.** Design batch 1 is **READY FOR REVIEW** (81 of 117 screens mocked, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
+**Overall:** **Phase 0 (design & feasibility) in progress.** Design v1.2 is **READY FOR REVIEW** (118 of 118 screens designed, clickable prototype at `design/prototypes/index.html`). No app code, no backend change, no migration; nothing installed in either repo.
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no remote).
 
@@ -8,7 +8,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (local, branch `main`, no re
 
 | Phase | Name | Status | Gate |
 |---|---|---|---|
-| 0 | Design & feasibility | 🔄 Design batch 1 ready for review (`design/approvals/DESIGN_REVIEW.md`); batch 2 (36 screens) not started; Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
+| 0 | Design & feasibility | 🔄 Design v1.2 ready for review — all 118 screens designed (`design/approvals/DESIGN_REVIEW.md`); Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | ⏳ waiting for design review |
 | 1 | Backend authentication (in `fashion-erp`) | ⬜ | — |
 | 2 | Mobile foundation | ⬜ | — |
 | 3 | Common employee features | ⬜ | — |
@@ -53,6 +53,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-03 — Claude Code — Design batch 2 + phone sizes (v1.2)
+**Done:** all 36 batch-2 screens designed (`design/prototypes/screens-batch2.js`; routes verified in `fashion-erp/src/app/api/v1`); 118/118 screens designed; small/large phone exports for 10 key screens (`design/screens/responsive/`, tool `design/tools/export-responsive.cjs`); small-screen fixes (button pair overflow, compact hero); design v1.2; review doc updated.
+**Not done:** user review/approval; real-device rendering checks (Phase 2/7).
+**Next step:** user reviews; change requests → revise; approvals recorded in `design/approvals/APPROVED_SCREENS.md`.
 
 ### Handoff — 2026-11-03 — Claude Code — CR-001 voice notes
 **Done:** user asked for a voice-recording option next to every upload/remark (users who cannot type). Added `VoiceNote` / `RemarkField` components; applied to EMP-014, EMP-016, EMP-018, EMP-019, WRK-004, WRK-007, SUP-005; new SHR-005; design v1.1; D-D10 approved. Backend: existing for payment requests; gap G-14 / B-22 for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks. Microphone permission added to docs 08 and 10.

@@ -31,8 +31,8 @@ Who: Every employee with HRMS self-service (most roles). Categories are design s
 | EMP-025 | [My devices](EMP-025-my-devices/screen-spec.md) | READY_FOR_REVIEW | `session (own devices)` | [png](EMP-025-my-devices/screen.png) |
 | EMP-026 | [Help & Support](EMP-026-help-support/screen-spec.md) | READY_FOR_REVIEW | `session` | [png](EMP-026-help-support/screen.png) |
 | EMP-027 | [About app](EMP-027-about-app/screen-spec.md) | READY_FOR_REVIEW | `none` | [png](EMP-027-about-app/screen.png) |
-| EMP-028 | [Leave request form + my leave](EMP-028-leave-request-form-my-leave/screen-spec.md) | NOT_STARTED | `hrms_leave.create` | — |
-| EMP-029 | [Attendance correction request](EMP-029-attendance-correction-request/screen-spec.md) | NOT_STARTED | `hrms_attendance_regularization.create` | — |
-| EMP-030 | [My salary slips](EMP-030-my-salary-slips/screen-spec.md) | NOT_STARTED | `hrms_salary_history.view` | — |
-| EMP-031 | [Outside-punch rejection: accept / clarify](EMP-031-outside-punch-rejection-accept-clarify/screen-spec.md) | NOT_STARTED | `hrms_attendance.view` | — |
+| EMP-028 | [Leave request form + my leave](EMP-028-leave-request-form-my-leave/screen-spec.md) | READY_FOR_REVIEW | `hrms_leave.view / create` | [png](EMP-028-leave-request-form-my-leave/screen.png) |
+| EMP-029 | [Attendance correction request](EMP-029-attendance-correction-request/screen-spec.md) | READY_FOR_REVIEW | `hrms_attendance_regularization.create` | [png](EMP-029-attendance-correction-request/screen.png) |
+| EMP-030 | [My salary slips](EMP-030-my-salary-slips/screen-spec.md) | READY_FOR_REVIEW | `hrms_salary_history.view (own only)` | [png](EMP-030-my-salary-slips/screen.png) |
+| EMP-031 | [Outside punch rejected — accept or clarify](EMP-031-outside-punch-rejected-accept-or-clarify/screen-spec.md) | READY_FOR_REVIEW | `hrms_attendance.view` | [png](EMP-031-outside-punch-rejected-accept-or-clarify/screen.png) |
 

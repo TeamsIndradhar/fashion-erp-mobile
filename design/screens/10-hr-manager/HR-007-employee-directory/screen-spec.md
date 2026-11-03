@@ -3,23 +3,20 @@
 | Field | Value |
 |---|---|
 | Category | HR Manager (`10-hr-manager`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=HR-007` |
 | Required permission | `masters_core.view` |
 
 ## Purpose
-Employee cards.
+Search employees; call; open profile (fields per permission).
 
 ## User types / ERP roles
-- MANAGEMENT
-- SUPER_ADMIN
-- HRMS_TEAM_APPROVER roles (team scope)
-- custom HR role (none exists today)
+- roles with masters_core.view
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
@@ -27,7 +24,8 @@ To be designed.
 | `GET /api/v1/employees` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
-- —
+- Search
+- Call
 
 ## Validation
 - —

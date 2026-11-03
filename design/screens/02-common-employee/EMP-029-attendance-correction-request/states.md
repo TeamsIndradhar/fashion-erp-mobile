@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Missed punch etc. — also the fallback for weak indoor GPS.
+Screen-specific: Missed punch, missed logout, change login/logout time — also the fallback when indoor GPS fails (Q-13).
 

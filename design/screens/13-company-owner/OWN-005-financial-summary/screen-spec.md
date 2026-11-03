@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Owner (`13-company-owner`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=OWN-005` |
 | Required permission | `financial_reports.view + reports.view` |

@@ -1,4 +1,4 @@
-# Screen → permission mapping (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
+# Screen → permission mapping (Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03)
 
 Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A screen is shown when the user holds the key **and** the company entitlement is on (`module-entitlements.ts`). Roles are listed only as examples of who holds the key by default — roles are per company and customizable, and per-user GRANT/DENY overrides exist, so the app must use the keys from `GET /api/mobile/v1/me` (gap G-01), never role names.
 
@@ -42,10 +42,10 @@ Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A scr
 | EMP-025 | My devices | `session (own devices)` | All tenant users |
 | EMP-026 | Help & Support | `session` | All tenant users |
 | EMP-027 | About app | `none` | All tenant users |
-| EMP-028 | Leave request form + my leave | `hrms_leave.create` | HRMS_SELF_SERVICE roles |
-| EMP-029 | Attendance correction request | `hrms_attendance_regularization.create` | HRMS_SELF_SERVICE roles |
-| EMP-030 | My salary slips | `hrms_salary_history.view` | HRMS_SELF_SERVICE roles |
-| EMP-031 | Outside-punch rejection: accept / clarify | `hrms_attendance.view` | HRMS_SELF_SERVICE roles |
+| EMP-028 | Leave request form + my leave | `hrms_leave.view / create` | HRMS_SELF_SERVICE roles; HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
+| EMP-029 | Attendance correction request | `hrms_attendance_regularization.create` | HRMS_SELF_SERVICE roles; HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
+| EMP-030 | My salary slips | `hrms_salary_history.view (own only)` | HRMS_SELF_SERVICE roles; HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
+| EMP-031 | Outside punch rejected — accept or clarify | `hrms_attendance.view` | HRMS_SELF_SERVICE roles; HRMS_TEAM_APPROVER roles; MANAGEMENT; SUPER_ADMIN |
 | WRK-001 | Worker Home | `production.view (assigned scope) + hrms_attendance.view` | PRODUCTION_WORKER; any role with production.view but without view_all (assigned-only scope) |
 | WRK-002 | My Assigned Work (list) | `production.view; Employee.selfEntryEnabled` | PRODUCTION_WORKER; any role with production.view but without view_all (assigned-only scope) |
 | WRK-003 | Task / job order details | `production.view (own assignment rows only)` | PRODUCTION_WORKER; any role with production.view but without view_all (assigned-only scope) |
@@ -63,60 +63,60 @@ Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A scr
 | SUP-005 | Approve / reject progress entry | `production.approve (no self-approval)` | PRODUCTION_SUPERVISOR; PRODUCTION_MANAGER; SUPER_ADMIN (production.approve) |
 | SUP-006 | Team work status | `production.view (view_all or team)` | PRODUCTION_SUPERVISOR; PRODUCTION_MANAGER; SUPER_ADMIN (production.approve) |
 | SUP-007 | Team reports | `reports.view + production.view` | roles with reports.view + production.view |
-| EXT-001 | External unit (contractor) home | `production.view/create (own contractor)` | EXTERNAL_UNIT_USER |
+| EXT-001 | External unit (contractor) home | `production.view / create (own contractor only)` | EXTERNAL_UNIT_USER |
 | PM-001 | Production Manager Home | `production.view (+view_all); reports.view for KPIs` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
 | PM-002 | Production orders (list) | `production.view` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
 | PM-003 | Production order details | `production.view; actions per production.edit/approve/cancel` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
-| PM-004 | Job order details (manager) | `production.view` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
-| PM-005 | Job work orders (contractor) | `production.view` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
-| PM-006 | QC inspections | `qc.view` | QC_MANAGER |
-| PM-007 | Lot list / lot timeline | `production.view` | PRODUCTION_MANAGER; QC_MANAGER (QC parts); SAMPLING_MANAGER (view); MANAGEMENT; SUPER_ADMIN |
-| PM-008 | Sampling list & detail | `sampling.view` | SAMPLING_MANAGER; MERCHANDISER |
+| PM-004 | Job order details (manager) | `production.view; assign needs production.edit` | PRODUCTION_MANAGER; QC_MANAGER; MANAGEMENT; SUPER_ADMIN |
+| PM-005 | Job work orders (contractor) | `production.view (+ view_all)` | PRODUCTION_MANAGER; QC_MANAGER; MANAGEMENT; SUPER_ADMIN |
+| PM-006 | QC inspections (report view) | `qc.view + reports.view` | QC_MANAGER; PRODUCTION_MANAGER; MANAGEMENT |
+| PM-007 | Lot timeline | `production.view` | PRODUCTION_MANAGER; QC_MANAGER; MANAGEMENT; SUPER_ADMIN |
+| PM-008 | Sampling list & decision | `sampling.view; decision needs approve/reject` | SAMPLING_MANAGER; MERCHANDISER; MANAGEMENT |
 | INV-001 | Inventory Home | `inventory.view / fg_inventory.view / material_request.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
 | INV-002 | Stock balance (list) | `inventory.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| INV-003 | Stock item ledger | `inventory.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| INV-004 | Material requests list / issue | `material_request.view/edit` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| INV-005 | FG stock list | `fg_inventory.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| INV-006 | Stock movements / receive transfers | `inventory.view/create` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| INV-007 | Barcode scanner | `barcodes.scan` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| INV-003 | Stock item ledger | `inventory.view + reports.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| INV-004 | Material requests — approve / issue | `material_request.view; approve / issue per permission` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| INV-005 | Finished goods stock | `fg_inventory.view` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| INV-006 | Stock movements / receive transfer | `inventory.view; receive needs inventory.create` | STORE_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| INV-007 | Barcode scanner | `barcodes.scan` | roles with barcodes.scan (PRODUCTION_MANAGER/SUPERVISOR, STORE_MANAGER, WAREHOUSE_USER, DISPATCH_MANAGER) |
 | PUR-001 | Purchase Home | `purchase_order.view` | STORE_MANAGER (purchase_order approve); PRODUCTION_MANAGER / WAREHOUSE_USER (create); ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
 | PUR-002 | Purchase orders (list) | `purchase_order.view; approve button needs purchase_order.approve` | STORE_MANAGER (purchase_order approve); PRODUCTION_MANAGER / WAREHOUSE_USER (create); ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
-| PUR-003 | PO details + approve | `purchase_order.view/approve` | STORE_MANAGER (purchase_order approve); PRODUCTION_MANAGER / WAREHOUSE_USER (create); ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
-| PUR-004 | Goods receipts list | `inventory.view` | STORE_MANAGER (purchase_order approve); PRODUCTION_MANAGER / WAREHOUSE_USER (create); ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
+| PUR-003 | Purchase order details + approve | `purchase_order.view; approve needs purchase_order.approve (no self-approval)` | STORE_MANAGER; ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
+| PUR-004 | Goods receipts | `inventory.view` | STORE_MANAGER; ACCOUNTS_MANAGER / MANAGEMENT (approve); SUPER_ADMIN |
 | SAL-001 | Sales Home | `sales_orders.view; crm.view; sampling.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
 | SAL-002 | Sales orders (list) | `sales_orders.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
-| SAL-003 | Sales order details | `sales_orders.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
-| SAL-004 | CRM leads list / lead details | `crm.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
-| SAL-005 | Customers list | `masters_core.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
+| SAL-003 | Sales order details + lifecycle | `sales_orders.view; lifecycle sections redacted per module` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
+| SAL-004 | CRM leads + lead details | `crm.view (own scope unless view_all)` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
+| SAL-005 | Customers | `masters_core.view; outstanding needs financial permission` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
 | SAL-006 | Buyer enquiries | `buyer_enquiries.view` | MERCHANDISER; MANAGEMENT; SUPER_ADMIN |
 | ACC-001 | Accounts Home | `payment_requests.view (+approve/post); financial_reports.view for AR/AP` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE (no approve); MANAGEMENT; SUPER_ADMIN |
 | ACC-002 | Payment request approval inbox | `payment_requests.approve (no self-approval)` | roles with payment_requests.approve (current-level approver) |
-| ACC-003 | Payout queue / pay request | `payment_requests.post` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE (no approve); MANAGEMENT; SUPER_ADMIN |
-| ACC-004 | Invoices list | `invoices.view` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE (no approve); MANAGEMENT; SUPER_ADMIN |
-| ACC-005 | Receivables / payables reports | `financial_reports.view + reports.view` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE (no approve); MANAGEMENT; SUPER_ADMIN |
+| ACC-003 | Payout queue / pay request | `payment_requests.post` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE (post); SUPER_ADMIN |
+| ACC-004 | Invoices | `invoices.view` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE; MANAGEMENT; SUPER_ADMIN |
+| ACC-005 | Receivables / payables aging | `financial_reports.view + reports.view` | ACCOUNTS_MANAGER; ACCOUNTS_EXECUTIVE; MANAGEMENT; SUPER_ADMIN |
 | HR-001 | HR Home | `hrms_attendance_team.view; hrms_leave.approve; hrms_attendance_outdoor.approve` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
-| HR-002 | Company attendance (day / month) | `hrms_attendance_team.view / records.view` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
+| HR-002 | Company attendance (day / month) | `hrms_attendance_team.view / hrms_attendance_records.view (+view_all)` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope) |
 | HR-003 | Leave approvals | `hrms_leave.approve / reject (team scope, no self-approval)` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
-| HR-004 | Regularization approvals | `hrms_attendance_regularization.approve` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
+| HR-004 | Correction (regularization) approvals | `hrms_attendance_regularization.approve / reject` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope) |
 | HR-005 | Outside / flagged punch review | `hrms_attendance_outdoor.approve / reject` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
-| HR-006 | Overtime approvals | `hrms_attendance_overtime.approve` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
-| HR-007 | Employee directory | `masters_core.view` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope); custom HR role (none exists today) |
+| HR-006 | Overtime approvals | `hrms_attendance_overtime.approve / reject` | MANAGEMENT; SUPER_ADMIN; HRMS_TEAM_APPROVER roles (team scope) |
+| HR-007 | Employee directory | `masters_core.view` | roles with masters_core.view |
 | DSP-001 | Dispatch Home | `dispatch.view` | DISPATCH_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| DSP-002 | Dispatch list & details | `dispatch.view` | DISPATCH_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
-| DSP-003 | Carton scan / packing | `dispatch.edit + barcodes.scan` | DISPATCH_MANAGER; WAREHOUSE_USER; MANAGEMENT; SUPER_ADMIN |
+| DSP-002 | Dispatch details | `dispatch.view; actions per dispatch.edit/post` | DISPATCH_MANAGER; WAREHOUSE_USER; MANAGEMENT |
+| DSP-003 | Carton scan / packing | `dispatch.edit + barcodes.scan` | DISPATCH_MANAGER; WAREHOUSE_USER |
 | ADM-001 | Company Admin Dashboard | `dashboard.view; each card needs its own module permission` | SUPER_ADMIN; MANAGEMENT (view/approve); users with administration_* permissions |
 | ADM-002 | Pending approvals (all modules) | `approve on each module (shown per permission)` | SUPER_ADMIN; MANAGEMENT (view/approve); users with administration_* permissions |
-| ADM-003 | Employee summary | `masters_core.view + hrms_attendance_team.view` | SUPER_ADMIN; MANAGEMENT (view/approve); users with administration_* permissions |
-| ADM-004 | Users & roles (view) | `administration_users.view` | users with administration_users/roles.view |
+| ADM-003 | Employee summary | `masters_core.view + hrms_attendance_team.view` | SUPER_ADMIN; MANAGEMENT |
+| ADM-004 | Users & roles (view only) | `administration_users.view` | users with administration_users.view |
 | ADM-005 | Reports center | `reports.view + owning module` | any role with reports.view (+ owning module view) |
 | ADM-006 | Report viewer (mobile) | `reports.view; export needs reports.export` | any role with reports.view |
 | OWN-001 | Owner Dashboard | `reports.view + financial_reports.view (business cards); module views for others` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
 | OWN-002 | Sales analytics | `reports.view + sales_orders.view / financial_reports.view` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
-| OWN-003 | Production analytics | `reports.view + production.view` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
-| OWN-004 | Inventory analytics | `reports.view + inventory.view` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
+| OWN-003 | Production analytics | `reports.view + production.view` | SUPER_ADMIN; MANAGEMENT; users with reports.view + module view |
+| OWN-004 | Inventory analytics | `reports.view + inventory.view` | SUPER_ADMIN; MANAGEMENT; users with reports.view + module view |
 | OWN-005 | Financial summary | `financial_reports.view + reports.view` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
-| OWN-006 | HRMS summary | `hrms_attendance_records.view` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
-| OWN-007 | Alerts center | `per module` | SUPER_ADMIN; MANAGEMENT; any role with financial_reports.view + reports.view |
+| OWN-006 | HRMS summary | `hrms_attendance_records.view + reports.view` | SUPER_ADMIN; MANAGEMENT; users with reports.view + module view |
+| OWN-007 | Alerts center | `per alert's module` | SUPER_ADMIN; MANAGEMENT; users with reports.view + module view |
 | SHR-001 | Component sheet | `—` | design reference |
 | SHR-002 | All Modules (permission-driven) | `view on each module + entitlement` | every user (content depends on permissions) |
 | SHR-003 | Standard states | `—` | all screens |

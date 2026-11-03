@@ -4,7 +4,7 @@ const path = require("path");
 const vm = require("vm");
 
 const PROTO = path.join(__dirname, "..", "prototypes");
-const FILES = ["components.js", "screens-auth-employee.js", "screens-work.js", "screens-mgmt.js"];
+const FILES = ["components.js", "screens-auth-employee.js", "screens-work.js", "screens-mgmt.js", "screens-batch2.js"];
 
 function loadScreens() {
   globalThis.SCREENS = [];

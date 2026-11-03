@@ -3,23 +3,22 @@
 | Field | Value |
 |---|---|
 | Category | Accountant (`09-accountant`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=ACC-003` |
 | Required permission | `payment_requests.post` |
 
 ## Purpose
-Record payouts (UTR, bank, proof).
+Approved requests to pay; record payout with bank, mode, UTR and proof.
 
 ## User types / ERP roles
 - ACCOUNTS_MANAGER
-- ACCOUNTS_EXECUTIVE (no approve)
-- MANAGEMENT
+- ACCOUNTS_EXECUTIVE (post)
 - SUPER_ADMIN
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
@@ -28,7 +27,8 @@ To be designed.
 | `POST /api/v1/payment-requests/{id}/payouts` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
-- —
+- Pay (full/partial)
+- Attach proof
 
 ## Validation
 - —

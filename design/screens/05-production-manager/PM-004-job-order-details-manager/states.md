@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Assignments, entries, slips; assign worker (production.edit).
+Screen-specific: Workers assigned, progress per worker, pending entries, slips; assign a worker (with permission).
 

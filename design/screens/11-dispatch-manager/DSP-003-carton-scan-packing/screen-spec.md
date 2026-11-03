@@ -3,31 +3,31 @@
 | Field | Value |
 |---|---|
 | Category | Dispatch Manager (`11-dispatch-manager`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=DSP-003` |
 | Required permission | `dispatch.edit + barcodes.scan` |
 
 ## Purpose
-Scan cartons into a dispatch.
+Scan cartons into the dispatch; running count vs plan.
 
 ## User types / ERP roles
 - DISPATCH_MANAGER
 - WAREHOUSE_USER
-- MANAGEMENT
-- SUPER_ADMIN
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `dispatch packing routes (to map)` | EXISTING (via mobile auth adapter) |
+| `GET/POST /api/v1/dispatches/{id}/cartons` | EXISTING (via mobile auth adapter) |
+| `GET /api/v1/barcodes/resolve/{code}` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
-- —
+- Scan carton
+- Remove
 
 ## Validation
 - —

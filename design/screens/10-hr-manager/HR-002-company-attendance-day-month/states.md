@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: All employees with view_all.
+Screen-specific: All employees in scope by department with present/late/absent.
 

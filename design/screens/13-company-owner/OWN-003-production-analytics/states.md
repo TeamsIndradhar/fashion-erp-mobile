@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Target vs actual, efficiency (no SAM efficiency exists in ERP).
+Screen-specific: Target vs actual, rejection, line-wise output. No SAM/efficiency % exists in the ERP — not shown.
 

@@ -3,14 +3,14 @@
 | Field | Value |
 |---|---|
 | Category | Inventory Manager (`06-inventory-manager`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=INV-003` |
-| Required permission | `inventory.view` |
+| Required permission | `inventory.view + reports.view` |
 
 ## Purpose
-Movements for one item.
+In/out history of one material from the immutable stock ledger.
 
 ## User types / ERP roles
 - STORE_MANAGER
@@ -19,15 +19,15 @@ Movements for one item.
 - SUPER_ADMIN
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
 |---|---|
-| `GET /api/v1/reports/inventory/stock-ledger` | EXISTING (via mobile auth adapter) |
+| `GET /api/v1/reports/inventory/stock-ledger?materialId&warehouseId` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
-- —
+- Change warehouse / dates
 
 ## Validation
 - —

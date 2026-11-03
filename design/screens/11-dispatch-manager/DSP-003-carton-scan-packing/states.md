@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Scan cartons into a dispatch.
+Screen-specific: Scan cartons into the dispatch; running count vs plan.
 

@@ -3,37 +3,38 @@
 | Field | Value |
 |---|---|
 | Category | Company Admin (`12-company-admin`) |
-| Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
-| Mockup | not designed yet (batch 2) |
+| Status | **READY_FOR_REVIEW** (batch 2) |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
+| Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=ADM-003` |
 | Required permission | `masters_core.view + hrms_attendance_team.view` |
 
 ## Purpose
-Headcount by department, present/absent.
+Headcount, joiners/leavers, attendance today.
 
 ## User types / ERP roles
 - SUPER_ADMIN
-- MANAGEMENT (view/approve)
-- users with administration_* permissions
+- MANAGEMENT
 
 ## Header and navigation
-To be designed.
+Uses the shared `AppHeader` (home) or inner header (back + title); bottom navigation per `design/design-system/NAVIGATION.md` (hidden on forms and full-screen flows).
 
 ## Data / API
 | Endpoint | Kind |
 |---|---|
 | `GET /api/v1/employees` | EXISTING (via mobile auth adapter) |
-| `company counts API` | BACKEND_GAP — APPROVAL_REQUIRED |
+| `GET /api/v1/attendance/summary?date` | EXISTING (via mobile auth adapter) |
+| `Headcount by department API` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
-- —
+- Open directory
 
 ## Validation
 - —
 
 ## Navigation destinations
-- —
+- HR-007
+- HR-002
 
 ## UI components
 Shared components only (see `design/design-system/COMPONENTS.md`). Demo data in the mockup is marked "DEMO DATA".

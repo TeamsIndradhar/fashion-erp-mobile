@@ -1,7 +1,9 @@
 # PM-004 — interactions
 
-- **No user actions** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **Assign worker** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **Open entry** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **View slips** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
 
-Navigation: —.
+Navigation: SUP-005.
 Double-submit protection: primary actions show loading and are disabled until the server answers.
 

@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Delays, low stock, overdue receivables.
+Screen-specific: Important exceptions from existing reports in one list (aggregation API is a gap G-04).
 

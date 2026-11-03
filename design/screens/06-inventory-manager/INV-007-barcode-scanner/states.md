@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Scan roll / carton / bundle barcodes.
+Screen-specific: Scan roll / bundle / carton / unit barcode → open the record it belongs to (existing resolver).
 

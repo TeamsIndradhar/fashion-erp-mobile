@@ -1,6 +1,6 @@
 /* Prototype viewer. ?screen=ID shows one screen; &bare=1 renders only the phone screen (used for PNG export). */
 (function () {
-  const DESIGN_VERSION = "Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03";
+  const DESIGN_VERSION = "Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03";
   const CATS = {
     "01-authentication": "01 · Authentication", "02-common-employee": "02 · Common Employee", "03-production-worker": "03 · Production Worker",
     "04-supervisor": "04 · Supervisor", "05-production-manager": "05 · Production Manager", "06-inventory-manager": "06 · Inventory Manager",
@@ -24,6 +24,8 @@
     const s = screens.find((x) => x.id === current);
     document.body.classList.add("bare");
     if (s && s.h) document.documentElement.style.setProperty("--cap-h", s.h + "px");
+    if (params.get("w")) { document.documentElement.style.setProperty("--cap-w", params.get("w") + "px"); if (+params.get("w") <= 370) document.body.classList.add("sm"); }
+    if (params.get("h")) document.documentElement.style.setProperty("--cap-h", params.get("h") + "px");
     root.innerHTML = `<div class="screen">${s ? screenHtml(s) : "Unknown screen"}</div>`;
     return;
   }

@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Discovered role, not in the brief — decision D-D05.
+Screen-specific: Discovered role (not in the brief): contractor sees only their own job work. Included pending decision D-D05.
 

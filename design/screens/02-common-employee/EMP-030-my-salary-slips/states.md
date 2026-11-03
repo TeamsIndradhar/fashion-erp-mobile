@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Own slips; respond to slip.
+Screen-specific: Own finalised salary slips; open PDF; respond (accept / discuss) as on the web.
 

@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Present/absent trend, pending leave.
+Screen-specific: Attendance trend, absenteeism, pending leave.
 

@@ -4,7 +4,7 @@
 |---|---|
 | Category | Shared Components (`14-shared-components`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
+| Design version | Design v1.2 · Batches 1+2 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SHR-005` |
 | Required permission | `same as the record it is attached to; microphone permission on the phone` |

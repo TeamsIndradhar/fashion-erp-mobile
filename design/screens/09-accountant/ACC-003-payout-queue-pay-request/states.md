@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Record payouts (UTR, bank, proof).
+Screen-specific: Approved requests to pay; record payout with bank, mode, UTR and proof.
 

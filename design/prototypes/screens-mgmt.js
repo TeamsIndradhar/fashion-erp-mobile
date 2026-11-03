@@ -22,11 +22,6 @@
   R({ id: "PM-003", cat: "05-production-manager", title: "Production order details", roles: PMR, perm: "production.view; actions per production.edit/approve/cancel", api: [["GET /api/v1/production-orders/{id} (incl. job orders)", "E"], ["GET /api/v1/lots/{id}/timeline", "E"]],
     purpose: "Stage-wise progress, lots, job orders; buttons only for permitted actions.", actions: ["Open job order", "Open lot", "Permitted actions only"], nav: [], h: 900,
     render: () => C.frame(`${C.inner("PO-2025-0331", { sub: "Polo T-shirt · Navy" })}<div class="card">${["Cutting|100", "Stitching|50", "Finishing|10", "QC|0", "Packing|0"].map((s) => { const [n, p] = s.split("|"); return `<div class="row" style="margin:6px 0"><span style="width:84px;font-size:13px">${n}</span><div class="progress" style="flex:1"><i style="width:${p}%"></i></div><span class="muted" style="width:38px;text-align:right">${p}%</span></div>`; }).join("")}</div>${C.kv([["Quantity", "240 pcs (S 40 · M 120 · L 80)"], ["Sales order", "SO-2025-0210"], ["Ship date", "12 Nov 2025"], ["Lots", "L-1182, L-1185"]])}${C.li({ ic: "layers", tone: "warning", title: "JO-2025-0912 · Stitching", sub: "3 workers · 50%", pill: "In progress", ptone: "warning" })}`) });
-  later("PM-004", "05-production-manager", "Job order details (manager)", PMR, "production.view", [["GET /api/v1/job-orders/{id}", "E"]], "Assignments, entries, slips; assign worker (production.edit).");
-  later("PM-005", "05-production-manager", "Job work orders (contractor)", PMR, "production.view", [["GET /api/v1/job-work-orders", "E"]], "External job work tracking.");
-  later("PM-006", "05-production-manager", "QC inspections", ["QC_MANAGER"], "qc.view", [["QC list API", "G"], ["GET /api/v1/reports/quality/qc-inspection-register", "E"]], "No QC list API (G-06); report-based view.");
-  later("PM-007", "05-production-manager", "Lot list / lot timeline", PMR, "production.view", [["Lot list API", "G"], ["GET /api/v1/lots/{id}/timeline", "E"]], "No lot list API (G-05).");
-  later("PM-008", "05-production-manager", "Sampling list & detail", ["SAMPLING_MANAGER", "MERCHANDISER"], "sampling.view", [["sampling routes (to map)", "E"]], "Sample requests and approvals.");
 
   // ---------------- 06 INVENTORY ----------------
   const INVR = ["STORE_MANAGER", "WAREHOUSE_USER", "MANAGEMENT", "SUPER_ADMIN"];
@@ -39,11 +34,6 @@
   R({ id: "INV-002", cat: "06-inventory-manager", title: "Stock balance (list)", roles: INVR, perm: "inventory.view", api: [["GET /api/v1/inventory/stock-balances?warehouseId&materialCategory&showZeroStock", "E"]],
     purpose: "Item-wise stock as cards; filter by warehouse / category.", actions: ["Search", "Filter", "Open item"], nav: [],
     render: () => C.frame(`${C.inner("Stock Balance")}${C.search("Search material")}${C.tabs(["All warehouses", "Main store", "Trims store"])}${C.li({ ic: "box", tone: "primary", title: "Cotton fabric 180 GSM – Navy", sub: "Main store · 6 rolls", right: "842.5 m", chev: true })}${C.li({ ic: "box", tone: "danger", title: "Cotton thread – Navy 40s", sub: "Trims store · reorder 50", right: "12 cones", pill: "Low", ptone: "danger" })}${C.li({ ic: "box", tone: "primary", title: "Buttons 18L – White", sub: "Trims store", right: "4,200 pcs" })}`, mNav("Modules")) });
-  later("INV-003", "06-inventory-manager", "Stock item ledger", INVR, "inventory.view", [["GET /api/v1/reports/inventory/stock-ledger", "E"]], "Movements for one item.");
-  later("INV-004", "06-inventory-manager", "Material requests list / issue", INVR, "material_request.view/edit", [["GET /api/v1/material-requests", "E"]], "Issue material to lots.");
-  later("INV-005", "06-inventory-manager", "FG stock list", INVR, "fg_inventory.view", [["GET /api/v1/finished-goods-inventory/stock-list", "E"]], "Finished goods by style/colour/size.");
-  later("INV-006", "06-inventory-manager", "Stock movements / receive transfers", INVR, "inventory.view/create", [["GET /api/v1/stock-movements", "E"]], "Transfers between warehouses.");
-  later("INV-007", "06-inventory-manager", "Barcode scanner", INVR, "barcodes.scan", [["barcode resolve route (to map)", "E"]], "Scan roll / carton / bundle barcodes.");
 
   // ---------------- 07 PURCHASE ----------------
   const PURR = ["STORE_MANAGER (purchase_order approve)", "PRODUCTION_MANAGER / WAREHOUSE_USER (create)", "ACCOUNTS_MANAGER / MANAGEMENT (approve)", "SUPER_ADMIN"];
@@ -56,8 +46,6 @@
   R({ id: "PUR-002", cat: "07-purchase-manager", title: "Purchase orders (list)", roles: PURR, perm: "purchase_order.view; approve button needs purchase_order.approve", api: [["GET /api/v1/purchase-orders", "E"]],
     purpose: "PO cards with status; approve from detail (batch 2).", actions: ["Search", "Filter", "Open"], nav: ["PUR-003"],
     render: () => C.frame(`${C.inner("Purchase Orders")}${C.search("Search PO or supplier")}${C.tabs(["All", "Draft", "Approved", "Partly received", "Received"])}${C.li({ ic: "cart", tone: "warning", title: "PUR-2025-0188", sub: "Demo Textiles · Denim 12 oz", right: "₹ 3.96 L", pill: "Pending", ptone: "warning" })}${C.li({ ic: "cart", tone: "info", title: "PUR-2025-0181", sub: "Demo Trims · Buttons, zips", right: "₹ 42,300", pill: "Partly received", ptone: "info" })}${C.li({ ic: "cart", tone: "success", title: "PUR-2025-0170", sub: "Demo Threads · Thread 40s", right: "₹ 18,900", pill: "Received", ptone: "success" })}`, mNav("Modules")) });
-  later("PUR-003", "07-purchase-manager", "PO details + approve", PURR, "purchase_order.view/approve", [["GET /api/v1/purchase-orders/{id}", "E"], ["PO approve route (to map)", "E"]], "Lines, received qty, approve/reject.");
-  later("PUR-004", "07-purchase-manager", "Goods receipts list", PURR, "inventory.view", [["GET /api/v1/goods-receipts", "E"]], "GRNs incl. fabric rolls.");
 
   // ---------------- 08 SALES ----------------
   const SALR = ["MERCHANDISER", "MANAGEMENT", "SUPER_ADMIN"];
@@ -70,10 +58,6 @@
   R({ id: "SAL-002", cat: "08-sales-manager", title: "Sales orders (list)", roles: SALR, perm: "sales_orders.view", api: [["GET /api/v1/sales-orders", "E"]],
     purpose: "Order cards with ship date and status.", actions: ["Search", "Filter", "Open"], nav: [],
     render: () => C.frame(`${C.inner("Sales Orders")}${C.search("Search order or buyer")}${C.tabs(["All", "Confirmed", "In production", "Dispatched"])}${C.li({ ic: "file", tone: "warning", title: "SO-2025-0210", sub: "Demo Retail · Polo T-shirt · 240 pcs", sub2: "Ship 12 Nov", right: "₹ 1,08,000", pill: "In production", ptone: "warning" })}${C.li({ ic: "file", tone: "info", title: "SO-2025-0215", sub: "Demo Fashion House · Kurti · 500 pcs", sub2: "Ship 20 Nov", right: "₹ 2,75,000", pill: "Confirmed", ptone: "info" })}`, mNav("Modules")) });
-  later("SAL-003", "08-sales-manager", "Sales order details", SALR, "sales_orders.view", [["GET /api/v1/sales-orders/{id}", "E"], ["GET /api/v1/reports/order-lifecycle/{salesOrderId}", "E"]], "Lines, size matrix, lifecycle.");
-  later("SAL-004", "08-sales-manager", "CRM leads list / lead details", SALR, "crm.view", [["GET /api/v1/crm/leads", "E"]], "Leads, activities, follow-ups.");
-  later("SAL-005", "08-sales-manager", "Customers list", SALR, "masters_core.view", [["GET /api/v1/customers", "E"]], "Customer cards, outstanding (if finance permission).");
-  later("SAL-006", "08-sales-manager", "Buyer enquiries", SALR, "buyer_enquiries.view", [["buyer-enquiries routes (to map)", "E"]], "Enquiry list.");
 
   // ---------------- 09 ACCOUNTANT ----------------
   const ACR = ["ACCOUNTS_MANAGER", "ACCOUNTS_EXECUTIVE (no approve)", "MANAGEMENT", "SUPER_ADMIN"];
@@ -86,9 +70,6 @@
   R({ id: "ACC-002", cat: "09-accountant", title: "Payment request approval inbox", roles: ["roles with payment_requests.approve (current-level approver)"], perm: "payment_requests.approve (no self-approval)", api: [["GET /api/v1/payment-requests?view=approve", "E"], ["POST /api/v1/payment-requests/{id}/approve", "E"], ["POST /api/v1/payment-requests/{id}/reject", "E"]],
     purpose: "Approve / reject from cards; own requests excluded (existing rule).", actions: ["Approve", "Reject", "Open details"], nav: ["EMP-018"],
     render: () => C.frame(`${C.inner("Approve Requests", { sub: "7 waiting" })}${C.tabs(["Expenditure 5", "Supplier 2", "Transfers"])}${[["PR-2025-00412 · Rohit Kumar", "Local travel · 03 Nov", "₹ 450"], ["PR-2025-00415 · Neha Gupta", "Courier to buyer · 03 Nov", "₹ 1,250"]].map(([t, s, a]) => `<div class="card">${C.li({ ic: "rupee", tone: "warning", title: t, sub: s, right: a, chev: false })}<div class="pair mb0"><div class="btn secondary mb0">Reject</div><div class="btn success mb0">Approve</div></div></div>`).join("")}`, mNav("Approvals", 7)) });
-  later("ACC-003", "09-accountant", "Payout queue / pay request", ACR, "payment_requests.post", [["GET /api/v1/payment-requests?view=pay", "E"], ["POST /api/v1/payment-requests/{id}/payouts", "E"]], "Record payouts (UTR, bank, proof).");
-  later("ACC-004", "09-accountant", "Invoices list", ACR, "invoices.view", [["GET /api/v1/sales-invoices", "E"], ["GET /api/v1/purchase-invoices", "E"]], "Sales/purchase invoices.");
-  later("ACC-005", "09-accountant", "Receivables / payables reports", ACR, "financial_reports.view + reports.view", [["receivables/* and payables/* reports", "E"]], "Aging views.");
 
   // ---------------- 10 HR ----------------
   const HRR = ["MANAGEMENT", "SUPER_ADMIN", "HRMS_TEAM_APPROVER roles (team scope)", "custom HR role (none exists today)"];
@@ -104,14 +85,6 @@
   R({ id: "HR-005", cat: "10-hr-manager", title: "Outside / flagged punch review", roles: HRR, perm: "hrms_attendance_outdoor.approve / reject", api: [["GET /api/v1/attendance/outdoor", "E"], ["POST /api/v1/attendance/outdoor (approve)", "E"], ["POST /api/v1/attendance/outdoor/{sessionId}/reject", "E"], ["risk reasons from hrms_attendance_punch_meta (B-17)", "G"]],
     purpose: "Existing outdoor approval queue — also where SUSPICIOUS mobile punches land. Shows the risk reasons (new, B-17) so reviewers know why.", actions: ["Approve (→ REMOTE)", "Reject (times trimmed)", "View selfie / map"], nav: [],
     render: () => C.frame(`${C.inner("Punch Review", { sub: "3 waiting" })}<div class="card">${C.li({ ic: "pin", tone: "warning", title: "Imran Ali · In 09:10", sub: "230 m from Main Factory · GPS ± 18 m", chev: false })}<div class="row" style="flex-wrap:wrap;gap:6px;margin:6px 0 10px">${C.pill("Outside office", "warning")}${C.pill("Mock location reported", "warning")}${C.pill("Device verified", "success")}</div><div class="row" style="margin-bottom:10px"><div class="avatar" style="border-radius:12px">IN</div><span class="muted">Selfie · tap to enlarge</span></div><div class="pair mb0"><div class="btn secondary mb0">Reject</div><div class="btn success mb0">Approve</div></div></div>${C.banner("info", "Signals are indicators, not proof", "Decide with the selfie and the employee's explanation.")}`, mNav("Approvals", 11)) });
-  later("HR-002", "10-hr-manager", "Company attendance (day / month)", HRR, "hrms_attendance_team.view / records.view", [["GET /api/v1/attendance/team-day", "E"], ["GET /api/v1/attendance/team-month", "E"]], "All employees with view_all.");
-  later("HR-004", "10-hr-manager", "Regularization approvals", HRR, "hrms_attendance_regularization.approve", [["GET /api/v1/attendance-corrections", "E"]], "Correction requests with documents.");
-  later("HR-006", "10-hr-manager", "Overtime approvals", HRR, "hrms_attendance_overtime.approve", [["attendance/overtime routes", "E"]], "Overtime decisions.");
-  later("HR-007", "10-hr-manager", "Employee directory", HRR, "masters_core.view", [["GET /api/v1/employees", "E"]], "Employee cards.");
-  later("EMP-028", "02-common-employee", "Leave request form + my leave", ["HRMS_SELF_SERVICE roles"], "hrms_leave.create", [["POST /api/v1/leave-requests", "E"], ["GET /api/v1/leave-requests/balance", "E"]], "Apply leave (day durations, balance).");
-  later("EMP-029", "02-common-employee", "Attendance correction request", ["HRMS_SELF_SERVICE roles"], "hrms_attendance_regularization.create", [["POST /api/v1/attendance-corrections", "E"]], "Missed punch etc. — also the fallback for weak indoor GPS.");
-  later("EMP-030", "02-common-employee", "My salary slips", ["HRMS_SELF_SERVICE roles"], "hrms_salary_history.view", [["GET /api/v1/salary/history", "E"], ["GET /api/v1/salary/history/slips/{lineId}/pdf", "E"]], "Own slips; respond to slip.");
-  later("EMP-031", "02-common-employee", "Outside-punch rejection: accept / clarify", ["HRMS_SELF_SERVICE roles"], "hrms_attendance.view", [["GET /api/v1/attendance/outdoor-rejections?mine=true", "E"], ["POST .../{id}/accept|clarify", "E"]], "Employee side of the outdoor review.");
 
   // ---------------- 11 DISPATCH ----------------
   const DR = ["DISPATCH_MANAGER", "WAREHOUSE_USER", "MANAGEMENT", "SUPER_ADMIN"];
@@ -121,8 +94,6 @@
       kpis: [["Pending dispatch", "8", "orders", "mute", "truck"], ["Dispatched today", "3", "62 cartons", "up", "checkc"], ["In transit", "5", "", "mute", "pin"], ["Returns", "1", "to receive", "mute", "refresh"]],
       grid: [["Dispatches", "truck", "primary"], ["Packing", "box", "success"], ["Scanner", "scan", "purple"], ["Returns", "refresh", "warning"]],
       sec: "Ready to dispatch", items: [{ ic: "truck", tone: "info", title: "DSP-2025-0144 · Demo Retail", sub: "SO-2025-0198 · 24 cartons", pill: "Packed", ptone: "info" }] }) });
-  later("DSP-002", "11-dispatch-manager", "Dispatch list & details", DR, "dispatch.view", [["GET /api/v1/dispatches", "E"]], "Pick/pack/confirm/deliver states.");
-  later("DSP-003", "11-dispatch-manager", "Carton scan / packing", DR, "dispatch.edit + barcodes.scan", [["dispatch packing routes (to map)", "E"]], "Scan cartons into a dispatch.");
 
   // ---------------- 12 COMPANY ADMIN ----------------
   const ADR = ["SUPER_ADMIN", "MANAGEMENT (view/approve)", "users with administration_* permissions"];
@@ -142,8 +113,6 @@
   R({ id: "ADM-006", cat: "12-company-admin", title: "Report viewer (mobile)", roles: ["any role with reports.view"], perm: "reports.view; export needs reports.export", api: [["GET /api/v1/reports/{category}/{key}?dateFrom&dateTo…", "E"], ["GET …/export/{xlsx|csv|pdf}", "E"]],
     purpose: "Report rows rendered as cards; filters as a sheet; export/share only with permission. Reports return full row sets (no server paging) — large reports may be slow.", actions: ["Filters", "Export / share"], nav: [],
     render: () => C.frame(`${C.inner("Production achievement", { right: `<div class="ib">${C.icon("filter", "text", 22)}</div>` })}${C.tabs(["This month", "Last month", "Custom"])}${C.kpis([["Planned", "8,400", "pcs"], ["Completed", "6,120", "73%", "up"]])}${C.li({ ic: "factory", tone: "primary", title: "PO-2025-0331 · Polo T-shirt", sub: "240 planned · 120 done", right: "50%", chev: false })}${C.li({ ic: "factory", tone: "primary", title: "PO-2025-0318 · Kurti", sub: "500 planned · 310 done", right: "62%", chev: false })}${C.btn("Export PDF", "secondary", "file")}`, mNav("Modules")) });
-  later("ADM-003", "12-company-admin", "Employee summary", ADR, "masters_core.view + hrms_attendance_team.view", [["GET /api/v1/employees", "E"], ["company counts API", "G"]], "Headcount by department, present/absent.");
-  later("ADM-004", "12-company-admin", "Users & roles (view)", ["users with administration_users/roles.view"], "administration_users.view", [["GET /api/v1/users", "E"]], "Read-only on mobile; editing roles stays on web (proposal).");
 
   // ---------------- 13 COMPANY OWNER ----------------
   const OWR = ["SUPER_ADMIN", "MANAGEMENT", "any role with financial_reports.view + reports.view"];
@@ -156,11 +125,6 @@
   R({ id: "OWN-005", cat: "13-company-owner", title: "Financial summary", roles: OWR, perm: "financial_reports.view + reports.view", api: [["GET /api/v1/reports/accounts/profit-and-loss", "E"], ["GET /api/v1/reports/receivables/customer-outstanding", "E"], ["GET /api/v1/reports/payables/supplier-outstanding", "E"], ["GET /api/v1/reports/expenses/financial-accounts-balances", "E"], ["Cash-position KPI", "G"]],
     purpose: "P&L headline, AR/AP aging, bank/cash balances from existing reports. No dedicated cash-flow KPI exists (gap).", actions: ["Open each report"], nav: ["ADM-006"],
     render: () => C.frame(`${C.inner("Financial Summary", { sub: "November 2025" })}${C.kpis([["Revenue (month)", "₹ 1.62 Cr", "", "up"], ["Expenses (month)", "₹ 18.9 L", "", "mute"], ["Receivables", "₹ 38.2 L", "₹ 9.1 L > 60 days", "down"], ["Payables", "₹ 21.7 L", "", "mute"]])}<div class="card">${C.sech("Bank & cash")}${C.kv([["HDFC Current", "₹ 24,18,300"], ["SBI Current", "₹ 6,02,110"], ["Cash in hand", "₹ 48,250"]])}</div>${C.banner("warning", "Cash-flow trend", "No existing cash-flow KPI — BACKEND_GAP, approval required.")}`, mNav("Modules")) });
-  later("OWN-003", "13-company-owner", "Production analytics", OWR, "reports.view + production.view", [["production/production-achievement, production-rejection, line-wise-production", "E"]], "Target vs actual, efficiency (no SAM efficiency exists in ERP).");
-  later("OWN-004", "13-company-owner", "Inventory analytics", OWR, "reports.view + inventory.view", [["inventory/stock-valuation, low-stock-report, slow-moving-dead-stock", "E"]], "Stock value, low and dead stock.");
-  later("OWN-006", "13-company-owner", "HRMS summary", OWR, "hrms_attendance_records.view", [["attendance/monthly-attendance-summary", "E"]], "Present/absent trend, pending leave.");
-  later("OWN-007", "13-company-owner", "Alerts center", OWR, "per module", [["Alert aggregation", "G"]], "Delays, low stock, overdue receivables.");
-  later("EXT-001", "05-production-manager", "External unit (contractor) home", ["EXTERNAL_UNIT_USER"], "production.view/create (own contractor)", [["GET /api/v1/job-work-orders?contractorId=", "E"]], "Discovered role, not in the brief — decision D-D05.");
 
   // ---------------- 14 SHARED ----------------
   R({ id: "SHR-001", cat: "14-shared-components", title: "Component sheet", roles: ["design reference"], perm: "—", api: [["none", "E"]],

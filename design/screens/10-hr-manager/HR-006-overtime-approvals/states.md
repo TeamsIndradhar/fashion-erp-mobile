@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Overtime decisions.
+Screen-specific: Overtime hours computed by the ERP; approve or reject.
 

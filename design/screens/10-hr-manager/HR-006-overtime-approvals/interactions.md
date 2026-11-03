@@ -1,6 +1,7 @@
 # HR-006 — interactions
 
-- **No user actions** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **Approve** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **Reject** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
 
 Navigation: —.
 Double-submit protection: primary actions show loading and are disabled until the server answers.
