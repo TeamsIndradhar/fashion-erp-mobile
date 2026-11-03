@@ -4,7 +4,7 @@
 |---|---|
 | Category | Production Worker (`03-production-worker`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=WRK-007` |
 | Required permission | `production.view (own assignment)` |
@@ -23,6 +23,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `POST /api/v1/job-order-assignments/{id}/handback {quantity, reason}` | EXISTING (via mobile auth adapter) |
+| `Voice note on hand-back reason — no attachment target yet (CR-001)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Hand back

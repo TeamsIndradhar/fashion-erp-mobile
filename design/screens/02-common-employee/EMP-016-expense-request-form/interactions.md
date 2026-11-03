@@ -1,6 +1,7 @@
 # EMP-016 — interactions
 
 - **Take photo of bill** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
+- **Record voice note (instead of typing)** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
 - **Submit** — buttons for an action are shown only when the user holds its permission; the server re-checks every call.
 
 Navigation: EMP-018.

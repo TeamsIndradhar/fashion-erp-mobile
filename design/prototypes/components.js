@@ -54,6 +54,7 @@
     award: "M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM8.2 13.9 7 23l5-3 5 3-1.2-9.1",
     building: "M3 21h18M5 21V5l7-3 7 3v16M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1",
     mic: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3",
+    play: "M8 5v14l11-7z",
     sparkle: "M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8",
   };
   const COLOR = { primary: "#4130cc", success: "#0b973d", danger: "#e02130", warning: "#f08c00", info: "#2f6fed", purple: "#7c5cf2", text: "#07082a", muted: "#8789a8", white: "#fff" };
@@ -123,4 +124,19 @@
   g.C = C;
   g.SCREENS = g.SCREENS || [];
   g.REG = g.REG || ((s) => g.SCREENS.push(s));
+})(typeof window !== "undefined" ? window : globalThis);
+
+/* Voice note (CR-001, 2026-11-03): users who can't type record a voice note instead.
+   state: idle | rec | done. */
+(function (g) {
+  const C = g.C;
+  const wave = (n = 22, seed = 3) => `<div class="wave">${Array.from({ length: n }, (_, i) => `<i style="height:${6 + ((i * seed * 7) % 16)}px"></i>`).join("")}</div>`;
+  C.voice = (state = "idle", { label = "Record voice note", secs = "0:24", hint = "Tap to record · max 2 min" } = {}) => {
+    if (state === "rec") return `<div class="voice rec"><div class="mic">${C.icon("mic", "white", 22)}</div><div class="vt"><b>Recording… ${secs}</b>${wave(20, 5)}</div><div class="ib">${C.icon("check", "danger", 24)}</div></div>`;
+    if (state === "done") return `<div class="voice done"><div class="mic">${C.icon("play", "white", 22)}</div><div class="vt"><b>Voice note · ${secs}</b>${wave(24, 3)}</div><div class="ib">${C.icon("x", "danger", 20)}</div></div>`;
+    return `<div class="voice"><div class="mic">${C.icon("mic", "white", 22)}</div><div class="vt"><b>${label}</b><span>${hint}</span></div></div>`;
+  };
+  /* Remark field + voice: "type or record". */
+  C.remark = (label, value = "", voiceState = "idle", opts = {}) =>
+    `${C.fld(label + " (type or record)", value || "Type here…", { ph: !value, ...opts })}<div class="or">— or —</div>${C.voice(voiceState)}`;
 })(typeof window !== "undefined" ? window : globalThis);

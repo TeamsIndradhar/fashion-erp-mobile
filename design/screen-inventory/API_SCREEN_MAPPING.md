@@ -1,4 +1,4 @@
-# Screen → API mapping (Design v1.0 · Batch 1 · 2026-11-03)
+# Screen → API mapping (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
 
 Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N** new thin mobile route already designed in `docs/05_API_CONTRACT.md` · **G** `BACKEND_GAP — APPROVAL_REQUIRED` (no fake responses will be built in its place).
 
@@ -41,16 +41,20 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | EMP-013 | `GET /api/v1/attendance/me/day?date=YYYY-MM-DD` | E |
 | EMP-013 | `GET /api/v1/attendance/sessions/{id}/selfie/{in\|out}` | E |
 | EMP-014 | `PUT /api/v1/attendance/me/remark {date, remark}` | E |
+| EMP-014 | `Voice note on attendance day remark — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-015 | `GET /api/v1/payment-requests?view=mine` | E |
 | EMP-015 | `GET /api/v1/salary/advances` | E |
 | EMP-015 | `GET /api/v1/leave-requests?mine=true` | E |
 | EMP-015 | `GET /api/v1/attendance-corrections?mine=true` | E |
 | EMP-016 | `POST /api/v1/payment-requests (existing; request type = Expenditure voucher)` | E |
+| EMP-016 | `POST /api/v1/record-attachments/PAYMENT_REQUEST/{recordId} (voice note, existing shared attachments API)` | E |
 | EMP-017 | `GET /api/v1/payment-requests?view=mine&status=` | E |
 | EMP-018 | `GET /api/v1/payment-requests/{id}` | E |
 | EMP-018 | `POST /api/v1/payment-requests/{id}/cancel` | E |
+| EMP-018 | `GET /api/v1/record-attachments/PAYMENT_REQUEST/{id} (bill photo + voice note)` | E |
 | EMP-019 | `GET/POST /api/v1/salary/advances` | E |
 | EMP-019 | `POST /api/v1/salary/advances/{id}/cancel` | E |
+| EMP-019 | `Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | EMP-020 | `GET /api/v1/notifications` | E |
 | EMP-020 | `POST /api/v1/notifications/mark-all-read` | E |
 | EMP-021 | `PATCH /api/v1/notifications/{id}/read` | E |
@@ -76,9 +80,11 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | WRK-003 | `GET /api/v1/job-orders/{id}` | E |
 | WRK-003 | `GET /api/v1/job-orders/{id}/slips` | E |
 | WRK-004 | `POST /api/v1/job-orders/{id}/self-progress` | E |
+| WRK-004 | `Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-005 | `POST /api/v1/job-orders/{id}/self-progress → 201` | E |
 | WRK-006 | `GET /api/v1/job-order-progress-entries/mine` | E |
 | WRK-007 | `POST /api/v1/job-order-assignments/{id}/handback {quantity, reason}` | E |
+| WRK-007 | `Voice note on hand-back reason — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | WRK-008 | `GET /api/v1/lots/{id}` | E |
 | WRK-009 | `GET /api/v1/piece-rate-earnings` | E |
 | WRK-010 | `GET /api/v1/job-orders/my-assignments → error (not linked / self-entry off)` | E |
@@ -92,6 +98,7 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | SUP-005 | `POST /api/v1/job-order-progress-entries/{id}/approve {approvalRemark?}` | E |
 | SUP-005 | `POST /api/v1/job-order-progress-entries/{id}/reject (remark required)` | E |
 | SUP-005 | `PATCH /api/v1/job-order-progress-entries/{id}` | E |
+| SUP-005 | `Voice note on progress entries / approval remarks — no attachment target yet (CR-001)` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | SUP-006 | `GET /api/v1/production-orders (scoped)` | E |
 | SUP-006 | `Team job-order list / team pending counts` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 | SUP-007 | `GET /api/v1/reports/production/worker-output-register?period=` | E |
@@ -195,11 +202,18 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 | SHR-002 | `GET /api/mobile/v1/me (viewable modules + action sets)` | N |
 | SHR-003 | `none` | E |
 | SHR-004 | `existing EntitlementService via PermissionService` | E |
+| SHR-005 | `GET/POST /api/v1/record-attachments/{module}/{recordId} (existing; audio webm/ogg/mp3/m4a/wav/aac accepted)` | E |
+| SHR-005 | `Targets missing for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks` | G — **BACKEND_GAP — APPROVAL_REQUIRED** |
 
 ## Screens with a backend gap
 - AUTH-005 Forgot password (info): none — ERP has no self-service reset (admin reset only)
 - EMP-005 Punch – selfie: camera only; face step per decision Q-01 (OPEN)
+- EMP-014 Add attendance remark: Voice note on attendance day remark — no attachment target yet (CR-001)
+- EMP-019 Salary advance request: Voice note on the linked SALARY_ADVANCE payment request via record-attachments/PAYMENT_REQUEST — needs the request id in the advance response (to verify)
+- WRK-004 Submit production progress: Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)
+- WRK-007 Hand back pieces: Voice note on hand-back reason — no attachment target yet (CR-001)
 - SUP-001 Supervisor Home: Team dashboard counts (team size, active JOs) — server-rendered only
+- SUP-005 Approve / reject progress entry: Voice note on progress entries / approval remarks — no attachment target yet (CR-001)
 - SUP-006 Team work status: Team job-order list / team pending counts
 - PM-001 Production Manager Home: Numeric KPI endpoint
 - PM-006 QC inspections: QC list API
@@ -212,4 +226,5 @@ Kinds: **E** existing ERP route reused through the mobile bearer adapter · **N*
 - OWN-001 Owner Dashboard: Numeric KPI endpoint (values come as formatted strings today)
 - OWN-005 Financial summary: Cash-position KPI
 - OWN-007 Alerts center: Alert aggregation
+- SHR-005 Voice note (record instead of typing): Targets missing for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks
 

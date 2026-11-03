@@ -4,13 +4,13 @@
 |---|---|
 | Category | Production Worker (`03-production-worker`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=WRK-004` |
 | Required permission | `production.view + self-entry guards (linked employee, selfEntryEnabled, real assignment, work skill)` |
 
 ## Purpose
-Worker logs own quantities; entry is created PENDING for supervisor approval (existing rule). Capacity check: completed + rejected + damaged − extra ≤ assigned.
+Worker logs own quantities (and can record a voice note instead of typing remarks); entry is created PENDING for supervisor approval (existing rule). Capacity check: completed + rejected + damaged − extra ≤ assigned.
 
 ## User types / ERP roles
 - PRODUCTION_WORKER
@@ -23,6 +23,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `POST /api/v1/job-orders/{id}/self-progress` | EXISTING (via mobile auth adapter) |
+| `Voice note on production progress entries (needs a JOB_ORDER_PROGRESS_ENTRY target) — no attachment target yet (CR-001)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Submit

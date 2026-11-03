@@ -146,7 +146,7 @@ Release builds: no response logging, Hermes, R8 on Android; SecureStore excluded
 
 ## 10. Privacy
 
-- **Minimisation:** one location fix per punch (plus a live fix while the dashboard is open, never stored); no background location; no contacts/storage/microphone/photo-library permission; no IMEI/serial/advertising id; no installed-app scanning; no analytics SDK in v1.
+- **Minimisation:** one location fix per punch (plus a live fix while the dashboard is open, never stored); no background location; no contacts/storage/photo-library permission; **microphone only when the user taps "record voice note"** (CR-001 — voice notes are uploaded with the record, same access rules, no background recording); no IMEI/serial/advertising id; no installed-app scanning; no analytics SDK in v1.
 - **Biometric data:** enrolled photos are images today (no stored descriptors). Any server-side matching or vendor liveness needs an explicit notice/consent and retention rule.
 - **Law:** India's Digital Personal Data Protection Act, 2023 likely applies to selfies and location. The company needs a notice, purpose, retention period (selfie retention today: **no deletion job exists** — Q-15) and a grievance contact. Store listings need a public privacy policy URL.
 - **Transparency to employees:** the app explains why location, camera and device checks are used, before OS prompts.

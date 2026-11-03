@@ -33,8 +33,8 @@ Secrets go in the deployment's secret store, never in git. Documented in `fashio
 Identifiers (D-036, APPROVED): `in.indradhar.fashionerp`; variants `in.indradhar.fashionerp.dev`, `in.indradhar.fashionerp.preview`. The **App Attest rpId uses the exact Team ID + bundle id**; the **Play Integrity package name** must match — fix them before Phase 4.
 
 Permissions:
-- iOS: `NSLocationWhenInUseUsageDescription`, `NSCameraUsageDescription`; App Attest entitlement (`com.apple.developer.devicecheck.appattest-environment`).
-- Android: `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `CAMERA`, `INTERNET`. **Not**: `ACCESS_BACKGROUND_LOCATION`, `QUERY_ALL_PACKAGES`, storage. Check the merged manifest after every new module.
+- iOS: `NSLocationWhenInUseUsageDescription`, `NSCameraUsageDescription`, `NSMicrophoneUsageDescription` (voice notes, CR-001); App Attest entitlement (`com.apple.developer.devicecheck.appattest-environment`).
+- Android: `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `CAMERA`, `RECORD_AUDIO` (voice notes, CR-001), `INTERNET`. **Not**: `ACCESS_BACKGROUND_LOCATION`, `QUERY_ALL_PACKAGES`, storage. Check the merged manifest after every new module.
 
 ## 4. Accounts, setup and costs
 

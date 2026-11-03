@@ -1,4 +1,4 @@
-# Screen approval status (Design v1.0 · Batch 1 · 2026-11-03)
+# Screen approval status (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
 
 Statuses: NOT_STARTED → DESIGN_IN_PROGRESS → READY_FOR_REVIEW → CHANGES_REQUESTED → APPROVED → IMPLEMENTED → VERIFIED.
 Only the user can set APPROVED (record it in `design/approvals/APPROVED_SCREENS.md`).
@@ -122,4 +122,5 @@ Only the user can set APPROVED (record it in `design/approvals/APPROVED_SCREENS.
 | SHR-002 | All Modules (permission-driven) | READY_FOR_REVIEW | 1 | — |
 | SHR-003 | Standard states | READY_FOR_REVIEW | 1 | — |
 | SHR-004 | Module not enabled for company | READY_FOR_REVIEW | 1 | — |
+| SHR-005 | Voice note (record instead of typing) | READY_FOR_REVIEW | 1 | — |
 

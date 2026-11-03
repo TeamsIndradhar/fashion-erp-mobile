@@ -54,6 +54,10 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-03 — Claude Code — CR-001 voice notes
+**Done:** user asked for a voice-recording option next to every upload/remark (users who cannot type). Added `VoiceNote` / `RemarkField` components; applied to EMP-014, EMP-016, EMP-018, EMP-019, WRK-004, WRK-007, SUP-005; new SHR-005; design v1.1; D-D10 approved. Backend: existing for payment requests; gap G-14 / B-22 for production entries, attendance remark, leave, corrections, outdoor clarification, approval remarks. Microphone permission added to docs 08 and 10.
+**Not done:** batch-2 screens will apply the same rule when designed.
+
 ### Handoff — 2026-11-03 — Claude Code — Phase 0, design batch 1
 **Goal:** role-based UI/UX design blueprint (user brief "Design first, coding later").
 **Done:** ERP audit for design (`design/screen-inventory/ERP_AUDIT_FOR_DESIGN.md`: 15 roles, 59 modules, 14 actions, 13 packages, ~75 web pages, APIs, 13 gaps); design system (9 docs, colours sampled from the reference screenshots); 7 user flows; 117-screen inventory with permission + API mapping; 81 screen mockups (PNG + spec + interactions + states) in 14 categories; clickable prototype; approvals docs; roadmap revision 3.

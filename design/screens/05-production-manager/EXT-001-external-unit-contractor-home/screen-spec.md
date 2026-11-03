@@ -4,7 +4,7 @@
 |---|---|
 | Category | Production Manager (`05-production-manager`) |
 | Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | not designed yet (batch 2) |
 | Prototype | `design/prototypes/index.html?screen=EXT-001` |
 | Required permission | `production.view/create (own contractor)` |

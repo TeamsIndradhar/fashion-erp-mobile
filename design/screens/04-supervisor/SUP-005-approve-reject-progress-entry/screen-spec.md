@@ -4,7 +4,7 @@
 |---|---|
 | Category | Supervisor / Team Leader (`04-supervisor`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SUP-005` |
 | Required permission | `production.approve (no self-approval)` |
@@ -26,6 +26,7 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | `POST /api/v1/job-order-progress-entries/{id}/approve {approvalRemark?}` | EXISTING (via mobile auth adapter) |
 | `POST /api/v1/job-order-progress-entries/{id}/reject (remark required)` | EXISTING (via mobile auth adapter) |
 | `PATCH /api/v1/job-order-progress-entries/{id}` | EXISTING (via mobile auth adapter) |
+| `Voice note on progress entries / approval remarks — no attachment target yet (CR-001)` | BACKEND_GAP — APPROVAL_REQUIRED |
 
 ## Available actions
 - Approve

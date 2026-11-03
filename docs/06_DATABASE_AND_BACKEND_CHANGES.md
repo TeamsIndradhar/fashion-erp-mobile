@@ -27,6 +27,7 @@ Every item needs approval. All schema changes are **additive** (new tables/enums
 | B-19 | `punch()` gets one optional trailing `options` param: `{ meta?, forceReview? }`, used inside its existing `$transaction`; web calls unchanged | write metadata atomically; route SUSPICIOUS punches to review | 5 |
 | B-20 | (optional) web Admin: list/revoke a user's mobile devices; approve pending devices | HR device control | 7 |
 | B-21 | (conditional) `AttendanceSettings.requireFaceOnMobile` | only if Q-01 picks "selfie-only on mobile" | 5 |
+| B-22 | Voice-note attachment targets for production progress entries / hand-backs, attendance day remark, leave requests, attendance corrections, outdoor clarification, approval remarks (CR-001, gap G-14) — add entries to `src/core/attachments/attachment-targets.ts` with each record's own scope rule; payment requests already supported | users who cannot type (user request) | 3–5 |
 
 ## 2. `mobile_sessions` (B-01)
 

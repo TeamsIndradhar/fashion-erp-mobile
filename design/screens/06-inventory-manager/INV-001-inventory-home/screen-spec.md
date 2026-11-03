@@ -4,7 +4,7 @@
 |---|---|
 | Category | Inventory Manager (`06-inventory-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=INV-001` |
 | Required permission | `inventory.view / fg_inventory.view / material_request.view` |

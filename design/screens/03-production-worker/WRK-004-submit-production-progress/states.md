@@ -10,5 +10,5 @@
 | Session expired | Single refresh attempt; on failure → AUTH-007. |
 | Success | Toast or result screen using the server's success message. |
 
-Screen-specific: Worker logs own quantities; entry is created PENDING for supervisor approval (existing rule). Capacity check: completed + rejected + damaged − extra ≤ assigned.
+Screen-specific: Worker logs own quantities (and can record a voice note instead of typing remarks); entry is created PENDING for supervisor approval (existing rule). Capacity check: completed + rejected + damaged − extra ≤ assigned.
 

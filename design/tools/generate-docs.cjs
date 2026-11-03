@@ -5,7 +5,7 @@ const path = require("path");
 const { loadScreens, folderOf } = require("./load-screens.cjs");
 
 const DESIGN = path.join(__dirname, "..");
-const VERSION = "Design v1.0 · Batch 1 · 2026-11-03";
+const VERSION = "Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03";
 const CATS = {
   "01-authentication": ["Authentication", "Everyone before sign-in"],
   "02-common-employee": ["Common Employee", "Every employee with HRMS self-service (most roles)"],

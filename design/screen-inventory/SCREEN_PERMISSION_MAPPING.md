@@ -1,4 +1,4 @@
-# Screen → permission mapping (Design v1.0 · Batch 1 · 2026-11-03)
+# Screen → permission mapping (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
 
 Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A screen is shown when the user holds the key **and** the company entitlement is on (`module-entitlements.ts`). Roles are listed only as examples of who holds the key by default — roles are per company and customizable, and per-user GRANT/DENY overrides exist, so the app must use the keys from `GET /api/mobile/v1/me` (gap G-01), never role names.
 
@@ -121,4 +121,5 @@ Permission keys are `module.action` from `fashion-erp/src/config/rbac.ts`. A scr
 | SHR-002 | All Modules (permission-driven) | `view on each module + entitlement` | every user (content depends on permissions) |
 | SHR-003 | Standard states | `—` | all screens |
 | SHR-004 | Module not enabled for company | `entitlement off → 403 MODULE_NOT_ENABLED` | all |
+| SHR-005 | Voice note (record instead of typing) | `same as the record it is attached to; microphone permission on the phone` | every user, every remark / reason field and upload area |
 

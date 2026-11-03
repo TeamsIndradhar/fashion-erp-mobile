@@ -82,3 +82,10 @@ Dashboard · AI Garment Flow (3) · AI Designer (2) · Masters · CRM (16 pages)
 | Support | `/support-tickets` (web page for every user) | session | own |
 
 Additional gaps: G-10 no push notifications (needs a push-token table + sender); G-11 no notification for production entry approve/reject; G-12 employee advances & expenses have no "own" scope (accountant tools only); G-13 `employeeId` not in session (services look it up — fine for the adapter).
+
+## 7. Voice notes (CR-001, 2026-11-03)
+
+- **Existing:** shared record-attachments API `GET/POST /api/v1/record-attachments/{module}/{recordId}` (files + voice notes, max 10 files per upload) — `fashion-erp/src/app/api/v1/record-attachments/[module]/[recordId]/route.ts`, targets in `src/core/attachments/attachment-targets.ts`. File storage accepts `audio/webm, ogg, mpeg, mp4, x-m4a, wav, x-wav, aac` (`src/core/file-storage/FileStorage.ts:23-31`). Web recorder `src/components/ui/VoiceRecorder.tsx` (default max 300 s).
+- **Voice-enabled targets today:** EXPENSE, EXPENSE_PAYMENT, EMPLOYEE_ADVANCE, EMPLOYEE_ADVANCE_SETTLEMENT, INTERNAL_TRANSFER, **PAYMENT_REQUEST**, SUPPLIER_CREDIT_NOTE, PAYMENT.
+- **G-14 (BACKEND_GAP — APPROVAL_REQUIRED):** no attachment target for production progress entries / job-order hand-backs, attendance day remark, leave requests (`LEAVE_REQUEST` enum value exists, no target), attendance corrections (`ATTENDANCE_CORRECTION` exists, own documents route — audio support unverified), outdoor clarification proof (image/PDF only), approval/reject remarks, support tickets (unverified). The ERP design makes adding a target small: "a module added here gets file upload, voice recording, preview and delete for free" (comment in `attachment-targets.ts`) — each still needs its own scope rule (e.g. worker sees only own entries).
+- **Mobile:** recording needs the **microphone permission** (Android `RECORD_AUDIO`, iOS `NSMicrophoneUsageDescription`), asked only when the user first taps record.

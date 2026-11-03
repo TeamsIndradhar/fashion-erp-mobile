@@ -4,7 +4,7 @@
 |---|---|
 | Category | Company Admin (`12-company-admin`) |
 | Status | **NOT_STARTED** (batch 2) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | not designed yet (batch 2) |
 | Prototype | `design/prototypes/index.html?screen=ADM-003` |
 | Required permission | `masters_core.view + hrms_attendance_team.view` |

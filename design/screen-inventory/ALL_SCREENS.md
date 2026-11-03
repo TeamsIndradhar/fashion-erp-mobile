@@ -1,8 +1,8 @@
-# All screens (Design v1.0 · Batch 1 · 2026-11-03)
+# All screens (Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03)
 
 Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.cjs` — do not edit by hand.
 
-**117 screens** · **81 designed (batch 1, READY_FOR_REVIEW)** · **36 pending (batch 2, NOT_STARTED)** · 15 screens touch a BACKEND_GAP.
+**118 screens** · **82 designed (batch 1, READY_FOR_REVIEW)** · **36 pending (batch 2, NOT_STARTED)** · 21 screens touch a BACKEND_GAP.
 
 ## Authentication (11/11)
 
@@ -182,7 +182,7 @@ Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.c
 | OWN-006 | HRMS summary | NOT_STARTED | 2 |
 | OWN-007 | Alerts center | NOT_STARTED | 2 |
 
-## Shared Components (4/4)
+## Shared Components (5/5)
 
 | ID | Screen | Status | Batch |
 |---|---|---|---|
@@ -190,4 +190,5 @@ Generated from `design/prototypes/screens-*.js` by `design/tools/generate-docs.c
 | SHR-002 | All Modules (permission-driven) | READY_FOR_REVIEW | 1 |
 | SHR-003 | Standard states | READY_FOR_REVIEW | 1 |
 | SHR-004 | Module not enabled for company | READY_FOR_REVIEW | 1 |
+| SHR-005 | Voice note (record instead of typing) | READY_FOR_REVIEW | 1 |
 

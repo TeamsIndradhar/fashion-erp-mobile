@@ -211,3 +211,18 @@ body.bare .screen { border-radius: 0; height: var(--cap-h, 844px); }
 .bar i.hi { background: var(--primary); }
 .progress { height: 8px; border-radius: 4px; background: #ebe8fb; overflow: hidden; }
 .progress i { display: block; height: 100%; background: var(--success); }
+
+/* Voice note (CR-001): offered next to every remark / reason field and every upload area. */
+.voice { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px dashed #c9c2f7; border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
+.voice.rec { border: 1.5px solid var(--danger); background: #fff7f8; }
+.voice.done { border-style: solid; border-color: var(--border); }
+.voice .mic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--primary); }
+.voice.rec .mic { background: var(--danger); box-shadow: 0 0 0 6px rgba(224, 33, 48, .15); }
+.voice.done .mic { background: var(--success); }
+.voice .vt { flex: 1; min-width: 0; }
+.voice .vt b { font-size: 13.5px; display: block; }
+.voice .vt span { font-size: 11.5px; color: var(--text-2); }
+.wave { display: flex; align-items: center; gap: 2px; height: 22px; }
+.wave i { width: 3px; border-radius: 2px; background: #b9b0f3; }
+.voice.rec .wave i { background: #f19aa2; }
+.or { text-align: center; font-size: 11.5px; color: var(--text-2); margin: -4px 0 8px; }

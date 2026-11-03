@@ -4,7 +4,7 @@
 |---|---|
 | Category | Sales Manager (`08-sales-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=SAL-001` |
 | Required permission | `sales_orders.view; crm.view; sampling.view` |

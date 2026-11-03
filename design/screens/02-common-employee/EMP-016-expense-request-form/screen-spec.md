@@ -4,7 +4,7 @@
 |---|---|
 | Category | Common Employee (`02-common-employee`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=EMP-016` |
 | Required permission | `payment_requests.create` |
@@ -22,9 +22,11 @@ Uses the shared `AppHeader` (home) or inner header (back + title); bottom naviga
 | Endpoint | Kind |
 |---|---|
 | `POST /api/v1/payment-requests (existing; request type = Expenditure voucher)` | EXISTING (via mobile auth adapter) |
+| `POST /api/v1/record-attachments/PAYMENT_REQUEST/{recordId} (voice note, existing shared attachments API)` | EXISTING (via mobile auth adapter) |
 
 ## Available actions
 - Take photo of bill
+- Record voice note (instead of typing)
 - Submit
 
 ## Validation

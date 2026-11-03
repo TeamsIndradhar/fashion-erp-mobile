@@ -4,7 +4,7 @@
 |---|---|
 | Category | HR Manager (`10-hr-manager`) |
 | Status | **READY_FOR_REVIEW** (batch 1) |
-| Design version | Design v1.0 · Batch 1 · 2026-11-03 |
+| Design version | Design v1.1 · Batch 1 (+CR-001 voice notes) · 2026-11-03 |
 | Mockup | [screen.png](screen.png) |
 | Prototype | `design/prototypes/index.html?screen=HR-001` |
 | Required permission | `hrms_attendance_team.view; hrms_leave.approve; hrms_attendance_outdoor.approve` |

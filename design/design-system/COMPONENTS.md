@@ -26,3 +26,12 @@ Every screen is composed only from these components. Changing a shared component
 | `BottomNavigation` | 4–5 permission-driven tabs | | ref-1, ref-2 |
 | `BottomSheet` · `ConfirmDialog` | Small actions, confirmations | | — |
 | `DemoDataTag` | "DEMO DATA" marker — **prototype only, never in the app** | | — |
+
+## Voice note (added 2026-11-03, CR-001)
+
+| Component | Purpose | States | Where |
+|---|---|---|---|
+| `VoiceNote` | Record a short voice note instead of typing — for users who cannot type | idle (tap mic) · recording (timer, waveform, stop) · recorded (play, delete, re-record) · microphone blocked | Next to **every** remark / reason / description field and **every** upload area (expense, production progress, hand-back, attendance remark, approvals, leave, corrections, support) |
+| `RemarkField` | "Type or record": text field + "— or —" + `VoiceNote` | text only · voice only · both | All remark fields |
+
+Rules: voice is optional, text always stays available; max 2 minutes; recorded as AAC/M4A on the phone (accepted by the ERP file storage); uploaded through the ERP's existing record-attachments API with the same permission as the record; playback shown on detail and approval screens. See SHR-005.
