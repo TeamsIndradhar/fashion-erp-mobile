@@ -1,0 +1,75 @@
+# 12 — Decision Log and Open Questions
+
+**Single source of truth for mobile decisions.** If any other document disagrees, this file wins and the other document must be corrected. Every decision is **PROPOSED** until the user approves it; then set **APPROVED (date)**. Technical recommendations are not business policy until approved. Never delete a row — supersede it.
+
+## Decisions
+
+| Id | Decision | Status | Rationale / alternatives | Docs |
+|---|---|---|---|---|
+| D-001 | React Native + Expo (dev builds, EAS) + TypeScript + expo-router | PROPOSED | team skills; native modules via Expo Modules API. Rejected: Flutter, native ×2, bare RN, PWA | 02 §1 |
+| D-002 | App **and its docs** live in a **separate repository** `fashion-erp-mobile` (local `D:/office-data/claude-projects/fashion-erp-mobile`, no GitHub remote yet); `fashion-erp` gets only the backend changes | **APPROVED 2026-11-03 (user)** — supersedes the earlier "`fashion-erp/mobile/` folder" proposal | user: "same repo me nhi rakhna hai"; also removes the need for root tooling excludes (B-16 dropped) and gives the app its own agent instruction files | 02 §2 |
+| D-003 | **Thin bearer adapter inside `requireSession()`** + bearer **route allowlist** (proxy); existing `/api/v1` routes reused; new `/api/mobile/v1` routes only for missing functions | PROPOSED (revised 2026-11-03; earlier draft had an all-new namespace) | maximises API reuse; no second auth system; least privilege via allowlist. Rejected: NextAuth cookie in RN; duplicate route set | 03 §2, 05 |
+| D-004 | Opaque access token 15 min; opaque rotating refresh 30 d idle / 90 d absolute; SHA-256 hashes in `mobile_sessions`; reuse detection with 30 s grace | PROPOSED — values to validate (Q-04) | instant revocation; no JWT lib/secret. Alt: signed JWT access token | 03 §3 |
+| D-005 | Login = email + password via existing `authenticateTenantUser()`; company from user | PROPOSED | same rules/lockout as web | 03 §4.1 |
+| D-006 | Live user checks extracted once and shared by cookie and bearer paths | PROPOSED | no drift; unchanged `api-route.test.ts` | 03 §2.1 |
+| D-007 | No duplicated business logic; new routes call existing services | PROPOSED | CLAUDE.md reuse rule | 05 §4 |
+| D-008 | Online-only punching; server time only | PROPOSED | live proof at punch time | 04 §1 |
+| D-009 | Foreground location only; never background | PROPOSED | privacy, store policy | 04 §4 |
+| D-010 | Idempotent punch (`clientPunchId`), lookup before challenge check; metadata in new `hrms_attendance_punch_meta` | PROPOSED | safe retries; attendance tables untouched | 04 §8, 06 §4 |
+| D-011 | Server-side risk engine: reasons with strengths (INFO/WEAK/STRONG/CRITICAL), levels NORMAL/SUSPICIOUS/HIGH_RISK by corroboration rules; SUSPICIOUS → existing outdoor review; HIGH_RISK → review during pilot, block only if approved | PROPOSED | explainable, configurable; no single weak signal decides | 08 §6 |
+| D-012 | Face verification on mobile | **OPEN** (Spike A, Q-01) | existing model trusts client (SW-1); not mandatory without approval | 04 §7, 08 §7 |
+| D-013 | API types hand-written in `src/api/types.ts`; contract fixtures from server tests | PROPOSED | app can't import server code | 02 §2 |
+| D-014 | Tokens + installation id only in SecureStore (this-device-only) | PROPOSED | Keychain/Keystore | 03 §3 |
+| D-015 | No map in v1 | PROPOSED | scope, keys/tiles policy | 07 |
+| D-016 | No self-service forgot password in v1 | PROPOSED | ERP has none | 03 §4.6 |
+| D-017 | No certificate pinning in v1 | PROPOSED | rotation risk; revisit Phase 7 | 08 §2 |
+| D-018 | App version gate (`X-App-Version`, 426) | PROPOSED | force updates safely | 05 |
+| D-019 | Bearer token failures return 401 codes; web keeps 403 "Sign in required." | PROPOSED | app must distinguish refresh vs forbidden | 05 §1 |
+| D-020 | Conflict between root `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` ("never ask / no approval") and the approval-gated mobile process: agents **stop and report**, never silently override; repository-wide instruction change only with user approval | PROPOSED (revised) | user rule §18 | 13 §1 |
+| D-021 | No reverse geocoding in v1 | PROPOSED | no extra vendor | 04 |
+| D-022 | No new RBAC module; attendance access = `hrms_attendance.view/create` | PROPOSED (Q-10) | existing role defaults | 03 §6 |
+| D-023 | Expo SDK = latest stable at Phase 2 start (record version) | PROPOSED | — | 02 §1 |
+| D-024 | Device registration (`mobile_devices`), app-generated installation UUID, no hardware ids; policy max devices + optional HR approval per company | PROPOSED (Q-16) | lost/replace/revoke; privacy-conscious | 03 §5, 06 §3 |
+| D-025 | Integrity: Play Integrity (Android) and App Attest (iOS), verified **on the server**; DeviceCheck not in v1 | PROPOSED | official APIs; client results never trusted | 08 §4–5 |
+| D-026 | Stateless HMAC punch/registration challenge (120 s), single use via unique `challenge_id` / device row | PROPOSED | replay prevention with minimal storage | 06 §1 |
+| D-027 | Client-reported signals (mock flag, developer options, ADB, root/jailbreak/emulator heuristics, accuracy, fix time) are WEAK at most; "clean" values never lower risk; developer options/USB debugging never block alone | PROPOSED | user rule §8; attacker controls the client | 08 §3 |
+| D-028 | Existing radius and accuracy rules unchanged; no silent increase; fallback options decided after the factory field test | PROPOSED (Q-13) | user rule §7 | 04 §6 |
+| D-029 | Factory field test (Spike C) before any threshold decision | PROPOSED | 200–225 m observation | 09 §5 |
+| D-030 | Mobile punch uses a new thin route calling the existing `punch()` (not the web punch route), plus an optional `options` param on `punch()` | PROPOSED | mobile contract needs challenge/integrity/idempotency; web route untouched | 01 §6, 06 §6 |
+| D-031 | Every new npm dependency (root or mobile) is logged here with reason; root additions need approval | PROPOSED | supply-chain control | 02 §1 |
+| D-032 | Risk policy starts in monitor mode (HIGH_RISK → review) for a pilot period before any BLOCK | PROPOSED (Q-02) | calibrate false positives | 08 §6.3 |
+
+## Open questions — need the user's answer
+
+| Id | Question | Blocks | Recommendation |
+|---|---|---|---|
+| Q-01 | Face on mobile: selfie-only + review, on-device match, server-side match, or server match + liveness vendor? With `requireFace=true` (default) mobile can't punch until this is decided. | Phase 5 | Spike A; prefer server-side match if feasible, else selfie-only with review |
+| Q-02 | Risk outcomes: SUSPICIOUS → review OK? HIGH_RISK → review or block? Pilot length in monitor mode? | Phase 6 | review/review, 4–6 week pilot |
+| Q-03 | Login by email only? | Phase 1 | yes |
+| Q-04 | Token lifetimes 15 min / 30 d / 90 d OK? | Phase 1 | yes |
+| Q-05 | Self-service forgot password needed later? | later | not v1 |
+| Q-06 | Map later? | later | later |
+| Q-07 | Phone fleet: personal, company-owned, shared? Min OS? Devices without Google Play services? | Phase 0/2 | personal + company, one user per device |
+| Q-08 | Distribution (public vs private), account owners, app name, bundle id, Apple Team ID | Phase 2/4 | public listing under the company's org accounts |
+| Q-09 | Hosting: single SaaS URL or per-customer servers? Staging URL? Number of server instances? **Partly answered 2026-11-03: production URL = `https://erp.indradhar.in/`** (health check OK, HTTPS + HSTS, behind nginx). Still open: is this the one URL for all customer companies, staging URL, instance count. | Phase 1 | use it as the fixed production base URL if it serves all companies |
+| Q-10 | Separate mobile permission? Refuse login without attendance access? | Phase 1 | no; show "not enabled" screen |
+| Q-11 | Hindi in v1? | Phase 2 | English, Hindi-ready |
+| Q-12 | Crash reporting vendor (logging "Phase E" is on hold) | Phase 7 | decide with Phase E |
+| Q-13 | Weak indoor GPS fallback: keep reject, or accept low-accuracy punches as SUSPICIOUS (changes an existing rule)? Add locations per building? | Phase 5 | decide after field test; first fix office points/locations |
+| Q-14 | Push notifications later? | later | later |
+| Q-15 | Selfie/location/risk-data retention and privacy notice owner (DPDP Act) | Phase 8 | define before release |
+| Q-16 | Device policy: max devices per employee (2?), HR approval for new devices?, ownership labels | Phase 1 | 2 devices, approval off by default |
+| Q-17 | **Conflict:** `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` say never ask/never seek approval. **Partly resolved:** the new `fashion-erp-mobile` repo has its own `AGENTS.md`/`GEMINI.md`/`CLAUDE.md` with the approval-gated rules. Still open for backend phases run inside `fashion-erp`: may we add a one-line pointer there? | backend phases | yes, a one-line pointer |
+| Q-18 | Approve D-003 (bearer adapter on existing routes + allowlist) vs an all-new `/api/mobile/v1` namespace? | Phase 1 | adapter |
+| Q-19 | Should employees be limited to their branch's office locations (no such link today)? | Phase 6 | not in v1; review data first |
+| Q-20 | What do employees see when flagged — neutral message only, or the reasons? | Phase 6 | neutral message; reasons for reviewers |
+| Q-21 | SW-6 (fixed temporary password for new logins) — fix in the web ERP (random temp passwords)? Outside mobile scope. | separate task | yes, as its own task |
+
+## Change history
+
+| Date | Change | By |
+|---|---|---|
+| 2026-11-03 | Initial D-001…D-023, Q-01…Q-15 | Claude Code |
+| 2026-11-03 | D-002 APPROVED: app + docs moved to separate repo `fashion-erp-mobile` (user); B-16 dropped; Q-17 partly resolved | user / Claude Code |
+| 2026-11-03 | User gave production URL `https://erp.indradhar.in/` (Q-09 partly answered) | user / Claude Code |
+| 2026-11-03 | Rev 2 (master blueprint): D-003 revised to adapter + reuse of existing routes; D-011 risk engine; D-020 revised (stop and report); added D-024…D-032, Q-16…Q-21; roadmap renumbered to the user's Phase 0–8 structure | Claude Code |
