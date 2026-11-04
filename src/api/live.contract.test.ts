@@ -91,6 +91,48 @@ run("live ERP contract", () => {
     // Reaches the create route through the bearer allowlist without creating a ticket.
     await expect(ep.raiseTicket({ subject: "Hi", category: "GENERAL", body: "too short" })).rejects.toMatchObject({ status: 400, code: "VALIDATION_ERROR" });
 
+    // Release 2 reads (no writes): each route is reachable with the bearer token and has the expected shape.
+    const types = await ep.leaveTypes();
+    expect(Array.isArray(types)).toBe(true);
+    if (types[0] && me.employee) expect(typeof (await ep.leaveBalance(me.employee.id, types[0].id, 2026)).remainingDays).toBe("number");
+    expect(Array.isArray(await ep.myLeaveRequests())).toBe(true);
+    expect(Array.isArray(await ep.myCorrections())).toBe(true);
+    expect(Array.isArray(await ep.myOutsideReviews())).toBe(true);
+    expect(Array.isArray((await ep.salaryHistory()).runs)).toBe(true);
+    expect(Array.isArray((await ep.salaryAdvances()).advances)).toBe(true);
+    if (me.viewableModules.includes("payment_requests")) {
+      const expenses = await ep.myExpenseRequests();
+      expect(Array.isArray(expenses)).toBe(true);
+      expect(Array.isArray(await ep.expenseAccounts())).toBe(true);
+      if (expenses[0]) {
+        expect((await ep.expenseRequest(expenses[0].id)).id).toBe(expenses[0].id);
+        expect(Array.isArray(await ep.expenseFiles(expenses[0].id))).toBe(true);
+      }
+    }
+    // LIVE_WRITES=1: create and cancel an expense request and a salary advance (dev data only),
+    // and check leave / correction payloads reach the server's own validation.
+    if (process.env.LIVE_WRITES === "1") {
+      const accounts = await ep.expenseAccounts();
+      if (accounts[0] && me.viewableModules.includes("payment_requests")) {
+        const key = `contract-${Date.now()}`;
+        const exp = await ep.raiseExpense({ amount: 12.5, payToName: "Contract test", accountId: accounts[0].id, paymentDueDate: "2030-01-01", remark: "mobile contract test", idempotencyKey: key });
+        expect(exp.status).toBe("PENDING_APPROVAL");
+        const again = await ep.raiseExpense({ amount: 12.5, payToName: "Contract test", accountId: accounts[0].id, paymentDueDate: "2030-01-01", remark: "mobile contract test", idempotencyKey: key });
+        expect(again.id).toBe(exp.id); // idempotent retry
+        expect((await ep.cancelExpense(exp.id)).status).toBe("CANCELLED");
+      }
+      if (me.employee) {
+        const adv = await ep.requestAdvance({ amount: 100, installments: 2, reason: "Contract test", requestKey: `contract-${Date.now()}` }).catch((e) => e);
+        if (adv?.id) expect((await ep.cancelAdvance(adv.id)).status).toBe("CANCELLED");
+        else expect(adv).toMatchObject({ code: "INVALID_STATE_TRANSITION" }); // already has an open advance
+      }
+      await expect(ep.applyLeave({ leaveTypeId: types[0]?.id ?? "00000000-0000-0000-0000-000000000000", days: [], reason: "" })).rejects.toMatchObject({ status: 400, message: expect.stringContaining("at least one date") });
+      await expect(ep.requestCorrection({ type: "MISSED_PUNCH", attendanceDate: "2026-11-01", checkIn: "09:00", reason: "x" })).rejects.toMatchObject({ status: 400, message: expect.stringContaining("Both login and logout") });
+    }
+
+    // Approve routes stay refused for a mobile token.
+    await expect(api.post("/api/v1/leave-requests/00000000-0000-0000-0000-000000000000/approve")).rejects.toMatchObject({ status: 403 });
+
     const devices = await ep.devices();
     expect(devices.some((d) => d.isCurrent)).toBe(true);
 

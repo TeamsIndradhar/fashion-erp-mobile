@@ -43,6 +43,8 @@ export default function Home() {
       <View style={styles.actions}>
         {me.employee && attendanceAllowed ? <Button title="Attendance" onPress={() => router.push("/attendance")} testID="home-attendance" /> : null}
         <View style={styles.gap} />
+        {me.employee ? <Button kind="secondary" title="My requests" onPress={() => router.push("/requests")} testID="home-requests" /> : null}
+        <View style={styles.gap} />
         <Button kind="secondary" title={unread > 0 ? `Alerts (${unread} new)` : "Alerts"} onPress={() => router.push("/notifications")} testID="home-alerts" />
         <View style={styles.gap} />
         <Button kind="secondary" title={strings.profile.title} onPress={() => router.push("/profile")} testID="home-profile" />

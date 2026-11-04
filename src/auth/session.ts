@@ -23,6 +23,15 @@ export function createSession(store: TokenStore, refreshCall: RefreshCall, onEnd
       return (await store.load())?.accessToken ?? null;
     },
 
+    /** For raw downloads (PDF, images) that can't replay through the client: refresh first when close to expiry. */
+    async freshAccessToken(now: number = Date.now()): Promise<string | null> {
+      const current = await store.load();
+      if (!current) return null;
+      const expiresAt = Date.parse(current.accessTokenExpiresAt);
+      if (Number.isFinite(expiresAt) && expiresAt - now > 60_000) return current.accessToken;
+      return (await this.refresh()).accessToken;
+    },
+
     async hasSession(): Promise<boolean> {
       return (await store.load()) !== null;
     },

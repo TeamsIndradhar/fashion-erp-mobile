@@ -217,3 +217,152 @@ export interface SupportTicket {
   createdAt: string;
   lastMessageAt: string | null;
 }
+
+// ---- Leave (existing /api/v1/leave-*) ----
+
+export type LeaveDuration = "FULL" | "F_HALF" | "S_HALF" | "QR1" | "QR2" | "QR3" | "QR4";
+
+export interface LeaveType {
+  id: string;
+  name: string;
+  annualDays: string;
+  isActive: boolean;
+}
+
+export interface LeaveBalance {
+  annualDays: number;
+  usedDays: number;
+  remainingDays: number;
+  carriedInDays: number;
+}
+
+export interface LeaveRequest {
+  id: string;
+  startDate: string;
+  endDate: string;
+  reason: string | null;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejectionReason: string | null;
+  createdAt: string;
+  leaveType: { id: string; name: string };
+  days: { id: string; leaveDate: string; durationType: LeaveDuration; fraction: string }[];
+}
+
+// ---- Attendance regularization (existing /api/v1/attendance-corrections) ----
+
+export type CorrectionType = "MISSED_PUNCH" | "MISSED_LOGOUT" | "CHANGE_LOGIN" | "CHANGE_LOGOUT" | "LEAVE_NOT_TAKEN" | "EMERGENCY_LEAVE";
+
+export interface CorrectionInput {
+  type: CorrectionType;
+  attendanceDate?: string;
+  sessionId?: string;
+  checkIn?: string;
+  checkOut?: string;
+  reason: string;
+}
+
+export interface CorrectionRequest {
+  id: string;
+  type: CorrectionType;
+  attendanceDate: string;
+  requestedPunchIn: string | null;
+  requestedPunchOut: string | null;
+  reason: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  rejectionReason: string | null;
+  createdAt: string;
+}
+
+// ---- Outside punch reviews (existing /api/v1/attendance/outdoor-rejections) ----
+
+export interface OutdoorRejection {
+  id: string;
+  sessionId: string;
+  originalCheckIn: string;
+  originalCheckOut: string | null;
+  trimmedCheckIn: string;
+  trimmedCheckOut: string | null;
+  rejectedReason: string | null;
+  status: "PENDING" | "IN_PROCESS" | "APPROVED" | "REJECTED";
+  clarificationReason: string | null;
+  clarifiedAt: string | null;
+  hasProof: boolean;
+  session: { id: string; attendanceRecord: { attendanceDate: string } | null } | null;
+}
+
+// ---- Salary (existing /api/v1/salary/history, /api/v1/salary/advances) ----
+
+export interface SalaryLine {
+  id: string;
+  employeeCode: string;
+  employeeName: string;
+  paidDays: number;
+  calendarDays: number;
+  gross: number;
+  deductions: number;
+  arrears: number;
+  net: number;
+  isMine: boolean;
+  employeeResponse: "APPROVED" | "DISCUSS" | null;
+  employeeRemark: string | null;
+  employeeRespondedAt: string | null;
+}
+
+export interface SalaryRun {
+  id: string;
+  year: number;
+  month: number;
+  status: "APPROVED" | "FINALISED";
+  lines: SalaryLine[];
+}
+
+export interface SalaryAdvance {
+  id: string;
+  amount: number;
+  installments: number;
+  installmentAmount: number;
+  reason: string;
+  createdAt: string;
+  status: "PENDING_APPROVAL" | "APPROVED" | "REJECTED" | "CANCELLED" | "RECOVERING" | "RECOVERED";
+  recovered: number;
+  remaining: number;
+  paymentRequest: { id: string; requestNumber: string; status: string; rejectionReason: string | null } | null;
+}
+
+// ---- Expense requests (existing /api/v1/payment-requests, type VOUCHER_SINGLE) ----
+
+export type PaymentRequestStatus = "PENDING_APPROVAL" | "APPROVED" | "PARTIALLY_PAID" | "PAID" | "REJECTED" | "CANCELLED";
+
+export interface PaymentRequest {
+  id: string;
+  requestNumber: string;
+  requestType: string;
+  status: PaymentRequestStatus;
+  /** Prisma Decimal → string. */
+  amount: string;
+  paidAmount: string;
+  payToName: string | null;
+  paymentDueDate: string | null;
+  remark: string | null;
+  rejectionReason: string | null;
+  createdAt: string;
+  approvedAt: string | null;
+  rejectedAt: string | null;
+  cancelledAt: string | null;
+  isOverdue?: boolean;
+  typeDataJson: { purposeName?: string; expenseAccountName?: string } | null;
+}
+
+export interface ExpenseAccountOption {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export interface RecordAttachment {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  uploadedAt: string;
+}
