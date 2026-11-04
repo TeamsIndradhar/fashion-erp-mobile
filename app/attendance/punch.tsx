@@ -5,7 +5,7 @@ import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as Linking from "expo-linking";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { ApiError } from "@/api/errors";
 import type { PunchResult } from "@/api/types";
 import { useAuth } from "@/auth/AuthProvider";
@@ -13,18 +13,21 @@ import { AppText } from "@/components/AppText";
 import { Banner } from "@/components/Banner";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { DataListCard } from "@/components/DataListCard";
+import { InnerHeader } from "@/components/InnerHeader";
 import { Screen } from "@/components/Screen";
+import { StateView } from "@/components/StateView";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { nearestOffice } from "@/features/attendance/estimate";
-import { acquireFix, ensureLocationPermission, MAX_FIX_AGE_MS, type GpsFix } from "@/features/attendance/location";
+import { acquireFix, ensureLocationPermission, getLocationPermission, locationServicesOn, MAX_FIX_AGE_MS, type GpsFix } from "@/features/attendance/location";
 import { signalsFromFix, submitPunch } from "@/features/attendance/submitPunch";
 import { formatTime } from "@/lib/dates";
 import { colors, radius, spacing } from "@/theme/tokens";
 
 type Step =
   | { kind: "locating"; last: GpsFix | null }
-  | { kind: "permission"; blocked: boolean }
+  | { kind: "permission"; blocked: boolean; servicesOff: boolean; asking: boolean }
   | { kind: "weakGps"; fix: GpsFix | null }
   | { kind: "scanner"; fix: GpsFix; verifying: boolean; error: string | null }
   | { kind: "done"; result: PunchResult };
@@ -69,11 +72,26 @@ export default function Punch() {
     return () => clearTimeout(timer);
   }, [step.kind]);
 
+  /** Shows EMP-003 first when location is not granted or GPS is off; the OS prompt comes only from "Allow location". */
   async function startLocating() {
-    const perm = await ensureLocationPermission();
-    if (perm !== "granted") {
-      return setStep({ kind: "permission", blocked: perm === "blocked" });
+    const [perm, servicesOn] = await Promise.all([getLocationPermission(), locationServicesOn()]);
+    if (perm !== "granted" || !servicesOn) {
+      return setStep({ kind: "permission", blocked: perm === "blocked", servicesOff: !servicesOn, asking: false });
     }
+    await locate();
+  }
+
+  async function allowLocation() {
+    setStep((s) => (s.kind === "permission" ? { ...s, asking: true } : s));
+    const perm = await ensureLocationPermission();
+    const servicesOn = await locationServicesOn();
+    if (perm !== "granted" || !servicesOn) {
+      return setStep({ kind: "permission", blocked: perm === "blocked", servicesOff: !servicesOn, asking: false });
+    }
+    await locate();
+  }
+
+  async function locate() {
     setStep({ kind: "locating", last: null });
     const fix = await acquireFix(target, GPS_TIMEOUT_MS, (f) => {
       setStep((s) => (s.kind === "locating" ? { kind: "locating", last: f } : s));
@@ -185,25 +203,56 @@ export default function Punch() {
     );
   }
 
-  // EMP-003: Location Permission Needed
+  // EMP-003: Location permission — explained before the OS prompt (prototype EMP-003).
   if (step.kind === "permission") {
+    const openSettings = () => void Linking.openSettings();
     return (
       <Screen>
-        <AppText variant="h2" style={styles.title}>
-          Location needed
-        </AppText>
-        <Card>
-          <AppText variant="bodyStrong">Allow location while punching</AppText>
-          <AppText color={colors.textSecondary} style={styles.subtext}>
-            Fashion ERP uses your location only while you check in or out, to confirm you are at your office. It never tracks you in the background.
-          </AppText>
-        </Card>
-        <View style={styles.gap} />
-        {step.blocked ? (
-          <Button title="Open Settings" onPress={() => void Linking.openSettings()} />
-        ) : (
-          <Button title="Allow location" onPress={() => void startLocating()} />
-        )}
+        <InnerHeader title="Location needed" />
+        <View style={styles.permSpacer} />
+        <StateView
+          icon="pin"
+          tone="primary"
+          title="Allow location while punching"
+          text="Fashion ERP uses your location only while you check in or out, to confirm you are at your office. It never tracks you in the background."
+        >
+          <Button
+            icon="pin"
+            title="Allow location"
+            loading={step.asking}
+            testID="punch-allow-location"
+            onPress={() => (step.blocked ? openSettings() : void allowLocation())}
+          />
+          <View style={styles.permGap} />
+          <Card style={styles.permCard}>
+            {step.servicesOff ? (
+              <DataListCard
+                icon="gps"
+                tone="warning"
+                title="Location is turned off"
+                sub="Turn on GPS / Location in your phone settings"
+                testID="punch-gps-off"
+                onPress={openGpsSettings}
+              />
+            ) : null}
+            <DataListCard
+              icon="alert"
+              tone="warning"
+              title="Approximate location is on"
+              sub="Turn on Precise location for Fashion ERP"
+              testID="punch-precise"
+              onPress={openSettings}
+            />
+            <DataListCard
+              icon="lock"
+              tone="danger"
+              title="Location denied"
+              sub="Open Settings → Location → While using"
+              testID="punch-open-settings"
+              onPress={openSettings}
+            />
+          </Card>
+        </StateView>
       </Screen>
     );
   }
@@ -461,4 +510,16 @@ const styles = StyleSheet.create({
   },
   resultCard: { alignItems: "center", marginTop: spacing.lg, paddingVertical: spacing.xl },
   resultSub: { marginTop: spacing.xs },
+  permSpacer: { height: 30 },
+  permGap: { height: 10 },
+  permCard: { padding: 14, paddingBottom: 6 },
 });
+
+/** Android: open the phone's Location (GPS) switch; iOS has no deep link, so open app settings. */
+function openGpsSettings() {
+  if (Platform.OS === "android") {
+    Linking.sendIntent("android.settings.LOCATION_SOURCE_SETTINGS").catch(() => void Linking.openSettings());
+  } else {
+    void Linking.openSettings();
+  }
+}

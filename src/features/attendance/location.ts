@@ -10,6 +10,22 @@ export interface GpsFix {
 
 export type PermissionState = "granted" | "denied" | "blocked";
 
+/** Current foreground permission without showing the OS prompt (EMP-003 explains first). */
+export async function getLocationPermission(): Promise<PermissionState> {
+  const current = await Location.getForegroundPermissionsAsync();
+  if (current.granted) return "granted";
+  return current.canAskAgain ? "denied" : "blocked";
+}
+
+/** Whether the phone's location services (GPS) are switched on. */
+export async function locationServicesOn(): Promise<boolean> {
+  try {
+    return await Location.hasServicesEnabledAsync();
+  } catch {
+    return true;
+  }
+}
+
 /** Foreground "while using" location only — never background (docs/10 §3). */
 export async function ensureLocationPermission(): Promise<PermissionState> {
   const current = await Location.getForegroundPermissionsAsync();
