@@ -21,6 +21,8 @@ import type {
   MobileDevice,
   MyAssignment,
   OutdoorRejection,
+  OutsideSession,
+  OvertimeRow,
   PaymentRequest,
   PaymentRequestStatus,
   PieceRateEarning,
@@ -35,8 +37,11 @@ import type {
   SalaryAdvance,
   SalaryRun,
   SupportTicket,
+  TeamCorrection,
   TeamDay,
+  TeamLeaveRequest,
   TeamMonth,
+  TeamOutdoorRejection,
   TicketCategory,
 } from "./types";
 
@@ -150,6 +155,24 @@ export function createEndpoints(api: ApiClient) {
       api.post<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}/reject`, { approvalRemark }),
     correctEntry: (id: string, q: ProgressQuantities & { remarks?: string }) =>
       api.request<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}`, { method: "PATCH", body: q }),
+    // Team approvals (D-D06)
+    teamLeave: () => api.get<TeamLeaveRequest[]>("/api/v1/leave-requests?status=PENDING&pageSize=100"),
+    approveLeave: (id: string) => api.post<unknown>(`/api/v1/leave-requests/${encodeURIComponent(id)}/approve`),
+    rejectLeave: (id: string, reason: string) => api.post<unknown>(`/api/v1/leave-requests/${encodeURIComponent(id)}/reject`, { reason }),
+    teamCorrections: () => api.get<TeamCorrection[]>("/api/v1/attendance-corrections?status=PENDING&pageSize=100"),
+    approveCorrection: (id: string) => api.post<unknown>(`/api/v1/attendance-corrections/${encodeURIComponent(id)}/approve`),
+    rejectCorrection: (id: string, reason: string) => api.post<unknown>(`/api/v1/attendance-corrections/${encodeURIComponent(id)}/reject`, { reason }),
+    teamOvertime: () => api.get<OvertimeRow[]>("/api/v1/attendance/overtime?status=PENDING"),
+    approveOvertime: (id: string) => api.post<unknown>(`/api/v1/attendance/overtime/${encodeURIComponent(id)}/approve`),
+    rejectOvertime: (id: string, reason: string) => api.post<unknown>(`/api/v1/attendance/overtime/${encodeURIComponent(id)}/reject`, { reason }),
+    teamOutside: () => api.get<OutsideSession[]>("/api/v1/attendance/outdoor"),
+    approveOutside: (sessionIds: string[]) => api.post<unknown>("/api/v1/attendance/outdoor", { sessionIds }),
+    rejectOutside: (sessionId: string, input: { reason: string; trimmedCheckInAt: string; trimmedCheckOutAt: string }) =>
+      api.post<unknown>(`/api/v1/attendance/outdoor/${encodeURIComponent(sessionId)}/reject`, input),
+    teamClarifications: () => api.get<TeamOutdoorRejection[]>("/api/v1/attendance/outdoor-rejections?status=IN_PROCESS"),
+    decideClarification: (id: string, decision: "approve" | "reject") =>
+      api.post<unknown>(`/api/v1/attendance/outdoor-rejections/${encodeURIComponent(id)}/${decision}`),
+
     teamDay: (date: string) => api.get<TeamDay>(`/api/v1/attendance/team-day?date=${encodeURIComponent(date)}`),
     teamMonth: (month: string) => api.get<TeamMonth>(`/api/v1/attendance/team-month?month=${encodeURIComponent(month)}&view=team`),
     productionOrders: () => api.get<ProductionOrderRow[]>("/api/v1/production-orders?pageSize=50&status=IN_PROGRESS"),

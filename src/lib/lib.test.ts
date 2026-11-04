@@ -53,3 +53,15 @@ describe("logger", () => {
     expect(logger.scrub({ accessToken: "fea_x", nested: { password: "p", ok: 1 } })).toEqual({ accessToken: "[hidden]", nested: { password: "[hidden]", ok: 1 } });
   });
 });
+
+describe("IST time on a day", () => {
+  it("builds and reads back an IST instant", () => {
+    const { istTimeOnDayOf, istHhmm } = jest.requireActual("./dates") as typeof import("./dates");
+    // 03:45Z = 09:15 IST on 4 Nov.
+    expect(istTimeOnDayOf("2026-11-04T03:45:00.000Z", "10:30")).toBe("2026-11-04T10:30:00+05:30");
+    // 20:00Z on 3 Nov is already 4 Nov in IST.
+    expect(istTimeOnDayOf("2026-11-03T20:00:00.000Z", "08:00")).toBe("2026-11-04T08:00:00+05:30");
+    expect(istHhmm("2026-11-04T03:45:00.000Z")).toBe("09:15");
+    expect(new Date(istTimeOnDayOf("2026-11-04T03:45:00.000Z", "09:15")).toISOString()).toBe("2026-11-04T03:45:00.000Z");
+  });
+});

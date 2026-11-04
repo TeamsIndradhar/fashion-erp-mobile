@@ -60,6 +60,7 @@ export interface MeResponse {
     /** Older servers do not send these. */
     production?: { view: boolean; approve: boolean };
     pieceRate?: { view: boolean };
+    approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean };
   };
   modulesEnabled: { hrms: boolean };
   viewableModules: string[];
@@ -506,3 +507,41 @@ export interface TeamMonth {
     summary: AttendanceMonth["summary"];
   }[];
 }
+
+// ---- Team approvals (D-D06; existing routes — each checks team scope and blocks self-approval) ----
+
+export interface TeamPerson {
+  id: string;
+  employeeCode: string;
+  fullName: string;
+}
+
+export type TeamLeaveRequest = LeaveRequest & { employee: TeamPerson };
+export type TeamCorrection = CorrectionRequest & { employee: TeamPerson };
+
+export interface OvertimeRow {
+  id: string;
+  attendanceDate: string;
+  hours: number;
+  workedHours: number;
+  shiftHours: number;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  reason: string | null;
+  employee: TeamPerson;
+  /** null without salary access. */
+  amount: number | null;
+}
+
+export interface OutsideSession {
+  id: string;
+  checkInAt: string;
+  checkOutAt: string | null;
+  inDistanceMeters: number | null;
+  outDistanceMeters: number | null;
+  employee: TeamPerson;
+  inLocation: { name: string } | null;
+  outLocation: { name: string } | null;
+  attendanceRecord: { attendanceDate: string } | null;
+}
+
+export type TeamOutdoorRejection = OutdoorRejection & { employee: TeamPerson };

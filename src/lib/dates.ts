@@ -56,3 +56,14 @@ export function formatHours(hours: number | null | undefined): string {
   const total = Math.round(hours * 60);
   return `${Math.floor(total / 60)}h ${pad(total % 60)}m`;
 }
+
+/** "09:15" on the IST calendar day of `iso` → ISO instant ("2026-11-04T09:15:00+05:30"). */
+export function istTimeOnDayOf(iso: string, hhmm: string): string {
+  return `${istDateKey(new Date(iso))}T${hhmm}:00+05:30`;
+}
+
+/** "HH:mm" in IST for an instant (inverse of istTimeOnDayOf, for pre-filling pickers). */
+export function istHhmm(iso: string): string {
+  const d = new Date(new Date(iso).getTime() + 330 * 60 * 1000);
+  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+}

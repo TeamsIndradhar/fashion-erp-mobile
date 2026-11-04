@@ -157,8 +157,19 @@ run("live ERP contract", () => {
       for (const e of tm.employees) expect(Object.keys(e.employee).filter((k) => PAY.includes(k))).toEqual([]);
     }
 
-    // Approve routes stay refused for a mobile token.
-    await expect(api.post("/api/v1/leave-requests/00000000-0000-0000-0000-000000000000/approve")).rejects.toMatchObject({ status: 403 });
+    // Team approval lists (D-D06) — reads only; overtime carries no pay without salary access.
+    const ap = me.permissions.approvals;
+    if (ap?.leave) for (const r of await ep.teamLeave()) expect(r.employee.fullName).toBeTruthy();
+    if (ap?.correction) expect(Array.isArray(await ep.teamCorrections())).toBe(true);
+    if (ap?.outdoor) {
+      expect(Array.isArray(await ep.teamOutside())).toBe(true);
+      expect(Array.isArray(await ep.teamClarifications())).toBe(true);
+    }
+    if (ap?.overtime) for (const o of await ep.teamOvertime()) expect(o).not.toHaveProperty("employee.attendanceProfile");
+
+    // Routes outside the mobile allowlist stay refused for a mobile token.
+    await expect(api.post("/api/v1/leave-requests/carry-forward", { fromYear: 2025 })).rejects.toMatchObject({ status: 403 });
+    await expect(api.post("/api/v1/attendance/outdoor-rejections/00000000-0000-0000-0000-000000000000/cancel")).rejects.toMatchObject({ status: 403 });
 
     const devices = await ep.devices();
     expect(devices.some((d) => d.isCurrent)).toBe(true);
