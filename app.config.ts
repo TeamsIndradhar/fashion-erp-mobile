@@ -10,6 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: NAME,
   slug: "fashion-erp-mobile",
+  owner: "vrikshansh-tech-solutions",
   scheme: "fashionerp",
   version: "1.0.0",
   orientation: "portrait",
@@ -55,6 +56,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   experiments: { typedRoutes: true },
   extra: {
+    eas: { projectId: "30cf7521-b26b-4025-a3fc-9b373ea4f838" },
     appVariant: VARIANT,
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? (VARIANT === "production" ? "https://erp.indradhar.in" : "http://192.168.1.10:3000"),
   },
