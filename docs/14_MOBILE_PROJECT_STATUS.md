@@ -26,7 +26,7 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
 
 1. ✅ Release-1 screen designs approved (38 screens). Phases now run without gates (D-039).
-1a. **Server deploy:** run migrations `20261103180000_mobile_auth`, `20261104090000_mobile_punch_meta` and `20261104120000_face_descriptors` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`; `npm ci` (new deps `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-wasm`); expect ~200 MB more RAM per server process once the first face check runs.
+1a. **Server deploy:** run migrations `20261103180000_mobile_auth`, `20261104090000_mobile_punch_meta` and `20261104120000_face_descriptors` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`; `npm ci` (new deps `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-wasm`); expect ~200 MB more RAM per server process once the first face check runs. Then run `node --experimental-strip-types --no-warnings scripts/grant-own-expense-requests.mjs --apply` (B-23) and restart the app.
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
@@ -59,10 +59,16 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-04 — Claude Code — B-23 done
+**Commit:** `fashion-erp` `main` `abda2355` — `OWN_EXPENSE_REQUESTS` (`payment_requests` view + create) on PRODUCTION_WORKER, PRODUCTION_SUPERVISOR, WAREHOUSE_USER for new companies; `scripts/grant-own-expense-requests.mjs` for existing ones (dry run default, `--apply`, additive). User confirmed in chat 2026-11-04 ("Yes, make B-23").
+**Verified (executed):** dry run → apply on the dev DB (3 companies, 9 roles, 18 grants) → re-run shows 0 (idempotent); SQL confirms all three roles hold both keys (5 users); RBAC + payment-request tests 204/204; `tsc` clean; ESLint clean. Not verified: a real worker signing in to the app (dev worker logins have no usable password).
+**Effect in the app:** those users now see the "Expense requests" tile; they see only requests they raised.
+**Still open from B-23's row:** HRMS_TEAM_APPROVER for supervisors (D-D06) — with the supervisor screens.
+
 ### Handoff — 2026-11-04 — Claude Code — Release 2: employee requests
 **Commits:** `fashion-erp` `main` `9105769c` (bearer allowlist for the employee side of leave, corrections, outside reviews, salary history/advances, payment requests + attachments; approve/reject/pay refused). App: `app/requests/` — hub (tiles by `viewableModules`), `leave`, `correction`, `outside`, `salary`, `advance`, `expenses/{index,new,[id]}`; components `PickerField` (native date/time), `Chips`, `StatusPill`; `src/features/requests/requests.ts` (labels, validations mirroring the server, date ranges, Indian money format); `src/lib/download.ts` (salary-slip PDF / bill file → cache → share sheet; token refreshed first). New deps (D-041 addendum): `@react-native-community/datetimepicker`, `expo-file-system`, `expo-sharing`, `expo-image-picker`.
 **Verified (executed):** app `tsc`, `eslint`, jest 42/42, Android bundle exports (3 MB); ERP auth tests 80/80; live contract with the real client against the dev server — all release-2 reads, and with `LIVE_WRITES=1`: expense create → idempotent retry returns the same request → cancel, advance ask/cancel, leave and correction payloads reach the server's own validation messages.
-**Not done:** **B-23** (give PRODUCTION_WORKER / PRODUCTION_SUPERVISOR / WAREHOUSE_USER `payment_requests` view+create) — the agent safety check blocked the role-permission edit; needs the user. Until then those roles don't see Expense requests (tile hidden). Voice notes on EMP-016/018 (CR-001, needs `expo-audio`). Leave-type regularizations (leave not taken / emergency leave) stay on the web. Nothing run on a device.
+**Not done (at the time):** B-23 — done later the same day, see the handoff above. Voice notes on EMP-016/018 (CR-001, needs `expo-audio`). Leave-type regularizations (leave not taken / emergency leave) stay on the web. Nothing run on a device.
 **Dev DB side effects:** one cancelled expense request (12.50, "Contract test") and possibly one cancelled salary advance for admin@indradhar.com; test devices created and removed.
 
 ### Handoff — 2026-11-04 — Claude Code — Alerts, settings, help, about
