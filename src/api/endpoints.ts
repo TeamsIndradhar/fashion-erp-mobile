@@ -10,6 +10,8 @@ import type {
   CorrectionRequest,
   DeviceInfo,
   ExpenseAccountOption,
+  FgStyleDetail,
+  FgStyleRow,
   JobOrderDetail,
   LeaveBalance,
   LeaveDuration,
@@ -38,10 +40,15 @@ import type {
   PunchChallenge,
   PunchResult,
   RecordAttachment,
+  RawStockDetail,
+  RawStockRow,
   RefreshResponse,
+  ResolvedBarcode,
   ReportCategoryGroup,
   ReportDescriptor,
   SalaryAdvance,
+  StockMovementDetail,
+  StockMovementRow,
   SalaryRun,
   SupportTicket,
   TeamCorrection,
@@ -50,6 +57,8 @@ import type {
   TeamMonth,
   TeamOutdoorRejection,
   TicketCategory,
+  WarehouseLocation,
+  WarehouseOption,
 } from "./types";
 
 /** Typed calls for the routes in docs/05 (release 1 = login + attendance). */
@@ -179,6 +188,21 @@ export function createEndpoints(api: ApiClient) {
     teamClarifications: () => api.get<TeamOutdoorRejection[]>("/api/v1/attendance/outdoor-rejections?status=IN_PROCESS"),
     decideClarification: (id: string, decision: "approve" | "reject") =>
       api.post<unknown>(`/api/v1/attendance/outdoor-rejections/${encodeURIComponent(id)}/${decision}`),
+
+    // Inventory (06)
+    rawStock: (search: string, warehouseId?: string) =>
+      api.get<RawStockRow[]>(`/api/v1/inventory/stock-balances?pageSize=50${search ? `&search=${encodeURIComponent(search)}` : ""}${warehouseId ? `&warehouseId=${warehouseId}` : ""}`),
+    rawStockDetail: (productId: string) => api.get<RawStockDetail>(`/api/v1/inventory/stock-balances/${encodeURIComponent(productId)}`),
+    fgStock: (search: string, warehouseId?: string) =>
+      api.get<FgStyleRow[]>(`/api/v1/finished-goods-inventory/style-stock?pageSize=50${search ? `&search=${encodeURIComponent(search)}` : ""}${warehouseId ? `&warehouseId=${warehouseId}` : ""}`),
+    fgStockDetail: (productId: string) => api.get<FgStyleDetail>(`/api/v1/finished-goods-inventory/style-stock/${encodeURIComponent(productId)}`),
+    movements: (status?: string) => api.get<StockMovementRow[]>(`/api/v1/stock-movements?pageSize=50${status ? `&status=${status}` : ""}`),
+    movement: (id: string) => api.get<StockMovementDetail>(`/api/v1/stock-movements/${encodeURIComponent(id)}`),
+    receiveMovement: (id: string, items: { itemId: string; toWarehouseLocationId: string }[]) =>
+      api.post<StockMovementDetail>(`/api/v1/stock-movements/${encodeURIComponent(id)}/receive`, { items }),
+    warehouses: () => api.get<WarehouseOption[]>("/api/v1/warehouses?pageSize=100"),
+    warehouseLocations: (warehouseId: string) => api.get<WarehouseLocation[]>(`/api/v1/warehouses/${encodeURIComponent(warehouseId)}/locations`),
+    resolveBarcode: (code: string) => api.get<ResolvedBarcode>(`/api/v1/barcodes/resolve/${encodeURIComponent(code)}`),
 
     // Reports (ADM-005/006, OWN-001)
     reportCatalog: () => api.get<ReportCategoryGroup[]>("/api/mobile/v1/reports"),

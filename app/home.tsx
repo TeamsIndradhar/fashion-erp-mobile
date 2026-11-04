@@ -45,6 +45,8 @@ export default function Home() {
       <View style={styles.actions}>
         {me.viewableModules.includes("reports") ? <Button title="Business dashboard" onPress={() => router.push("/dashboard")} testID="home-dashboard" /> : null}
         {me.viewableModules.includes("reports") ? <View style={styles.gap} /> : null}
+        {me.viewableModules.includes("inventory") || me.viewableModules.includes("fg_inventory") ? <Button kind="secondary" title="Inventory" onPress={() => router.push("/inventory")} testID="home-inventory" /> : null}
+        {me.viewableModules.includes("inventory") || me.viewableModules.includes("fg_inventory") ? <View style={styles.gap} /> : null}
         {me.employee && attendanceAllowed ? <Button title="Attendance" onPress={() => router.push("/attendance")} testID="home-attendance" /> : null}
         <View style={styles.gap} />
         {me.employee && me.permissions.production?.view && !canApprove ? <Button title="My work" onPress={() => router.push("/work")} testID="home-work" /> : null}

@@ -60,6 +60,7 @@ export interface MeResponse {
     /** Older servers do not send these. */
     production?: { view: boolean; approve: boolean };
     pieceRate?: { view: boolean };
+    inventory?: { receive: boolean; scan: boolean };
     approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean; paymentRequest?: boolean; purchaseOrder?: boolean; materialRequest?: boolean };
   };
   modulesEnabled: { hrms: boolean };
@@ -642,4 +643,96 @@ export interface ReportCategoryGroup {
   description: string;
   canExport: boolean;
   reports: { key: string; title: string }[];
+}
+
+// ---- Inventory (existing routes; service routes send numbers, raw Prisma rows send strings) ----
+
+export interface RawStockRow {
+  id: string;
+  productId: string;
+  materialName: string;
+  materialCode: string | null;
+  materialCategory: string | null;
+  unit: string | null;
+  totalStock: number;
+  availableStock: number;
+  rollCount: number;
+  colourCount: number;
+  breakdownMode: "ROLL" | "COLOUR" | "PLAIN";
+  lastUpdated: string | null;
+}
+
+export interface RawStockDetail {
+  materialId: string;
+  materialName: string;
+  materialCode: string | null;
+  unit: string | null;
+  breakdownMode: "ROLL" | "COLOUR" | "PLAIN";
+  totalStock: number;
+  availableStock: number;
+  rollCount: number;
+  colourBalances: { colorId: string | null; colorName: string | null; quantity: number; warehouses: { warehouseName: string; quantity: number }[] }[];
+  colours: { colorId: string | null; colorName: string | null; rollCount: number; availableQuantity: number; rolls: { id: string; rollNumber: string; lotNumber: string | null; shadeCode: string | null; warehouseName: string | null; locationLabel: string | null; remainingQuantity: number }[] }[];
+  warehouses: { warehouseId: string; warehouseName: string; quantity: number; locations: { label: string; quantity: number }[]; unassignedQuantity: number }[];
+}
+
+export interface FgStyleRow {
+  id: string;
+  productId: string;
+  styleName: string;
+  styleCode: string | null;
+  categoryName: string | null;
+  saleableStock: number;
+  rejectedStock: number;
+  totalStock: number;
+  colourCount: number;
+  sizeCount: number;
+  warehouseCount: number;
+}
+
+export interface FgStyleDetail {
+  saleableStock: number;
+  rejectedStock: number;
+  colours: { colorId: string | null; colorName: string | null; saleableQuantity: number; rejectedQuantity: number; sizes: { sizeId: string | null; sizeName: string | null; saleableQuantity: number; rejectedQuantity: number; places: { label: string; quantity: number }[] }[] }[];
+  warehouses: { warehouseId: string; warehouseName: string; saleableQuantity: number; rejectedQuantity: number; locations: { label: string; quantity: number }[] }[];
+}
+
+export interface StockMovementRow {
+  id: string;
+  movementNumber: string;
+  movementType: "TRANSFER" | "ADJUSTMENT" | "RETURN_TO_SUPPLIER";
+  status: "POSTED" | "IN_TRANSIT" | "RECEIVED";
+  movementDate?: string;
+  createdAt: string;
+  notes?: string | null;
+  warehouse: { id: string; name: string } | null;
+  toWarehouse: { id: string; name: string } | null;
+  performedBy: { fullName: string } | null;
+  _count?: { items: number };
+}
+
+export interface StockMovementDetail extends StockMovementRow {
+  toWarehouseId: string | null;
+  receivedBy: { fullName: string } | null;
+  items: { id: string; quantity: string; product: { styleName: string; styleCode: string | null } | null; uom: { code: string } | null; color: { name: string } | null; warehouseLocation: { code: string } | null; toWarehouseLocation: { code: string } | null }[];
+}
+
+export interface WarehouseOption {
+  id: string;
+  name: string;
+  code: string | null;
+  isActive: boolean;
+}
+
+export interface WarehouseLocation {
+  id: string;
+  code: string;
+  isActive: boolean;
+}
+
+export interface ResolvedBarcode {
+  entityType: "FABRIC_ROLL" | "PRODUCTION_LOT" | "CARTON" | "ITEM" | "SKU" | "PRODUCT_UNIT" | string;
+  entityId: string;
+  code: string;
+  summary: Record<string, unknown> & { kind: string };
 }
