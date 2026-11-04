@@ -20,16 +20,17 @@ import { colors, spacing } from "@/theme/tokens";
 
 /** ADM-006 Report viewer: same descriptor as the web report, rows as cards, optional date range and export. */
 export default function ReportViewer() {
-  const p = useLocalSearchParams<{ category: string; key: string; title?: string; canExport?: string }>();
+  const p = useLocalSearchParams<{ category: string; key: string; title?: string; canExport?: string; filters?: string }>();
   const auth = useAuth();
   const [from, setFrom] = useState<string | null>(null);
   const [to, setTo] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
-  const filters: Record<string, string> = {};
+  // Fixed filters from the screen that opened the report (e.g. the stock ledger of one item).
+  const filters: Record<string, string> = parseFixedFilters(p.filters);
   if (from) filters.dateFrom = from;
   if (to) filters.dateTo = to;
   const enabled = auth.status === "signedIn" && !!p.category && !!p.key;
-  const r = useQuery({ queryKey: ["reports", p.category, p.key, from, to], queryFn: () => endpoints.report(p.category!, p.key!, filters), enabled });
+  const r = useQuery({ queryKey: ["reports", p.category, p.key, p.filters ?? "", from, to], queryFn: () => endpoints.report(p.category!, p.key!, filters), enabled });
   if (auth.status !== "signedIn") return <Redirect href="/" />;
   const d = r.data?.descriptor;
   const sectioned = !!d && d.columns.some((c) => c.key === "section") && d.columns.some((c) => c.key === "metric");
@@ -150,3 +151,13 @@ const styles = StyleSheet.create({
   field: { flexDirection: "row", marginTop: spacing.xs },
   flex: { flex: 1, marginRight: spacing.sm },
 });
+
+function parseFixedFilters(raw: string | undefined): Record<string, string> {
+  if (!raw) return {};
+  try {
+    const v = JSON.parse(raw) as Record<string, unknown>;
+    return Object.fromEntries(Object.entries(v).filter(([, x]) => typeof x === "string")) as Record<string, string>;
+  } catch {
+    return {};
+  }
+}

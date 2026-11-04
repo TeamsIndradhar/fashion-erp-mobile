@@ -189,6 +189,29 @@ run("live ERP contract", () => {
     }
     await expect(api.post("/api/v1/reports/dashboard/executive-dashboard", {})).rejects.toMatchObject({ status: 403 });
 
+    // Inventory (06): stock reads, movements, warehouses, barcode scan; stock writes stay closed.
+    if (me.viewableModules.includes("inventory")) {
+      const raw = await ep.rawStock("");
+      if (raw[0]) {
+        expect(typeof (await ep.rawStockDetail(raw[0].productId)).availableStock).toBe("number");
+        if (me.viewableModules.includes("reports")) expect(Array.isArray((await ep.report("inventory", "stock-ledger", { productId: raw[0].productId })).descriptor.rows)).toBe(true);
+      }
+      const moves = await ep.movements();
+      if (moves[0]) expect(Array.isArray((await ep.movement(moves[0].id)).items)).toBe(true);
+      await expect(api.post("/api/v1/stock-movements", {})).rejects.toMatchObject({ status: 403 });
+    }
+    if (me.viewableModules.includes("fg_inventory")) {
+      const fg = await ep.fgStock("");
+      if (fg[0]) expect(Array.isArray((await ep.fgStockDetail(fg[0].productId)).colours)).toBe(true);
+    }
+    if (me.viewableModules.includes("masters_core")) expect(Array.isArray(await ep.warehouses())).toBe(true);
+    if (me.permissions.inventory?.scan) {
+      await expect(ep.resolveBarcode("NO-SUCH-CODE-123")).rejects.toMatchObject({ status: 404 });
+      // A broken %-sequence is a client error (Next.js answers 400 before the route; the route maps it to 404), never a 500.
+      const bad = (await api.get("/api/v1/barcodes/resolve/%ZZ").catch((e) => e)) as { status: number };
+      expect([400, 404]).toContain(bad.status);
+    }
+
     // Routes outside the mobile allowlist stay refused for a mobile token.
     await expect(api.post("/api/v1/leave-requests/carry-forward", { fromYear: 2025 })).rejects.toMatchObject({ status: 403 });
     await expect(api.post("/api/v1/attendance/outdoor-rejections/00000000-0000-0000-0000-000000000000/cancel")).rejects.toMatchObject({ status: 403 });
