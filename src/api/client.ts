@@ -66,6 +66,10 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
       res = await doFetch(`${config.baseUrl}${path}`, { method: opts.method ?? "GET", headers, body, signal: controller.signal });
     } catch (err: unknown) {
       if (controller.signal.aborted && !opts.signal?.aborted) throw new ApiError(0, "TIMEOUT", strings.errors.timeout);
+      // A file that cannot be read or attached is not a connection problem.
+      if (err instanceof Error && (err.name === "LocalFileReadError" || /FormData/i.test(err.message))) {
+        throw new ApiError(0, "FILE_UNREADABLE", `${strings.errors.fileUnreadable} [${err.message}]`);
+      }
       const detail = err instanceof Error ? err.message : String(err || "");
       throw new ApiError(0, "NETWORK_ERROR", detail ? `${strings.errors.network} [${detail}]` : strings.errors.network);
     } finally {

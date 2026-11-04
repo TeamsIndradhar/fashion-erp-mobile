@@ -1,4 +1,5 @@
 import type { ApiClient } from "./client";
+import { appendFile } from "./formFile";
 import type {
   AppConfig,
   AppNotification,
@@ -115,7 +116,7 @@ export function createEndpoints(api: ApiClient) {
     requestCorrection: (input: CorrectionInput) => api.post<CorrectionRequest>("/api/v1/attendance-corrections", input),
     addCorrectionProof: (id: string, file: { uri: string; name: string; type: string }) => {
       const form = new FormData();
-      form.append("file", file as unknown as Blob);
+      appendFile(form, "file", file);
       return api.request<unknown>(`/api/v1/attendance-corrections/${encodeURIComponent(id)}/documents`, { method: "POST", body: form, timeoutMs: 45_000 });
     },
 
@@ -124,7 +125,7 @@ export function createEndpoints(api: ApiClient) {
     clarifyOutsideReview: (id: string, reason: string, proof: { uri: string; name: string; type: string } | null) => {
       const form = new FormData();
       form.append("reason", reason);
-      if (proof) form.append("proof", proof as unknown as Blob);
+      if (proof) appendFile(form, "proof", proof);
       return api.request<OutdoorRejection>(`/api/v1/attendance/outdoor-rejections/${encodeURIComponent(id)}/clarify`, { method: "POST", body: form, timeoutMs: 45_000 });
     },
 
@@ -237,7 +238,7 @@ export function createEndpoints(api: ApiClient) {
 
     addExpenseFile: (id: string, file: { uri: string; name: string; type: string }) => {
       const form = new FormData();
-      form.append("files", file as unknown as Blob);
+      appendFile(form, "files", file);
       return api.request<RecordAttachment[]>(`/api/v1/record-attachments/payment-request/${encodeURIComponent(id)}`, { method: "POST", body: form, timeoutMs: 45_000 });
     },
   };

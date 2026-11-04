@@ -1,5 +1,5 @@
-import { Platform } from "react-native";
 import { ApiError } from "../../api/errors";
+import { appendFile } from "../../api/formFile";
 import type { PunchChallenge, PunchResult, PunchSignals } from "../../api/types";
 import type { GpsFix } from "./location";
 
@@ -29,16 +29,7 @@ export function buildPunchForm(req: PunchRequest, challenge: string): FormData {
   form.append("locationTimestamp", new Date(req.fix.timestamp).toISOString());
   if (req.facePhotoId) form.append("facePhotoId", req.facePhotoId);
   form.append("signals", JSON.stringify(req.signals));
-  // React Native's FormData file part.
-  let uri = req.selfie.uri;
-  if (Platform.OS === "android" && !uri.startsWith("file://") && !uri.startsWith("content://")) {
-    uri = `file://${uri}`;
-  }
-  form.append("selfie", {
-    uri,
-    name: req.selfie.name || "selfie.jpg",
-    type: req.selfie.type || "image/jpeg",
-  } as unknown as Blob);
+  appendFile(form, "selfie", { uri: req.selfie.uri, name: req.selfie.name || "selfie.jpg", type: req.selfie.type || "image/jpeg" });
   return form;
 }
 

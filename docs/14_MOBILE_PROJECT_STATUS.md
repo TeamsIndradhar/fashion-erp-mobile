@@ -17,7 +17,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 | 5 | Other authorized modules | 🔄 Approvals inbox built: payment requests approve/reject (ACC-002), purchase order approve (PUR-002/003), damage material request approve/reject (INV-004). HR screens (HR-002…006) covered by team attendance + team approvals. Inventory built: home, raw-material stock + item detail (warehouse, colour, rolls, ledger report), finished goods by colour × size × rack, transfers + receive with rack choice, barcode scanner, low-stock report (INV-001…003, 005…007). Not built: material issue (INV-004 issue part), production manager, purchase detail lists, sales, accounts payout, dispatch screens | — |
 | 6 | Admin & owner dashboards | 🔄 Business dashboard (OWN-001 / ADM-001: Executive Dashboard sections the server allows + "waiting for you" counts = ADM-002), Reports center (ADM-005) and report viewer with date range + Excel/PDF export (ADM-006). Not built: owner analytics pages OWN-002…006 (the viewer opens the same reports), alerts center OWN-007, users & roles ADM-004, employee summary ADM-003 | — |
 | 7 | Security & testing | ⬜ | — |
-| 8 | Builds & release | 🔄 First internal Android preview APK built on EAS (temp testing account vrikshansh-tech-solutions) | — |
+| 8 | Builds & release | 🔄 First internal Android preview APK built on EAS (temp testing account vrikshansh-tech-solutions) — 2026-11-04: fixed photo uploads failing on the phone ("Unsupported FormDataPart implementation", shown as "No internet"); needs a new APK build to reach testers | — |
 
 Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user · ❌ blocked
 

@@ -13,6 +13,7 @@ export const strings = {
     server: "The server had a problem. Please try again in a moment.",
     network: "No internet connection. Check your network and try again.",
     timeout: "The server took too long to answer. Please try again.",
+    fileUnreadable: "The photo or file could not be attached. Please take or choose it again.",
   },
   offline: {
     banner: "You are offline. Some information may be old.",

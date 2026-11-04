@@ -81,6 +81,14 @@ describe("api client", () => {
     expect(await session.hasSession()).toBe(true);
   });
 
+  it("reports a file that cannot be attached as FILE_UNREADABLE, not as no internet", async () => {
+    const fetchImpl = jest.fn().mockRejectedValue(new Error("Unsupported FormDataPart implementation"));
+    const { client } = await setup(fetchImpl);
+    const err = (await client.get("/api/mobile/v1/me").catch((e) => e)) as ApiError;
+    expect(err.code).toBe("FILE_UNREADABLE");
+    expect(err.message).not.toContain("internet");
+  });
+
   it("times out slow requests", async () => {
     const fetchImpl = jest.fn(
       (_u: string, init: RequestInit) => new Promise<Response>((_r, reject) => init.signal!.addEventListener("abort", () => reject(new Error("aborted"))))
