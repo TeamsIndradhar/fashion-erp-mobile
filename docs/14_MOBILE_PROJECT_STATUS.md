@@ -17,7 +17,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 | 5 | Other authorized modules | 🔄 Approvals inbox built: payment requests approve/reject (ACC-002), purchase order approve (PUR-002/003), damage material request approve/reject (INV-004). HR screens (HR-002…006) covered by team attendance + team approvals. Not built: production manager, inventory, purchase detail lists, sales, accounts payout, dispatch screens | — |
 | 6 | Admin & owner dashboards | 🔄 Business dashboard (OWN-001 / ADM-001: Executive Dashboard sections the server allows + "waiting for you" counts = ADM-002), Reports center (ADM-005) and report viewer with date range + Excel/PDF export (ADM-006). Not built: owner analytics pages OWN-002…006 (the viewer opens the same reports), alerts center OWN-007, users & roles ADM-004, employee summary ADM-003 | — |
 | 7 | Security & testing | ⬜ | — |
-| 8 | Builds & release | ⬜ needs developer accounts (Q-08) | user input |
+| 8 | Builds & release | 🔄 First internal Android preview APK built on EAS (`vrikshansh-tech-solutions`) | — |
 
 Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user · ❌ blocked
 
@@ -58,6 +58,13 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-04 — Antigravity — Android Preview APK build generated
+**Commits:** `6d7e259` (EAS config, owner `vrikshansh-tech-solutions`, preview APK profile).
+**Done:** Project linked to Expo account `@vrikshansh-tech-solutions/fashion-erp-mobile` (Project ID: `30cf7521-b26b-4025-a3fc-9b373ea4f838`). `eas.json` preview profile configured for standalone installable Android APK (`buildType: "apk"`), pointing to live backend `https://erp.indradhar.in`. Cloud build triggered and completed successfully on EAS.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/b97303d1-cec4-4150-b36d-461c34b19651`
+**Verified:** Live backend `/api/mobile/v1/app-config` confirmed 200 OK. TypeScript check passed (`tsc --noEmit`). Test suite 20/20 passed (114 tests passed). Android standalone APK generated and downloadable directly to phones.
+**Next step:** Install APK on test phone(s), verify live login, GPS permissions, selfie punch flow, and reports.
 
 ### Handoff — 2026-11-04 — Claude Code — Business dashboard and reports
 **Commits:** `fashion-erp` `main` `4f73dbad` — **web-wide fix**: Executive Dashboard / Daily MIS sections need view on their own modules (finance needed accounts + financial_reports; before, anyone with reports.view saw AR / AP / expenses), in the view route and all exports; `GET /api/mobile/v1/reports` catalog; reports view/export allowlisted GET-only. App: `app/dashboard.tsx` (sections as metric tiles, waiting-approvals counts linking to the inboxes), `app/reports/index.tsx` (search, categories by permission), `app/reports/[category]/[key].tsx` (optional date range, overview reports as sections, other reports as cards with totals, first 200 rows, Excel/PDF export through the share sheet when allowed); Home "Business dashboard".
