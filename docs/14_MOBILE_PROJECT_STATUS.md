@@ -59,6 +59,12 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-04 — Claude Code — Android Preview APK build #3 (photo upload fix)
+**Commits:** `bcebd2c`.
+**Done:** Uploads (punch selfie, expense files/voice, correction proof, outside-punch proof) failed on the phone with "Unsupported FormDataPart implementation" (Expo SDK 58's `expo/fetch` rejects `{ uri, name, type }` parts), shown wrongly as "No internet". Now sent via `src/api/formFile.ts`; unreadable files show `FILE_UNREADABLE`.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/de72b4e4-4244-4512-b2ed-b6a5d101bc22`
+**Verified:** 186 tests pass, `tsc` clean, build finished on EAS. **Not yet tried on a phone.**
+
 ### Handoff — 2026-11-04 — Antigravity — Android Preview APK build #2 (EMP-005 face scanner UI/UX + auto-verify + 5s capture fallback + Android file upload fix)
 **Commits:** `bfeea58`.
 **Done:** Redesigned punch flow to match approved prototype `EMP-003` to `EMP-005`. Removed intermediate selfie preview card and manual confirm step. Implemented live camera face scanner with oval guide, automatic capture/verification with server, and 5-second manual "Capture" button fallback. Fixed Android `file://` URI formatting in `submitPunch.ts` and enhanced `client.ts` to surface detailed error causes.
