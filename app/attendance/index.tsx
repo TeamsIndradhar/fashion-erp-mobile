@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/auth/AuthProvider";
 import { AppText } from "@/components/AppText";
 import { Banner } from "@/components/Banner";
+import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { HeroCard } from "@/components/HeroCard";
 import { OfflineBanner } from "@/components/OfflineBanner";
@@ -59,13 +60,28 @@ export default function AttendanceDashboard() {
           </HeroCard>
         ) : null}
 
-        {t ? (
-          <Banner
-            tone="info"
-            message="Punching in and out from the phone is coming in the next app update. Until then, punch from the web ERP."
-            testID="punch-coming"
-          />
+        {t && auth.me?.permissions.attendance.punch ? (
+          <View style={styles.punchRow}>
+            <View style={styles.punchCell}>
+              <Button
+                title="Punch In"
+                disabled={t.isPunchedIn}
+                onPress={() => router.push({ pathname: "/attendance/punch", params: { type: "IN" } })}
+                testID="attendance-punch-in"
+              />
+            </View>
+            <View style={styles.punchCell}>
+              <Button
+                kind="danger"
+                title="Punch Out"
+                disabled={!t.isPunchedIn}
+                onPress={() => router.push({ pathname: "/attendance/punch", params: { type: "OUT" } })}
+                testID="attendance-punch-out"
+              />
+            </View>
+          </View>
         ) : null}
+        {t && !t.hasLocations ? <Banner tone="warning" message="No office location is set up yet. Ask HR to add one before punching." /> : null}
 
         {t?.sessions.map((sess, i) => (
           <SessionCard key={sess.id} session={sess} index={i} />
@@ -145,6 +161,8 @@ const styles = StyleSheet.create({
   content: { padding: layout.gutter },
   title: { marginTop: spacing.lg, marginBottom: spacing.lg },
   heroValue: { marginVertical: spacing.sm },
+  punchRow: { flexDirection: "row", marginHorizontal: -spacing.xs, marginBottom: spacing.md },
+  punchCell: { flex: 1, paddingHorizontal: spacing.xs },
   monthHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.md },
   arrow: { minWidth: layout.touchTarget, minHeight: layout.touchTarget, alignItems: "center", justifyContent: "center" },
   dim: { opacity: 0.3 },

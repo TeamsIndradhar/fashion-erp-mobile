@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** Phase 1 (backend mobile auth) **merged into `fashion-erp` `main`** (`b804bbcf`). **Phase 2 (Expo app foundation) done** and the **login/session part of Phase 3 done**, plus read-only attendance screens (today, month, day, day remark). **Punching from the phone is not built yet** — it needs the mobile punch backend (challenge, locations, punch route) in `fashion-erp`, which is next. App not yet run on a real phone or emulator (no Android SDK on this PC; no developer accounts yet). D-039: no phase gates, agents push to `main`.
+**Overall:** Phase 1 (backend mobile auth) and the **mobile punch backend** are on `fashion-erp` `main` (`b804bbcf`, `18dc32fe`). **Phase 2 (Expo app foundation) done.** Phase 3: login/session, profile, devices, attendance today/month/day + remark and the **punch flow (GPS → selfie → confirm → result, idempotent retries)** are done. **Punching from the phone works only for companies with "require face" off** — the face check (on-phone D-012 or server D-037, phase 1b) is not built, and the app never sends a fake face match. App not yet run on a real phone or emulator (no Android SDK on this PC, no developer accounts). D-039: no phase gates, agents push to `main`.
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fashion-erp-mobile`, branch `main`).
 
@@ -10,9 +10,9 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 |---|---|---|---|
 | 0 | Design & feasibility | 🔄 119 screens designed, release-1 screens (38) approved; Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | waiting for user inputs (photos, accounts/phones, factory visit) |
 | 1 | Backend authentication (in `fashion-erp`) | ✅ Done — merged to `fashion-erp` `main` (`b804bbcf`); migration `20261103180000_mobile_auth` applied to the **dev DB only** | — (D-039) |
-| 1b | Server-side face verification (in `fashion-erp`) | ⬜ waits for volunteer photos (accuracy test / threshold) | user input |
+| 1b | Server-side face verification (in `fashion-erp`) | ⬜ **next blocker for punching** in companies with "require face" on (the dev company has it on); accuracy threshold needs volunteer photos | user input (photos) |
 | 2 | Mobile foundation | ✅ Done — Expo SDK 58 app, expo-router, theme tokens, shared components, API client, SecureStore token store, single-flight refresh, app-config + Update Required, offline banner, Jest/ESLint/TS | — (D-039) |
-| 3 | Common employee features | 🔄 Login, forced/voluntary password change, profile, devices, sign out (all) done; attendance today/month/day + remark done (read-only); **punch flow not started** (needs backend) | — |
+| 3 | Common employee features | 🔄 Login, password change, profile, devices, sign out, attendance today/month/day + remark, **punch flow** done; blocked when the company requires face (phase 1b); not built: notifications, settings/help/about, device integrity registration, optional update sheet | — |
 | 4 | Worker & supervisor | ⬜ | — |
 | 5 | Other authorized modules | ⬜ | — |
 | 6 | Admin & owner dashboards | ⬜ | — |
@@ -26,13 +26,13 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
 
 1. ✅ Release-1 screen designs approved (38 screens). Phases now run without gates (D-039).
-1a. **Server deploy:** run migration `20261103180000_mobile_auth` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far).
+1a. **Server deploy:** run migrations `20261103180000_mobile_auth` and `20261104090000_mobile_punch_meta` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`.
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
 ## Backend work identified
 
-✅ Done in Phase 1: B-01…B-05 (auth routes), B-10 (auth codes), B-11, B-12 (auth audit), B-13, B-15 (auth env vars), B-24. Next: B-06, B-07, B-19, B-05 (punch routes), B-09 stub.
+✅ Done: B-01…B-05 (auth + punch-challenge, locations, punch routes), B-06 `hrms_attendance_punch_meta`, B-07 HMAC challenge, B-09 stub (records signals, always NORMAL), B-10 (auth codes + CHALLENGE_INVALID), B-11, B-12, B-13, B-15 (auth env vars; `MOBILE_CHALLENGE_SECRET` falls back to NEXTAUTH_SECRET — set its own in production), B-19, B-24. Next: B-18 (server face check), B-08 (integrity, needs accounts), B-09 real rules, B-17, B-14.
 
 B-01 `mobile_sessions` · B-02 `mobile_devices` · B-03 mobile-auth module · B-04 bearer adapter + shared live checks + allowlist · B-05 new mobile routes · B-06 `hrms_attendance_punch_meta` · B-07 HMAC challenge · B-08 integrity verifiers · B-09 risk engine + policy columns · B-10 error codes · B-11 per-IP limit · B-12 audit · B-13 revoke on reset/suspend · B-14 cleanup job · B-15 env vars · ~~B-16~~ (dropped) · B-17 reviewer reasons in Outdoor screen · **B-18 server-side face verification (approved, D-037)** · B-19 `punch()` options param · B-20 device admin (optional) · ~~B-21~~ (not needed) · ~~B-22~~ (dropped) · **B-23 role permission changes (approved)** · **B-24 AGENTS.md pointer (approved)**. Details: `06`.
 
@@ -58,6 +58,15 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-04 — Claude Code — Mobile punch (backend + app)
+**Commits:** `fashion-erp` `main` `18dc32fe` (punch-challenge, locations, idempotent punch, `hrms_attendance_punch_meta`, `punch()` options param, CHALLENGE_INVALID; migration `20261104090000_mobile_punch_meta` applied to the dev DB). `fashion-erp-mobile` `main` (this commit).
+**App:** `app/attendance/punch.tsx` (EMP-003…009: location permission, GPS accuracy loop to the company's `gpsAccuracyMeters`, front-camera selfie resized to 720 px JPEG, office distance estimate, confirm, result incl. "sent for review"); `src/features/attendance/{location,estimate,submitPunch}.ts` — one `clientPunchId` per attempt reused on retry, one fresh challenge on CHALLENGE_INVALID, fix older than 60 s re-acquired; Punch In / Punch Out buttons on the attendance dashboard. Signals sent: only `mocked` (others null = unknown, D-035 module not built).
+**Face:** if `rules.requireFace` the punch screen explains that face check from the phone is not ready and sends nothing (no fake `facePhotoId`). The dev company has require-face **on**, so on this server the app cannot punch until phase 1b.
+**Verified (executed):** backend — vitest 98/98 in the touched areas, full suite 3917 passed / 1 failed (CRM dashboard UI test; passes alone 8/8 — same timing flake as Phase 1); `tsc` clean except the generated-type `LayoutProps` (no `.next` in the worktree); ESLint clean on changed files; live dev-server punch flow 13/13 (auth, side binding, single use, replay, duplicate IN, low-GPS message, outside OUT → review, web punch refused for bearer). App — `tsc`, `eslint`, jest 29/29, live contract test with the app's real client against the dev server (login → me → today → month → offices → challenge → devices → refresh rotation → remove device → revoked), Android bundle exports.
+**Not verified:** the punch screen itself on a device (camera/GPS need a real phone or emulator); multipart selfie upload from React Native (covered only by the server-side live test with Node FormData).
+**Dev DB side effects:** one admin attendance session on 2026-11-04 (IN at Test Head Office, OUT from outside → review); two `hrms_attendance_punch_meta` rows; admin's two earlier test devices revoked ("Test device cleanup").
+**Next step:** phase 1b server face check (B-18) — implementation can start with the company's existing `faceMatchThreshold`; volunteer photos are still needed to confirm the threshold before go-live.
 
 ### Handoff — 2026-11-03 — Claude Code — Phase 2 done + Phase 3 login/session + attendance read-only
 **Branch / commit:** `fashion-erp-mobile` `main` (pushed, D-039). `fashion-erp`: Phase 1 merged to `main` (`b804bbcf`).

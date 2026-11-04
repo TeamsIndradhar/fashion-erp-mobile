@@ -160,3 +160,34 @@ export interface AttendanceDay {
   remark: string | null;
   remarkAt: string | null;
 }
+
+// ---- Mobile punch (/api/mobile/v1/attendance/*) ----
+
+export interface PunchChallenge {
+  challenge: string;
+  challengeId: string;
+  expiresAt: string;
+}
+
+/** Client-reported device signals: true / false / null (unknown). Untrusted on the server. */
+export interface PunchSignals {
+  mocked: boolean | null;
+  developerOptions: boolean | null;
+  adbEnabled: boolean | null;
+  adbWifiEnabled: boolean | null;
+  emulatorHeuristic: boolean | null;
+  rootHeuristic: boolean | null;
+  jailbreakHeuristic: boolean | null;
+  debuggerAttached: boolean | null;
+  locationProvider: string | null;
+}
+
+export interface PunchResult {
+  message: string;
+  session: AttendanceSession;
+  fromOffice: boolean;
+  locationName: string | null;
+  distanceMeters: number | null;
+  review: { riskLevel: string; needsReview: boolean; employeeMessage: string | null };
+  replayed: boolean;
+}

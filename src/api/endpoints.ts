@@ -1,6 +1,7 @@
 import type { ApiClient } from "./client";
 import type {
   AppConfig,
+  AttendanceOffice,
   AttendanceDay,
   AttendanceMonth,
   AttendanceToday,
@@ -8,6 +9,8 @@ import type {
   LoginResponse,
   MeResponse,
   MobileDevice,
+  PunchChallenge,
+  PunchResult,
   RefreshResponse,
 } from "./types";
 
@@ -25,6 +28,11 @@ export function createEndpoints(api: ApiClient) {
     removeDevice: (id: string) => api.del<{ ok: true }>(`/api/mobile/v1/devices/${encodeURIComponent(id)}`),
     changePassword: (currentPassword: string, newPassword: string) =>
       api.post<{ ok: true }>("/api/v1/account/change-password", { currentPassword, newPassword }),
+
+    punchChallenge: (type: "IN" | "OUT") => api.post<PunchChallenge>("/api/mobile/v1/attendance/punch-challenge", { purpose: "PUNCH", type }),
+    officeLocations: () => api.get<AttendanceOffice[]>("/api/mobile/v1/attendance/locations"),
+    /** multipart; 45 s like docs/02 §3. */
+    punch: (form: FormData) => api.request<PunchResult>("/api/mobile/v1/attendance/punch", { method: "POST", body: form, timeoutMs: 45_000 }),
 
     attendanceToday: () => api.get<AttendanceToday>("/api/v1/attendance/me/today"),
     attendanceMonth: (month: string) => api.get<AttendanceMonth>(`/api/v1/attendance/me/month?month=${encodeURIComponent(month)}`),
