@@ -43,6 +43,8 @@ export default function Home() {
       {me.employee && !attendanceAllowed ? <Banner tone="info" message={strings.home.attendanceOff} /> : null}
 
       <View style={styles.actions}>
+        {me.viewableModules.includes("reports") ? <Button title="Business dashboard" onPress={() => router.push("/dashboard")} testID="home-dashboard" /> : null}
+        {me.viewableModules.includes("reports") ? <View style={styles.gap} /> : null}
         {me.employee && attendanceAllowed ? <Button title="Attendance" onPress={() => router.push("/attendance")} testID="home-attendance" /> : null}
         <View style={styles.gap} />
         {me.employee && me.permissions.production?.view && !canApprove ? <Button title="My work" onPress={() => router.push("/work")} testID="home-work" /> : null}

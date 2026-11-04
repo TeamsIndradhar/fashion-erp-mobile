@@ -177,6 +177,18 @@ run("live ERP contract", () => {
     await expect(api.post("/api/v1/purchase-orders", {})).rejects.toMatchObject({ status: 403 });
     await expect(api.request("/api/v1/material-requests/00000000-0000-0000-0000-000000000000", { method: "PATCH", body: {} })).rejects.toMatchObject({ status: 403 });
 
+    // Reports (ADM-005/006, OWN-001): catalog, executive dashboard, first listed report.
+    const catalog = await ep.reportCatalog();
+    expect(Array.isArray(catalog)).toBe(true);
+    if (me.viewableModules.includes("reports")) {
+      const exec = await ep.report("dashboard", "executive-dashboard");
+      expect(Array.isArray(exec.descriptor.rows)).toBe(true);
+      for (const r of exec.descriptor.rows) expect(typeof r.section).toBe("string");
+      const first = catalog.find((g) => g.category !== "dashboard" && g.category !== "mis");
+      if (first) expect(Array.isArray((await ep.report(first.category, first.reports[0].key)).descriptor.columns)).toBe(true);
+    }
+    await expect(api.post("/api/v1/reports/dashboard/executive-dashboard", {})).rejects.toMatchObject({ status: 403 });
+
     // Routes outside the mobile allowlist stay refused for a mobile token.
     await expect(api.post("/api/v1/leave-requests/carry-forward", { fromYear: 2025 })).rejects.toMatchObject({ status: 403 });
     await expect(api.post("/api/v1/attendance/outdoor-rejections/00000000-0000-0000-0000-000000000000/cancel")).rejects.toMatchObject({ status: 403 });

@@ -615,3 +615,31 @@ export interface MaterialRequestDetail extends MaterialRequestRow {
     color: { name: string } | null;
   }[];
 }
+
+// ---- Reports (existing /api/v1/reports/{category}/{key}; catalog /api/mobile/v1/reports) ----
+
+export interface ReportColumn {
+  key: string;
+  label: string;
+  align?: "left" | "right" | "center";
+  type?: "text" | "number" | "currency" | "date" | "percent";
+}
+
+export interface ReportDescriptor {
+  title: string;
+  subtitle?: string;
+  filtersApplied: { label: string; value: string }[];
+  columns: ReportColumn[];
+  rows: Record<string, unknown>[];
+  totals?: Record<string, unknown>;
+  generatedAt: string;
+  unavailableReason?: string;
+}
+
+export interface ReportCategoryGroup {
+  category: string;
+  label: string;
+  description: string;
+  canExport: boolean;
+  reports: { key: string; title: string }[];
+}

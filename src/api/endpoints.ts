@@ -39,6 +39,8 @@ import type {
   PunchResult,
   RecordAttachment,
   RefreshResponse,
+  ReportCategoryGroup,
+  ReportDescriptor,
   SalaryAdvance,
   SalaryRun,
   SupportTicket,
@@ -177,6 +179,17 @@ export function createEndpoints(api: ApiClient) {
     teamClarifications: () => api.get<TeamOutdoorRejection[]>("/api/v1/attendance/outdoor-rejections?status=IN_PROCESS"),
     decideClarification: (id: string, decision: "approve" | "reject") =>
       api.post<unknown>(`/api/v1/attendance/outdoor-rejections/${encodeURIComponent(id)}/${decision}`),
+
+    // Reports (ADM-005/006, OWN-001)
+    reportCatalog: () => api.get<ReportCategoryGroup[]>("/api/mobile/v1/reports"),
+    report: (category: string, key: string, filters: Record<string, string> = {}) => {
+      const qs = new URLSearchParams(filters).toString();
+      return api.get<{ descriptor: ReportDescriptor }>(`/api/v1/reports/${encodeURIComponent(category)}/${encodeURIComponent(key)}${qs ? `?${qs}` : ""}`, { timeoutMs: 45_000 });
+    },
+    reportExportPath: (category: string, key: string, format: "xlsx" | "pdf", filters: Record<string, string> = {}) => {
+      const qs = new URLSearchParams(filters).toString();
+      return `/api/v1/reports/${encodeURIComponent(category)}/${encodeURIComponent(key)}/export/${format}${qs ? `?${qs}` : ""}`;
+    },
 
     // Approvals inbox (Phase 5)
     paymentRequestsToApprove: () => api.get<PaymentRequestForReview[]>("/api/v1/payment-requests?view=approve&pageSize=100&sortBy=createdAt&sortOrder=asc"),
