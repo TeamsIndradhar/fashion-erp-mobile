@@ -1,11 +1,12 @@
 import { router } from "expo-router";
+import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { colors, spacing } from "../theme/tokens";
 import { AppText } from "./AppText";
 import { Icon } from "./Icon";
 
 /** AppHeader `inner` variant (COMPONENTS.md): back arrow + title. */
-export function InnerHeader({ title, onBack, testID }: { title: string; onBack?: () => void; testID?: string }) {
+export function InnerHeader({ title, onBack, right, testID }: { title: string; onBack?: () => void; right?: ReactNode; testID?: string }) {
   return (
     <View style={styles.row}>
       <Pressable
@@ -21,6 +22,7 @@ export function InnerHeader({ title, onBack, testID }: { title: string; onBack?:
       <AppText variant="h2" style={styles.title} numberOfLines={1}>
         {title}
       </AppText>
+      {right}
     </View>
   );
 }

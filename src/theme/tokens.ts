@@ -20,6 +20,10 @@ export const colors = {
   warning: "#FFA81F",
   warningTint: "#FFF4E0",
   info: "#2F6FED",
+  infoTint: "#E8F0FE",
+  // Prototype icon-tile accent (design/prototypes COLOR.purple / TINT.purple): My Report, Add Remark.
+  accent: "#7C5CF2",
+  accentTint: "#EFE9FF",
   white: "#FFFFFF",
 } as const;
 

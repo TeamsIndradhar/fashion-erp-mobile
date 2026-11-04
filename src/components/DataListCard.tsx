@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { colors, elevation } from "../theme/tokens";
 import { AppText } from "./AppText";
@@ -9,6 +10,7 @@ export function DataListCard({
   tone = "primary",
   title,
   sub,
+  right,
   onPress,
   testID,
 }: {
@@ -16,6 +18,7 @@ export function DataListCard({
   tone?: IconTone;
   title: string;
   sub?: string;
+  right?: ReactNode;
   onPress?: () => void;
   testID?: string;
 }) {
@@ -32,6 +35,7 @@ export function DataListCard({
           </AppText>
         ) : null}
       </View>
+      {right}
       {onPress ? <Icon name="chev" tone="muted" size={18} /> : null}
     </>
   );

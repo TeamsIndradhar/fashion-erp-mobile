@@ -1,173 +1,150 @@
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, router } from "expo-router";
-import { useState } from "react";
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import type { AttendanceSession } from "@/api/types";
 import { useAuth } from "@/auth/AuthProvider";
 import { AppText } from "@/components/AppText";
 import { Banner } from "@/components/Banner";
-import { Button } from "@/components/Button";
+import { BottomNavigation } from "@/components/BottomNavigation";
 import { Card } from "@/components/Card";
-import { HeroCard } from "@/components/HeroCard";
-import { OfflineBanner } from "@/components/OfflineBanner";
+import { DataListCard } from "@/components/DataListCard";
+import { Icon } from "@/components/Icon";
+import { InfoBanner } from "@/components/InfoBanner";
+import { InnerHeader } from "@/components/InnerHeader";
+import { Screen } from "@/components/Screen";
+import { StatusBadge, type BadgeTone } from "@/components/StatusBadge";
 import { endpoints } from "@/core/services";
-import { dayStatus, TONE_COLOR } from "@/features/attendance/labels";
-import { SessionCard } from "@/features/attendance/SessionCard";
-import { formatDateKey, formatHours, formatMonthKey, formatTime, istMonthKey } from "@/lib/dates";
-import { colors, layout, spacing } from "@/theme/tokens";
+import { AttendanceHero, PunchPair } from "@/features/attendance/AttendanceWidgets";
+import { useLiveLocation } from "@/features/attendance/useLiveLocation";
+import { formatDateKey, formatHours, formatTime } from "@/lib/dates";
+import { colors } from "@/theme/tokens";
 
-/** EMP-002 Attendance dashboard + EMP-011/012 month report and day list. */
+const SESSION_BADGE: Record<string, { label: string; tone: BadgeTone }> = {
+  PRESENT: { label: "Present", tone: "success" },
+  PRESENT_FROM_OUTSIDE: { label: "Outside", tone: "warning" },
+  REMOTE: { label: "Remote", tone: "info" },
+};
+
+function sessionPlace(fromOffice: boolean | null, distance: number | null) {
+  return [fromOffice === null ? null : fromOffice ? "Inside office" : "Outside office", distance !== null ? `${Math.round(distance)} m` : null]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+function SessionRow({ s }: { s: AttendanceSession }) {
+  const badge = SESSION_BADGE[s.status] ?? { label: s.status.replace(/_/g, " ").toLowerCase(), tone: "neutral" as const };
+  const place = s.inLocationName ?? s.inOffice?.name ?? null;
+  const title = s.checkOutAt
+    ? `${formatTime(s.checkInAt)} – ${formatTime(s.checkOutAt)}${place ? ` · ${place}` : ""}`
+    : `In ${formatTime(s.checkInAt)}${place ? ` · ${place}` : ""}`;
+  const sub = s.checkOutAt
+    ? sessionPlace(s.isLogoutFromOffice, s.outDistanceMeters) || "Punched out"
+    : sessionPlace(s.isLoginFromOffice, s.inDistanceMeters) || "Punched in";
+  return (
+    <DataListCard
+      icon={s.checkOutAt ? "logout" : "login"}
+      tone={s.checkOutAt ? "danger" : "success"}
+      title={title}
+      sub={sub}
+      right={<StatusBadge label={badge.label} tone={badge.tone} />}
+    />
+  );
+}
+
+/** EMP-002 Attendance dashboard (prototype EMP-002): live location hero, In/Out pair, today's sessions, shift. */
 export default function AttendanceDashboard() {
   const auth = useAuth();
-  const [monthDelta, setMonthDelta] = useState(0);
-  const monthKey = istMonthKey(new Date(), monthDelta);
   const enabled = auth.status === "signedIn";
   const today = useQuery({ queryKey: ["attendance", "today"], queryFn: endpoints.attendanceToday, enabled });
-  const month = useQuery({ queryKey: ["attendance", "month", monthKey], queryFn: () => endpoints.attendanceMonth(monthKey), enabled });
+  const { live, refresh } = useLiveLocation(enabled, today.data?.rules.gpsAccuracyMeters ?? 50);
 
   if (!enabled) return <Redirect href="/" />;
 
   const t = today.data;
   const open = t?.sessions.find((s) => s.id === t.openSessionId) ?? null;
-  const s = month.data?.summary;
-  const days = (month.data?.days ?? []).filter((d) => !d.isFuture).reverse();
+  const lastOut = [...(t?.sessions ?? [])].reverse().find((s) => s.checkOutAt)?.checkOutAt ?? null;
+  const ringState = open ? "in" : lastOut ? "out" : "none";
+  const ringTime = open ? formatTime(open.checkInAt) : lastOut ? formatTime(lastOut) : "--:--";
+  const shift = t?.employee.shift;
+  const canPunch = !!auth.me?.permissions.attendance.punch;
 
   return (
-    <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
-      <OfflineBanner />
-      <ScrollView
-        contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={today.isRefetching || month.isRefetching} onRefresh={() => void Promise.all([today.refetch(), month.refetch()])} />}
-      >
-        <AppText variant="h2" style={styles.title}>
-          Attendance
-        </AppText>
-
-        {today.isPending ? <ActivityIndicator color={colors.primary} /> : null}
-        {today.error ? <Banner tone="danger" message={(today.error as Error).message} /> : null}
-        {t ? (
-          <HeroCard>
-            <AppText variant="caption" color={colors.white}>
-              {formatDateKey(t.dateKey)}
-              {t.employee.shift ? ` · ${t.employee.shift.name} ${t.employee.shift.startTime}–${t.employee.shift.endTime}` : ""}
-            </AppText>
-            <AppText variant="display" color={colors.white} style={styles.heroValue}>
-              {t.isPunchedIn && open ? `In since ${formatTime(open.checkInAt)}` : t.sessions.length ? "Punched out" : "Not punched in"}
-            </AppText>
-            <AppText variant="bodyStrong" color={colors.white}>
-              Worked today: {formatHours(t.liveHours)}
-            </AppText>
-          </HeroCard>
-        ) : null}
-
-        {t && auth.me?.permissions.attendance.punch ? (
-          <View style={styles.punchRow}>
-            <View style={styles.punchCell}>
-              <Button
-                title="Punch In"
-                disabled={t.isPunchedIn}
-                onPress={() => router.push({ pathname: "/attendance/punch", params: { type: "IN" } })}
-                testID="attendance-punch-in"
-              />
-            </View>
-            <View style={styles.punchCell}>
-              <Button
-                kind="danger"
-                title="Punch Out"
-                disabled={!t.isPunchedIn}
-                onPress={() => router.push({ pathname: "/attendance/punch", params: { type: "OUT" } })}
-                testID="attendance-punch-out"
-              />
-            </View>
-          </View>
-        ) : null}
-        {t && !t.hasLocations ? <Banner tone="warning" message="No office location is set up yet. Ask HR to add one before punching." /> : null}
-
-        {t?.sessions.map((sess, i) => (
-          <SessionCard key={sess.id} session={sess} index={i} />
-        ))}
-
-        <View style={styles.monthHead}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Previous month" onPress={() => setMonthDelta((d) => d - 1)} style={styles.arrow}>
-            <AppText variant="h3" color={colors.primary}>
-              ‹
-            </AppText>
+    <Screen
+      footer={<BottomNavigation active="My Work" />}
+      refreshing={today.isRefetching}
+      onRefresh={() => {
+        void today.refetch();
+        refresh();
+      }}
+    >
+      <InnerHeader
+        title="My Attendance"
+        right={
+          <Pressable testID="attendance-report" accessibilityRole="button" accessibilityLabel="My report" hitSlop={8} onPress={() => router.push("/attendance/report")} style={styles.ib}>
+            <Icon name="calendar" tone="text" size={22} />
           </Pressable>
-          <AppText variant="h3">{formatMonthKey(monthKey)}</AppText>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Next month"
-            disabled={monthDelta >= 0}
-            onPress={() => setMonthDelta((d) => Math.min(0, d + 1))}
-            style={[styles.arrow, monthDelta >= 0 && styles.dim]}
-          >
-            <AppText variant="h3" color={colors.primary}>
-              ›
-            </AppText>
-          </Pressable>
-        </View>
+        }
+      />
 
-        {month.isPending ? <ActivityIndicator color={colors.primary} /> : null}
-        {month.error ? <Banner tone="danger" message={(month.error as Error).message} /> : null}
-        {s ? (
-          <Card style={styles.summary}>
-            {(
-              [
-                ["Present", s.presentDays],
-                ["Absent", s.absentDays],
-                ["Leave", (s.paidLeaveDays ?? 0) + (s.unpaidLeaveDays ?? 0)],
-                ["Late", s.lateDays],
-                ["Outside", s.outsideDays],
-                ["Hours", s.totalHours !== undefined ? formatHours(s.totalHours) : undefined],
-              ] as const
-            ).map(([label, value]) => (
-              <View key={label} style={styles.stat}>
-                <AppText variant="h3">{value ?? "—"}</AppText>
-                <AppText variant="caption" color={colors.textSecondary}>
-                  {label}
-                </AppText>
-              </View>
-            ))}
+      {today.isPending ? <ActivityIndicator color={colors.primary} style={styles.loading} /> : null}
+      {today.error ? <Banner tone="danger" message={(today.error as Error).message} /> : null}
+
+      {t ? (
+        <>
+          <AttendanceHero live={live} hasLocations={t.hasLocations} dateText={formatDateKey(t.dateKey)} ringState={ringState} ringTime={ringTime} />
+          {canPunch ? (
+            <PunchPair
+              punchedIn={t.isPunchedIn}
+              onIn={() => router.push({ pathname: "/attendance/punch", params: { type: "IN" } })}
+              onOut={() => router.push({ pathname: "/attendance/punch", params: { type: "OUT" } })}
+            />
+          ) : null}
+          {!t.hasLocations ? <Banner tone="warning" message="No office location is set up yet. Ask HR to add one before punching." /> : null}
+
+          <Card style={styles.card}>
+            <AppText variant="h3" style={styles.sech}>
+              {"Today's sessions"}
+            </AppText>
+            {t.sessions.length ? (
+              t.sessions.map((s) => <SessionRow key={s.id} s={s} />)
+            ) : (
+              <AppText variant="caption" color={colors.textSecondary} style={styles.empty}>
+                No punches yet today.
+              </AppText>
+            )}
+            <View style={styles.kv}>
+              <AppText variant="caption" color={colors.textSecondary} style={styles.kvText}>
+                {open ? "Worked so far" : "Worked today"}
+              </AppText>
+              <AppText variant="bodyStrong" style={styles.kvText}>
+                {formatHours(t.liveHours)}
+              </AppText>
+            </View>
+            <View style={[styles.kv, styles.kvLast]}>
+              <AppText variant="caption" color={colors.textSecondary} style={styles.kvText}>
+                Shift
+              </AppText>
+              <AppText variant="bodyStrong" style={[styles.kvText, styles.kvValue]}>
+                {shift ? `${shift.name} ${shift.startTime} – ${shift.endTime} (${shift.graceMinutes} min grace)` : "Not assigned"}
+              </AppText>
+            </View>
           </Card>
-        ) : null}
+        </>
+      ) : null}
 
-        {days.map((d) => {
-          const st = dayStatus(d);
-          return (
-            <Pressable key={d.dateKey} accessibilityRole="button" onPress={() => router.push({ pathname: "/attendance/day/[date]", params: { date: d.dateKey } })}>
-              <Card style={styles.dayRow}>
-                <View style={styles.dayMain}>
-                  <AppText variant="bodyStrong">{formatDateKey(d.dateKey)}</AppText>
-                  <AppText variant="caption" color={colors.textSecondary}>
-                    {d.firstIn ? `${formatTime(d.firstIn)} – ${d.lastOut ? formatTime(d.lastOut) : "…"}` : "No punches"}
-                    {d.workedHours ? ` · ${formatHours(d.workedHours)}` : ""}
-                    {d.remark ? " · remark" : ""}
-                  </AppText>
-                </View>
-                <AppText variant="micro" color={TONE_COLOR[st.tone]}>
-                  {st.label.toUpperCase()}
-                </AppText>
-              </Card>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-    </SafeAreaView>
+      <InfoBanner tone="success" text="Your attendance is securely recorded with fraud prevention." />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: layout.gutter },
-  title: { marginTop: spacing.lg, marginBottom: spacing.lg },
-  heroValue: { marginVertical: spacing.sm },
-  punchRow: { flexDirection: "row", marginHorizontal: -spacing.xs, marginBottom: spacing.md },
-  punchCell: { flex: 1, paddingHorizontal: spacing.xs },
-  monthHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl, marginBottom: spacing.md },
-  arrow: { minWidth: layout.touchTarget, minHeight: layout.touchTarget, alignItems: "center", justifyContent: "center" },
-  dim: { opacity: 0.3 },
-  summary: { flexDirection: "row", flexWrap: "wrap" },
-  stat: { width: "33%", paddingVertical: spacing.sm },
-  dayRow: { flexDirection: "row", alignItems: "center" },
-  dayMain: { flex: 1, marginRight: spacing.sm },
+  ib: { width: 40, height: 40, alignItems: "center", justifyContent: "center" },
+  loading: { marginVertical: 24 },
+  card: { padding: 14 },
+  sech: { fontWeight: "700", marginTop: 4, marginBottom: 8 },
+  empty: { marginBottom: 8 },
+  kv: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 9, borderBottomWidth: 1, borderBottomColor: colors.border, gap: 12 },
+  kvLast: { borderBottomWidth: 0 },
+  kvText: { fontSize: 13.5, lineHeight: 18 },
+  kvValue: { flexShrink: 1, textAlign: "right", fontWeight: "600" },
 });
