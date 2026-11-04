@@ -10,16 +10,24 @@ import type {
   CorrectionRequest,
   DeviceInfo,
   ExpenseAccountOption,
+  JobOrderDetail,
   LeaveBalance,
   LeaveDuration,
   LeaveRequest,
   LeaveType,
   LoginResponse,
+  LotDetail,
   MeResponse,
   MobileDevice,
+  MyAssignment,
   OutdoorRejection,
   PaymentRequest,
   PaymentRequestStatus,
+  PieceRateEarning,
+  ProductionOrderDetail,
+  ProductionOrderRow,
+  ProgressEntry,
+  ProgressQuantities,
   PunchChallenge,
   PunchResult,
   RecordAttachment,
@@ -122,6 +130,27 @@ export function createEndpoints(api: ApiClient) {
       }),
     cancelExpense: (id: string) => api.post<PaymentRequest>(`/api/v1/payment-requests/${encodeURIComponent(id)}/cancel`),
     expenseFiles: (id: string) => api.get<RecordAttachment[]>(`/api/v1/record-attachments/payment-request/${encodeURIComponent(id)}`),
+    // ---- Worker (03) / supervisor (04) ----
+    myAssignments: () => api.get<MyAssignment[]>("/api/v1/job-orders/my-assignments"),
+    jobOrder: (id: string) => api.get<JobOrderDetail>(`/api/v1/job-orders/${encodeURIComponent(id)}`),
+    lot: (id: string) => api.get<LotDetail>(`/api/v1/lots/${encodeURIComponent(id)}`),
+    submitProgress: (jobOrderId: string, q: ProgressQuantities & { remarks: string }) =>
+      api.post<ProgressEntry>(`/api/v1/job-orders/${encodeURIComponent(jobOrderId)}/self-progress`, q),
+    myEntries: () => api.get<ProgressEntry[]>("/api/v1/job-order-progress-entries/mine"),
+    handBack: (assignmentId: string, quantity: number, reason: string) =>
+      api.post<{ id: string }>(`/api/v1/job-order-assignments/${encodeURIComponent(assignmentId)}/handback`, { quantity, reason }),
+    myEarnings: () => api.get<PieceRateEarning[]>("/api/v1/piece-rate-earnings"),
+
+    pendingEntries: () => api.get<ProgressEntry[]>("/api/v1/job-order-progress-entries/pending"),
+    approveEntry: (id: string, approvalRemark: string) =>
+      api.post<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}/approve`, { approvalRemark }),
+    rejectEntry: (id: string, approvalRemark: string) =>
+      api.post<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}/reject`, { approvalRemark }),
+    correctEntry: (id: string, q: ProgressQuantities & { remarks?: string }) =>
+      api.request<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}`, { method: "PATCH", body: q }),
+    productionOrders: () => api.get<ProductionOrderRow[]>("/api/v1/production-orders?pageSize=50&status=IN_PROGRESS"),
+    productionOrder: (id: string) => api.get<ProductionOrderDetail>(`/api/v1/production-orders/${encodeURIComponent(id)}`),
+
     addExpenseFile: (id: string, file: { uri: string; name: string; type: string }) => {
       const form = new FormData();
       form.append("files", file as unknown as Blob);

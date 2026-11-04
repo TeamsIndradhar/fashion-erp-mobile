@@ -130,6 +130,21 @@ run("live ERP contract", () => {
       await expect(ep.requestCorrection({ type: "MISSED_PUNCH", attendanceDate: "2026-11-01", checkIn: "09:00", reason: "x" })).rejects.toMatchObject({ status: 400, message: expect.stringContaining("Both login and logout") });
     }
 
+    // Worker / supervisor reads (03, 04).
+    expect(typeof me.permissions.production?.view).toBe("boolean");
+    const assignments = await ep.myAssignments().catch((e) => e);
+    // Self-entry off / not linked are real answers, not failures.
+    if (Array.isArray(assignments)) {
+      if (assignments[0]) expect((await ep.jobOrder(assignments[0].jobOrderId)).jobNumber).toBeTruthy();
+    } else expect(["PERMISSION_DENIED", "VALIDATION_ERROR"]).toContain(assignments.code);
+    if (me.permissions.pieceRate?.view) expect(Array.isArray(await ep.myEarnings())).toBe(true);
+    if (me.permissions.production?.approve) expect(Array.isArray(await ep.pendingEntries())).toBe(true);
+    if (me.permissions.production?.view) {
+      const orders = await ep.productionOrders();
+      expect(Array.isArray(orders)).toBe(true);
+      if (orders[0]) expect(typeof (await ep.productionOrder(orders[0].id)).progress.progressPercent).toBe("number");
+    }
+
     // Approve routes stay refused for a mobile token.
     await expect(api.post("/api/v1/leave-requests/00000000-0000-0000-0000-000000000000/approve")).rejects.toMatchObject({ status: 403 });
 

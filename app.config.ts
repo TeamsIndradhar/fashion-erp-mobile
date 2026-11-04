@@ -48,6 +48,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-secure-store",
     ["expo-location", { locationWhenInUsePermission: "Fashion ERP uses your location only when you punch in or out, to check that you are at your office.", isAndroidBackgroundLocationEnabled: false }],
     ["expo-camera", { cameraPermission: "Fashion ERP uses the camera to take your attendance selfie.", recordAudioAndroid: false }],
+    ["expo-audio", { microphonePermission: "Fashion ERP uses the microphone only when you record a voice note." }],
     ["expo-splash-screen", { image: "./assets/splash-icon.png", imageWidth: 200, resizeMode: "contain", backgroundColor: "#F2F0FE" }],
     // Cleartext HTTP (LAN dev server) is allowed in development builds only.
     ["expo-build-properties", { android: { usesCleartextTraffic: VARIANT === "development" } }],

@@ -52,9 +52,15 @@ export interface MeResponse {
     departmentName: string | null;
     designationName: string | null;
     shift: { id: string; name: string; startTime: string; endTime: string; graceMinutes: number } | null;
+    selfEntryEnabled?: boolean;
   } | null;
   mustChangePassword: boolean;
-  permissions: { attendance: { view: boolean; punch: boolean } };
+  permissions: {
+    attendance: { view: boolean; punch: boolean };
+    /** Older servers do not send these. */
+    production?: { view: boolean; approve: boolean };
+    pieceRate?: { view: boolean };
+  };
   modulesEnabled: { hrms: boolean };
   viewableModules: string[];
   device: { id: string; status: string; integrityStatus: string; model: string | null; platform: string } | null;
@@ -365,4 +371,110 @@ export interface RecordAttachment {
   mimeType: string;
   fileSizeBytes: number;
   uploadedAt: string;
+}
+
+// ---- Production: worker self-entry and supervisor approvals (existing /api/v1 routes; Decimals are strings) ----
+
+export type AssignmentStatus = "ASSIGNED" | "IN_PROGRESS" | "COMPLETED" | "REASSIGNED" | "CANCELLED";
+
+export interface JobOrderBrief {
+  id: string;
+  jobNumber: string;
+  status: string;
+  lotId: string;
+  plannedQuantity: string;
+  completedQuantity: string;
+  productionStage: { id: string; name: string; allowsExtraQuantity?: boolean };
+  lot: { id: string; lotNumber: string };
+}
+
+export interface MyAssignment {
+  id: string;
+  jobOrderId: string;
+  status: AssignmentStatus;
+  assignedQuantity: string;
+  assignedAt: string;
+  jobOrder: JobOrderBrief;
+}
+
+export type ApprovalStatus = "NOT_REQUIRED" | "PENDING" | "APPROVED" | "REJECTED";
+
+export interface ProgressEntry {
+  id: string;
+  jobOrderId: string;
+  jobOrderAssignmentId: string | null;
+  completedQuantity: string;
+  rejectedQuantity: string;
+  damagedQuantity: string;
+  extraQuantity: string;
+  remarks: string | null;
+  approvalStatus: ApprovalStatus;
+  approvalRemark: string | null;
+  createdAt: string;
+  recordedByUserId: string;
+  employee?: { id: string; fullName: string; employeeCode: string };
+  jobOrder?: { id?: string; jobNumber: string; productionStage: { name: string }; lot?: { lotNumber: string } };
+}
+
+export interface JobOrderDetail extends JobOrderBrief {
+  rejectedQuantity: string;
+  damagedQuantity: string;
+  extraQuantity: string;
+  assignments: { id: string; status: AssignmentStatus; assignedQuantity: string }[];
+  progressEntries: ProgressEntry[];
+}
+
+export interface LotDetail {
+  id: string;
+  lotNumber: string;
+  quantity: string;
+  status: string;
+  currentStage: { id: string; name: string } | null;
+  productionOrder: { id: string; orderNumber: string; product: { styleName: string } | null } | null;
+  variantBreakdown: { id: string; quantity: string; productVariant: { skuCode: string; color: { name: string } | null; size: { name: string } | null } }[];
+  jobOrders: {
+    id: string;
+    jobNumber: string;
+    status: string;
+    productionStage: { name: string };
+    assignments: { id: string; assignedQuantity: string; loggedQuantity: number; remainingQuantity: number }[];
+  }[];
+}
+
+export interface PieceRateEarning {
+  id: string;
+  status: string;
+  payableQuantity: string;
+  rateApplied: string;
+  amount: string;
+  createdAt: string;
+  productionOperation: { name: string } | null;
+  jobOrder: { jobNumber: string; productionStage: { name: string } | null; lot: { lotNumber: string } | null } | null;
+}
+
+export interface ProductionOrderRow {
+  id: string;
+  orderNumber: string;
+  status: string;
+  plannedQuantity: string;
+  producedQuantity: number;
+  product: { styleName: string; styleCode: string } | null;
+}
+
+export interface ProductionOrderDetail extends ProductionOrderRow {
+  progress: {
+    plannedQuantity: number;
+    producedQuantity: number;
+    rejectedQuantity: number;
+    balanceQuantity: number;
+    progressPercent: number;
+    lots: { lotId: string; lotNumber: string; plannedQuantity: number; producedQuantity: number; rejectedQuantity: number; status: string }[];
+  };
+}
+
+export interface ProgressQuantities {
+  completedQuantity: number;
+  rejectedQuantity: number;
+  damagedQuantity: number;
+  extraQuantity: number;
 }

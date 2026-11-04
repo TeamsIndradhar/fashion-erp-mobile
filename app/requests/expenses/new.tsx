@@ -14,6 +14,7 @@ import { Chips } from "@/components/Chips";
 import { localDateKey, PickerField } from "@/components/PickerField";
 import { Screen } from "@/components/Screen";
 import { TextField } from "@/components/TextField";
+import { VoiceNoteField, type VoiceNote } from "@/components/VoiceNoteField";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { parseAmount, validateExpense } from "@/features/requests/requests";
@@ -34,6 +35,7 @@ export default function NewExpense() {
   const [dueDate, setDueDate] = useState<string | null>(today);
   const [remark, setRemark] = useState("");
   const [photos, setPhotos] = useState<Photo[]>([]);
+  const [voice, setVoice] = useState<VoiceNote | null>(null);
   const [errors, setErrors] = useState<ReturnType<typeof validateExpense>>({});
   // Same key on every retry of this form → the server returns the first request.
   const [idempotencyKey] = useState(() => `mobile-expense:${Crypto.randomUUID()}`);
@@ -42,7 +44,7 @@ export default function NewExpense() {
     mutationFn: async () => {
       const created = await endpoints.raiseExpense({ amount: parseAmount(amount)!, payToName: payToName.trim(), accountId: accountId!, paymentDueDate: dueDate!, remark: remark.trim(), idempotencyKey });
       let failed = 0;
-      for (const p of photos) {
+      for (const p of voice ? [...photos, { uri: voice.uri, name: voice.name, type: voice.type }] : photos) {
         try {
           await endpoints.addExpenseFile(created.id, p);
         } catch {
@@ -53,7 +55,7 @@ export default function NewExpense() {
     },
     onSuccess: ({ created, failed }) => {
       void qc.invalidateQueries({ queryKey: ["expenses"] });
-      if (failed > 0) Alert.alert("Expense request", `The request was sent, but ${failed} photo(s) did not upload. Please send them to Accounts another way.`);
+      if (failed > 0) Alert.alert("Expense request", `The request was sent, but ${failed} file(s) did not upload. Please send them to Accounts another way.`);
       router.replace({ pathname: "/requests/expenses/[id]", params: { id: created.id } });
     },
   });
@@ -96,6 +98,7 @@ export default function NewExpense() {
         ) : null}
         <PickerField label="Pay by" mode="date" value={dueDate} onChange={setDueDate} minimumDate={new Date()} error={errors.dueDate} />
         <TextField label="Details (optional)" value={remark} onChangeText={setRemark} multiline maxLength={2000} />
+        <VoiceNoteField value={voice} onChange={setVoice} label="Or explain by voice (optional)" />
         <AppText variant="caption" color={colors.textSecondary} style={styles.label}>
           Bill / receipt photos
         </AppText>

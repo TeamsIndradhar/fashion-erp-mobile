@@ -13,7 +13,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 | 1b | Server-side face verification (in `fashion-erp`) | ✅ Built — `2becc954`: face-api + TF.js wasm on the server, descriptor cache table, mobile = enforce (no match → review), web = monitor until the accuracy test (`ATTENDANCE_SERVER_FACE_CHECK`). **Accuracy test still open** | user input (volunteer photos) to switch web to enforce |
 | 2 | Mobile foundation | ✅ Done — Expo SDK 58 app, expo-router, theme tokens, shared components, API client, SecureStore token store, single-flight refresh, app-config + Update Required, offline banner, Jest/ESLint/TS | — (D-039) |
 | 3 | Common employee features | ✅ All release-1 employee screens built: login, password change, profile, devices, sign out, attendance today/month/day + remark, punch flow with server face check, alerts (EMP-020/021), settings (EMP-024), help & support with tickets (EMP-026), about (EMP-027). Not built: device integrity registration (AUTH-009, needs accounts), optional update sheet (AUTH-012, needs Play build), Hindi strings (Q-11). **Release-2 employee requests built**: My requests hub, leave (EMP-028), correction (EMP-029), outside-punch review (EMP-031), salary slips (EMP-030), salary advance (EMP-019), expense requests list/new/detail (EMP-015…018). Voice notes (CR-001) not built | — |
-| 4 | Worker & supervisor | ⬜ (release 2b: assigned work, progress, team approvals — needs B-23 supervisor set) | — |
+| 4 | Worker & supervisor | 🔄 Built: worker home entry, my work (WRK-002), job order + enter work + hand back (WRK-003…005, 007), my entries (WRK-006), lot (WRK-008), earnings (WRK-009), self-entry off (WRK-010); supervisor approvals approve/reject/correct (SUP-004/005), team work status (SUP-006). Not built: team attendance (SUP-002/003, needs D-D06 + server change), team reports (SUP-007). Designs were READY_FOR_REVIEW, built under D-039 | — |
 | 5 | Other authorized modules | ⬜ | — |
 | 6 | Admin & owner dashboards | ⬜ | — |
 | 7 | Security & testing | ⬜ | — |
@@ -58,6 +58,14 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-04 — Claude Code — Worker & supervisor screens, voice notes
+**Commits:** `fashion-erp` `main` `8288fdc4` (`/me` production + piece-rate permissions and `selfEntryEnabled`; bearer allowlist for worker and supervisor routes; earnings fix for unlinked users). App: `app/work/` (index, `[jobOrderId]` with enter work + hand back, history, `lot/[id]`, earnings), `app/team/` (approvals, orders), Home entries ("My work" / "Approvals (n waiting)" / "Team work status"), `src/features/work/work.ts` (server capacity rule mirrored for display), `VoiceNoteField` (expo-audio, m4a) on the expense form (CR-001).
+**Design status:** WRK-* and SUP-* screens are READY_FOR_REVIEW, not APPROVED — built under D-039; the user may still ask for changes.
+**Verified (executed):** app `tsc`, `eslint`, jest 48/48; ERP tests 448/448 in auth/mobile-auth/production; live contract (admin): `/me` new fields, my-assignments (self-entry off answer handled), production orders + detail progress, pending entries, earnings.
+**Not verified:** a worker actually submitting / handing back and a supervisor approving through the app (no dev worker login with a usable password); voice recording on a device.
+**Server gaps noted (not changed):** self-progress has no idempotency key — the app locks the button and tells the user to check "My entries" after a network error; `my-assignments` sends rate fields regardless of `workersCanViewOwnRate` (app hides them); `team-day` returns members' salary fields — fix before opening team attendance to supervisors.
+**Next:** decide D-D06 for supervisors (team attendance) — needs a server change to drop salary fields from `team-day` first.
 
 ### Handoff — 2026-11-04 — Claude Code — B-23 done
 **Commit:** `fashion-erp` `main` `abda2355` — `OWN_EXPENSE_REQUESTS` (`payment_requests` view + create) on PRODUCTION_WORKER, PRODUCTION_SUPERVISOR, WAREHOUSE_USER for new companies; `scripts/grant-own-expense-requests.mjs` for existing ones (dry run default, `--apply`, additive). User confirmed in chat 2026-11-04 ("Yes, make B-23").

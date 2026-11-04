@@ -17,6 +17,8 @@ export default function Home() {
   const auth = useAuth();
   const alerts = useQuery({ queryKey: ["notifications"], queryFn: endpoints.notifications, enabled: auth.status === "signedIn" });
   const unread = unreadCount(alerts.data);
+  const canApprove = !!auth.me?.permissions.production?.approve;
+  const pending = useQuery({ queryKey: ["team", "pending"], queryFn: endpoints.pendingEntries, enabled: auth.status === "signedIn" && canApprove });
   if (auth.status !== "signedIn" || !auth.me) return <Redirect href="/" />;
   const { me } = auth;
   const attendanceAllowed = me.permissions.attendance.view && me.modulesEnabled.hrms;
@@ -42,6 +44,11 @@ export default function Home() {
 
       <View style={styles.actions}>
         {me.employee && attendanceAllowed ? <Button title="Attendance" onPress={() => router.push("/attendance")} testID="home-attendance" /> : null}
+        <View style={styles.gap} />
+        {me.employee && me.permissions.production?.view && !canApprove ? <Button title="My work" onPress={() => router.push("/work")} testID="home-work" /> : null}
+        {canApprove ? <Button title={pending.data?.length ? `Approvals (${pending.data.length} waiting)` : "Approvals"} onPress={() => router.push("/team/approvals")} testID="home-approvals" /> : null}
+        {canApprove ? <View style={styles.gap} /> : null}
+        {canApprove ? <Button kind="secondary" title="Team work status" onPress={() => router.push("/team/orders")} testID="home-team" /> : null}
         <View style={styles.gap} />
         {me.employee ? <Button kind="secondary" title="My requests" onPress={() => router.push("/requests")} testID="home-requests" /> : null}
         <View style={styles.gap} />
