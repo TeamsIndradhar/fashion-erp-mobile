@@ -59,6 +59,12 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-04 — Claude Code — Android Preview APK build #4 (EMP-001/002/003 match the prototype)
+**Commits:** `6059001` (EMP-003 location permission), `ff14b94` (EMP-001 home, EMP-002 attendance, My Report, Office Locations).
+**Done:** Home, Attendance and Location-permission screens rebuilt to the approved prototype; adds `@expo/vector-icons` and `expo-linear-gradient` (D-042), so this APK is needed to see them.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/597b9da1-35d2-49c0-9771-fdf71dc837b1` (APK: `https://expo.dev/artifacts/eas/nowDYKz5mAmD9K3coHaV5cV85nvPA8z55fHNt3TJrIY.apk`)
+**Verified:** tsc, eslint, jest 66 pass (incl. render test for both screens); EAS build FINISHED. **Not yet tried on a phone.**
+
 ### Handoff — 2026-11-04 — Claude Code — Android Preview APK build #3 (photo upload fix)
 **Commits:** `bcebd2c`.
 **Done:** Uploads (punch selfie, expense files/voice, correction proof, outside-punch proof) failed on the phone with "Unsupported FormDataPart implementation" (Expo SDK 58's `expo/fetch` rejects `{ uri, name, type }` parts), shown wrongly as "No internet". Now sent via `src/api/formFile.ts`; unreadable files show `FILE_UNREADABLE`.
