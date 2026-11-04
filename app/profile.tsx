@@ -7,7 +7,6 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { ListRow } from "@/components/ListRow";
 import { Screen } from "@/components/Screen";
-import { env } from "@/config/env";
 import { strings } from "@/config/strings";
 import { colors, spacing } from "@/theme/tokens";
 
@@ -52,7 +51,9 @@ export default function Profile() {
       <Card>
         <ListRow label={strings.profile.devices} onPress={() => router.push("/devices")} testID="profile-devices" />
         <ListRow label="Change password" onPress={() => router.push("/change-password")} testID="profile-change-password" />
-        <ListRow label="App version" value={`${env.appVersion} (${env.appVariant})`} />
+        <ListRow label="Settings" onPress={() => router.push("/settings")} testID="profile-settings" />
+        <ListRow label="Help & support" onPress={() => router.push("/help")} testID="profile-help" />
+        <ListRow label="About" onPress={() => router.push("/about")} />
       </Card>
       <View style={styles.actions}>
         <Button kind="danger" title={strings.profile.signOut} onPress={() => confirm(strings.profile.confirmSignOut, auth.signOut)} testID="profile-sign-out" />

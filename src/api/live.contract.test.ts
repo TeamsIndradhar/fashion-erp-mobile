@@ -28,6 +28,16 @@ const nodeFetch = ((url: string, init: RequestInit = {}) =>
     req.end();
   })) as unknown as typeof fetch;
 
+/** Text-only multipart for FormData bodies (React Native's `_parts` or the standard entries()), so the shim can send forms. */
+const nodeFetchWithForms = ((url: string, init: RequestInit = {}) => {
+  const form = init.body as unknown as { _parts?: [string, string][]; entries?: () => Iterable<[string, unknown]> } | undefined;
+  const parts = form?._parts ?? (form && typeof form.entries === "function" ? [...form.entries()].map(([k, v]) => [k, String(v)] as [string, string]) : null);
+  if (!parts) return nodeFetch(url, init);
+  const boundary = "----fe-contract-test";
+  const body = parts.map(([k, v]) => `--${boundary}\r\nContent-Disposition: form-data; name="${k}"\r\n\r\n${v}\r\n`).join("") + `--${boundary}--\r\n`;
+  return nodeFetch(url, { ...init, body, headers: { ...(init.headers as Record<string, string>), "Content-Type": `multipart/form-data; boundary=${boundary}` } });
+}) as unknown as typeof fetch;
+
 function memoryKV(): SecureKV {
   const data = new Map<string, string>();
   return { getItem: async (k) => data.get(k) ?? null, setItem: async (k, v) => void data.set(k, v), deleteItem: async (k) => void data.delete(k) };
@@ -37,7 +47,7 @@ run("live ERP contract", () => {
   jest.setTimeout(60_000);
   const store = createTokenStore(memoryKV());
   let session: ReturnType<typeof createSession> | null = null;
-  const api = createApiClient({ baseUrl: BASE!, appVersion: "1.0.0", platform: "android", fetchImpl: nodeFetch }, () => session);
+  const api = createApiClient({ baseUrl: BASE!, appVersion: "1.0.0", platform: "android", fetchImpl: nodeFetchWithForms }, () => session);
   const ep = createEndpoints(api);
   session = createSession(store, ep.refresh, () => undefined);
 
@@ -71,6 +81,15 @@ run("live ERP contract", () => {
 
     const challenge = await ep.punchChallenge(today.isPunchedIn ? "OUT" : "IN");
     expect(challenge.challenge.split(".")).toHaveLength(2);
+
+    const alerts = await ep.notifications();
+    expect(Array.isArray(alerts)).toBe(true);
+    await expect(ep.markAllNotificationsRead()).resolves.toEqual({ ok: true });
+
+    const tickets = await ep.myTickets();
+    expect(Array.isArray(tickets.tickets)).toBe(true);
+    // Reaches the create route through the bearer allowlist without creating a ticket.
+    await expect(ep.raiseTicket({ subject: "Hi", category: "GENERAL", body: "too short" })).rejects.toMatchObject({ status: 400, code: "VALIDATION_ERROR" });
 
     const devices = await ep.devices();
     expect(devices.some((d) => d.isCurrent)).toBe(true);

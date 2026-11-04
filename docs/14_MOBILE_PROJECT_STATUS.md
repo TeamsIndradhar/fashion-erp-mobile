@@ -12,7 +12,7 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 | 1 | Backend authentication (in `fashion-erp`) | ✅ Done — merged to `fashion-erp` `main` (`b804bbcf`); migration `20261103180000_mobile_auth` applied to the **dev DB only** | — (D-039) |
 | 1b | Server-side face verification (in `fashion-erp`) | ✅ Built — `2becc954`: face-api + TF.js wasm on the server, descriptor cache table, mobile = enforce (no match → review), web = monitor until the accuracy test (`ATTENDANCE_SERVER_FACE_CHECK`). **Accuracy test still open** | user input (volunteer photos) to switch web to enforce |
 | 2 | Mobile foundation | ✅ Done — Expo SDK 58 app, expo-router, theme tokens, shared components, API client, SecureStore token store, single-flight refresh, app-config + Update Required, offline banner, Jest/ESLint/TS | — (D-039) |
-| 3 | Common employee features | 🔄 Login, password change, profile, devices, sign out, attendance today/month/day + remark, **punch flow incl. server face check** done; not built: notifications, settings/help/about, device integrity registration, optional update sheet | — |
+| 3 | Common employee features (release-1 part) | ✅ All release-1 employee screens built: login, password change, profile, devices, sign out, attendance today/month/day + remark, punch flow with server face check, alerts (EMP-020/021), settings (EMP-024), help & support with tickets (EMP-026), about (EMP-027). Not built: device integrity registration (AUTH-009, needs accounts), optional update sheet (AUTH-012, needs Play build), Hindi strings (Q-11). Later-release screens (expense, leave, correction, salary slips) not started | — |
 | 4 | Worker & supervisor | ⬜ | — |
 | 5 | Other authorized modules | ⬜ | — |
 | 6 | Admin & owner dashboards | ⬜ | — |
@@ -58,6 +58,13 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-04 — Claude Code — Alerts, settings, help, about
+**Commits:** `fashion-erp` `main` `59397e42` (bearer allowlist + `GET/POST /api/v1/support-tickets`). App: `app/notifications/index.tsx` (EMP-020: list, unread dot, mark all read, pull to refresh), `app/notifications/[id].tsx` (EMP-021: marks read; opens Attendance for `ATTENDANCE_CORRECTION`, otherwise "open on the website"), `app/settings.tsx` (EMP-024: language English, phone permission settings, links), `app/help.tsx` + `src/features/help/help.ts` (EMP-026: 6 FAQ, my tickets, raise ticket with topic chips — billing left out for employees), `app/about.tsx` (EMP-027: version, server, supported versions, privacy text, licences). Home shows "Alerts (n new)"; Profile links Settings / Help / About.
+**Verified (executed):** app `tsc`, `eslint`, jest 33/33; live contract with the real client against the dev server incl. notifications list, mark all read, tickets list, ticket create route (validation 400, no ticket created). ERP auth tests 85/85.
+**Not verified:** screens on a device. Push notifications are still a backend gap (G-10) — alerts appear only when the app is opened.
+**Dev DB side effects:** the contract run marked admin@indradhar.com's notifications as read; it created and removed one test device.
+**Privacy notice link:** placeholder text until Q-15 (who owns the notice, retention) is answered.
 
 ### Handoff — 2026-11-04 — Claude Code — Phase 1b server face check
 **Commits:** `fashion-erp` `main` `2becc954` (face engine + service, `hrms_employee_face_descriptors` + rollback, `punch()` `faceCheck` option, mobile = enforce, web = monitor by `ATTENDANCE_SERVER_FACE_CHECK`, `serverExternalPackages`, new deps `@tensorflow/tfjs` + `@tensorflow/tfjs-backend-wasm` 4.22.0 as approved with D-037). App: punch screen no longer refuses when the company requires a face; it shows a selfie hint and a "no face photo enrolled" stop; sends no `facePhotoId`.

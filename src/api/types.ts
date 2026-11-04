@@ -191,3 +191,29 @@ export interface PunchResult {
   review: { riskLevel: string; needsReview: boolean; employeeMessage: string | null };
   replayed: boolean;
 }
+
+// ---- Notifications (existing /api/v1/notifications) ----
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  body: string;
+  relatedModule: string | null;
+  relatedRecordId: string | null;
+  isRead: boolean;
+  createdAt: string;
+}
+
+// ---- Support tickets (existing /api/v1/support-tickets, list + create only on mobile) ----
+
+export type TicketCategory = "GENERAL" | "BUG" | "BILLING" | "ACCOUNT" | "DATA" | "FEATURE_REQUEST";
+
+export interface SupportTicket {
+  id: string;
+  ticketNumber: string;
+  subject: string;
+  status: "OPEN" | "IN_PROGRESS" | "WAITING_ON_CUSTOMER" | "RESOLVED" | "CLOSED";
+  category: TicketCategory;
+  createdAt: string;
+  lastMessageAt: string | null;
+}
