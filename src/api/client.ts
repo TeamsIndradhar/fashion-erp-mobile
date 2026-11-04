@@ -64,9 +64,10 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
     let res: Response;
     try {
       res = await doFetch(`${config.baseUrl}${path}`, { method: opts.method ?? "GET", headers, body, signal: controller.signal });
-    } catch {
+    } catch (err: unknown) {
       if (controller.signal.aborted && !opts.signal?.aborted) throw new ApiError(0, "TIMEOUT", strings.errors.timeout);
-      throw new ApiError(0, "NETWORK_ERROR", strings.errors.network);
+      const detail = err instanceof Error ? err.message : String(err || "");
+      throw new ApiError(0, "NETWORK_ERROR", detail ? `${strings.errors.network} [${detail}]` : strings.errors.network);
     } finally {
       clearTimeout(timer);
       opts.signal?.removeEventListener("abort", onOuterAbort);
@@ -77,7 +78,7 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
     if (text) {
       try {
         json = JSON.parse(text);
-      } catch {
+      } catch (err: unknown) {
         json = null;
       }
     }

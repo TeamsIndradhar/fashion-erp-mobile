@@ -4,8 +4,8 @@ import * as Crypto from "expo-crypto";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as Linking from "expo-linking";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { ApiError } from "@/api/errors";
 import type { PunchResult } from "@/api/types";
 import { useAuth } from "@/auth/AuthProvider";
@@ -23,19 +23,17 @@ import { formatTime } from "@/lib/dates";
 import { colors, radius, spacing } from "@/theme/tokens";
 
 type Step =
-  | { kind: "start" }
   | { kind: "locating"; last: GpsFix | null }
   | { kind: "permission"; blocked: boolean }
   | { kind: "weakGps"; fix: GpsFix | null }
-  | { kind: "selfie"; fix: GpsFix }
-  | { kind: "confirm"; fix: GpsFix; photoUri: string }
-  | { kind: "sending"; fix: GpsFix; photoUri: string }
-  | { kind: "failed"; fix: GpsFix; photoUri: string; message: string; retryable: boolean }
+  | { kind: "scanner"; fix: GpsFix; verifying: boolean; error: string | null }
   | { kind: "done"; result: PunchResult };
 
 const GPS_TIMEOUT_MS = 20_000;
+const AUTO_CAPTURE_DELAY_MS = 1_800;
+const MANUAL_BUTTON_DELAY_MS = 5_000;
 
-/** EMP-003 permission · EMP-004 GPS check · EMP-005 selfie · EMP-006/008 confirm · EMP-007/009 result. */
+/** EMP-003 permission · EMP-004 GPS check · EMP-005 face scanner · EMP-007/009 result. */
 export default function Punch() {
   const { type: rawType } = useLocalSearchParams<{ type: string }>();
   const type = rawType === "OUT" ? "OUT" : "IN";
@@ -46,60 +44,115 @@ export default function Punch() {
   const offices = useQuery({ queryKey: ["attendance", "offices"], queryFn: endpoints.officeLocations, enabled, staleTime: 10 * 60_000 });
   const [camPerm, requestCamPerm] = useCameraPermissions();
   const camera = useRef<CameraView>(null);
-  const [step, setStep] = useState<Step>({ kind: "start" });
-  // One id per punch attempt, reused on every retry so the server can replay.
+  const [step, setStep] = useState<Step>({ kind: "locating", last: null });
   const [clientPunchId] = useState(() => Crypto.randomUUID());
+  const [showManualCapture, setShowManualCapture] = useState(false);
+  const autoCaptureTriggered = useRef(false);
+  const submittingRef = useRef(false);
 
-  if (!enabled) return <Redirect href="/" />;
   const rules = today.data?.rules;
   const target = rules?.gpsAccuracyMeters ?? 50;
   const title = type === "IN" ? "Punch In" : "Punch Out";
 
-  async function locate() {
+  // Auto-start: acquire location and check camera permission immediately.
+  useEffect(() => {
+    if (!enabled) return;
+    void startLocating();
+  }, [enabled]);
+
+  // Show manual capture button after 5 seconds if not already submitted.
+  useEffect(() => {
+    if (step.kind !== "scanner") return;
+    const timer = setTimeout(() => {
+      setShowManualCapture(true);
+    }, MANUAL_BUTTON_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [step.kind]);
+
+  async function startLocating() {
     const perm = await ensureLocationPermission();
-    if (perm !== "granted") return setStep({ kind: "permission", blocked: perm === "blocked" });
-    setStep({ kind: "locating", last: null });
-    const fix = await acquireFix(target, GPS_TIMEOUT_MS, (f) => setStep((s) => (s.kind === "locating" ? { kind: "locating", last: f } : s)));
-    if (!fix || fix.accuracy === null || fix.accuracy > target) return setStep({ kind: "weakGps", fix });
-    if (!camPerm?.granted) await requestCamPerm();
-    setStep({ kind: "selfie", fix });
-  }
-
-  async function takeSelfie(fix: GpsFix) {
-    const shot = await camera.current?.takePictureAsync({ quality: 0.8, skipProcessing: false });
-    if (!shot) return;
-    // Resize: the server takes up to 5 MB; 720 px wide JPEG is ~100 KB.
-    const rendered = await ImageManipulator.manipulate(shot.uri).resize({ width: 720 }).renderAsync();
-    const saved = await rendered.saveAsync({ compress: 0.7, format: SaveFormat.JPEG });
-    setStep({ kind: "confirm", fix, photoUri: saved.uri });
-  }
-
-  async function send(fix: GpsFix, photoUri: string) {
-    // A fix older than a minute is refreshed first (the server records its age).
-    let useFix = fix;
-    if (Date.now() - fix.timestamp > MAX_FIX_AGE_MS) {
-      const fresh = await acquireFix(target, GPS_TIMEOUT_MS, () => undefined);
-      if (!fresh || fresh.accuracy === null || fresh.accuracy > target) return setStep({ kind: "weakGps", fix: fresh });
-      useFix = fresh;
+    if (perm !== "granted") {
+      return setStep({ kind: "permission", blocked: perm === "blocked" });
     }
-    setStep({ kind: "sending", fix: useFix, photoUri });
+    setStep({ kind: "locating", last: null });
+    const fix = await acquireFix(target, GPS_TIMEOUT_MS, (f) => {
+      setStep((s) => (s.kind === "locating" ? { kind: "locating", last: f } : s));
+    });
+    if (!fix || fix.accuracy === null || fix.accuracy > target) {
+      return setStep({ kind: "weakGps", fix });
+    }
+
+    if (!camPerm?.granted) {
+      const res = await requestCamPerm();
+      if (!res.granted) {
+        // Wait for user to grant camera
+        return;
+      }
+    }
+
+    setStep({ kind: "scanner", fix, verifying: false, error: null });
+    autoCaptureTriggered.current = false;
+  }
+
+  // Auto-capture after camera settles on screen
+  function handleCameraReady(fix: GpsFix) {
+    if (autoCaptureTriggered.current || submittingRef.current) return;
+    autoCaptureTriggered.current = true;
+    setTimeout(() => {
+      if (!submittingRef.current) {
+        void captureAndSubmit(fix);
+      }
+    }, AUTO_CAPTURE_DELAY_MS);
+  }
+
+  async function captureAndSubmit(fix: GpsFix) {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setStep((s) => (s.kind === "scanner" ? { ...s, verifying: true, error: null } : s));
+
     try {
+      const shot = await camera.current?.takePictureAsync({ quality: 0.8, skipProcessing: false });
+      if (!shot) {
+        submittingRef.current = false;
+        setShowManualCapture(true);
+        setStep((s) => (s.kind === "scanner" ? { ...s, verifying: false, error: "Could not take photo. Tap Capture." } : s));
+        return;
+      }
+
+      // Resize: server takes up to 5 MB; 720 px JPEG is ~100 KB.
+      const rendered = await ImageManipulator.manipulate(shot.uri).resize({ width: 720 }).renderAsync();
+      const saved = await rendered.saveAsync({ compress: 0.7, format: SaveFormat.JPEG });
+
+      // Ensure fix is fresh (< 60s)
+      let useFix = fix;
+      if (Date.now() - fix.timestamp > MAX_FIX_AGE_MS) {
+        const fresh = await acquireFix(target, GPS_TIMEOUT_MS, () => undefined);
+        if (fresh && fresh.accuracy !== null && fresh.accuracy <= target) {
+          useFix = fresh;
+        }
+      }
+
       const result = await submitPunch(endpoints, {
         type,
         clientPunchId,
         fix: useFix,
-        selfie: { uri: photoUri, name: "selfie.jpg", type: "image/jpeg" },
+        selfie: { uri: saved.uri, name: "selfie.jpg", type: "image/jpeg" },
         facePhotoId: null,
         signals: signalsFromFix(useFix),
       });
+
       await qc.invalidateQueries({ queryKey: ["attendance"] });
       setStep({ kind: "done", result });
     } catch (err) {
+      submittingRef.current = false;
+      setShowManualCapture(true);
       const e = err instanceof ApiError ? err : null;
-      const retryable = !e || e.code === "NETWORK_ERROR" || e.code === "TIMEOUT" || e.status >= 500;
-      setStep({ kind: "failed", fix: useFix, photoUri, message: e?.message ?? strings.errors.generic, retryable });
+      const message = e?.message ?? (err instanceof Error ? err.message : strings.errors.generic);
+      setStep((s) => (s.kind === "scanner" ? { ...s, verifying: false, error: message } : s));
     }
   }
+
+  if (!enabled) return <Redirect href="/" />;
 
   if (today.isPending) {
     return (
@@ -108,6 +161,7 @@ export default function Punch() {
       </Screen>
     );
   }
+
   if (today.error) {
     return (
       <Screen>
@@ -116,8 +170,7 @@ export default function Punch() {
     );
   }
 
-  // Face check (D-037): the server compares the selfie with the enrolled photos.
-  // The app sends no facePhotoId of its own — it never claims a match it didn't make.
+  // Face enrolled check
   const faceRequired = !!rules?.requireFace;
   if (faceRequired && today.data && today.data.facePhotoIds.length === 0) {
     return (
@@ -132,133 +185,280 @@ export default function Punch() {
     );
   }
 
-  const estimate = step.kind === "confirm" || step.kind === "sending" ? (offices.data ? nearestOffice(step.fix, offices.data) : null) : null;
-
-  return (
-    <Screen>
-      <AppText variant="h2" style={styles.title}>
-        {title}
-      </AppText>
-
-      {step.kind === "start" ? (
-        <>
-          <Card>
-            <AppText>The app checks your location and takes a selfie. Location is used only for this punch.</AppText>
-            {faceRequired ? (
-              <AppText variant="caption" color={colors.textSecondary} style={styles.faceNote}>
-                Your face is checked from the selfie: look straight at the camera in good light, no mask or sunglasses.
-              </AppText>
-            ) : null}
-          </Card>
-          <Button title="Check my location" onPress={() => void locate()} testID="punch-start" />
-        </>
-      ) : null}
-
-      {step.kind === "permission" ? (
-        <>
-          <Banner tone="warning" message="Location permission is needed to punch. Allow location “While using the app”." />
-          <View style={styles.gap} />
-          {step.blocked ? <Button title="Open settings" onPress={() => void Linking.openSettings()} /> : <Button title="Allow location" onPress={() => void locate()} />}
-        </>
-      ) : null}
-
-      {step.kind === "locating" ? (
+  // EMP-003: Location Permission Needed
+  if (step.kind === "permission") {
+    return (
+      <Screen>
+        <AppText variant="h2" style={styles.title}>
+          Location needed
+        </AppText>
         <Card>
-          <ActivityIndicator color={colors.primary} />
-          <AppText style={styles.center}>
-            Getting your location…{step.last?.accuracy ? ` ±${Math.round(step.last.accuracy)} m (need ±${target} m)` : ""}
+          <AppText variant="bodyStrong">Allow location while punching</AppText>
+          <AppText color={colors.textSecondary} style={styles.subtext}>
+            Fashion ERP uses your location only while you check in or out, to confirm you are at your office. It never tracks you in the background.
           </AppText>
         </Card>
-      ) : null}
-
-      {step.kind === "weakGps" ? (
-        <>
-          <Banner
-            tone="warning"
-            message={`GPS is too weak${step.fix?.accuracy ? ` (±${Math.round(step.fix.accuracy)} m)` : ""}. It must be within ±${target} m — move near a window or an open area and try again.`}
-          />
-          <View style={styles.gap} />
-          <Button title={strings.common.retry} onPress={() => void locate()} />
-        </>
-      ) : null}
-
-      {step.kind === "selfie" ? (
-        camPerm?.granted ? (
-          <>
-            <View style={styles.cameraBox}>
-              <CameraView ref={camera} style={styles.camera} facing="front" />
-            </View>
-            <Button title="Take selfie" onPress={() => void takeSelfie(step.fix)} testID="punch-take-selfie" />
-          </>
+        <View style={styles.gap} />
+        {step.blocked ? (
+          <Button title="Open Settings" onPress={() => void Linking.openSettings()} />
         ) : (
-          <>
-            <Banner tone="warning" message="Camera permission is needed for the attendance selfie." />
-            <View style={styles.gap} />
-            <Button title={camPerm?.canAskAgain === false ? "Open settings" : "Allow camera"} onPress={() => void (camPerm?.canAskAgain === false ? Linking.openSettings() : requestCamPerm())} />
-          </>
-        )
-      ) : null}
+          <Button title="Allow location" onPress={() => void startLocating()} />
+        )}
+      </Screen>
+    );
+  }
 
-      {step.kind === "confirm" || step.kind === "sending" || step.kind === "failed" ? (
-        <>
-          <Image source={{ uri: step.photoUri }} style={styles.preview} />
-          <Card>
-            <AppText variant="bodyStrong">Location ±{Math.round(step.fix.accuracy ?? 0)} m</AppText>
-            {estimate ? (
-              <AppText variant="caption" color={colors.textSecondary}>
-                About {Math.round(estimate.distance)} m from {estimate.office.name}
-                {estimate.inside ? " (looks inside)" : " (looks outside — your punch may go for review)"}
-              </AppText>
-            ) : null}
-          </Card>
-          {step.kind === "failed" ? (
-            <>
-              <Banner tone="danger" message={step.message} testID="punch-error" />
-              <View style={styles.gap} />
-            </>
-          ) : null}
-          {step.kind === "failed" && !step.retryable ? (
-            <Button kind="secondary" title="Start again" onPress={() => setStep({ kind: "start" })} />
-          ) : (
-            <Button
-              kind={type === "IN" ? "primary" : "danger"}
-              title={step.kind === "failed" ? strings.common.retry : `Confirm ${title}`}
-              loading={step.kind === "sending"}
-              onPress={() => void send(step.fix, step.photoUri)}
-              testID="punch-confirm"
-            />
-          )}
-        </>
-      ) : null}
+  // Step 1: Locating (EMP-004)
+  if (step.kind === "locating") {
+    return (
+      <Screen>
+        <AppText variant="h2" style={styles.title}>
+          {title} · Step 1 / 3
+        </AppText>
+        <Card style={styles.centerCard}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <AppText variant="h3" style={styles.locatingText}>
+            Checking location…
+          </AppText>
+          <AppText color={colors.textSecondary}>
+            {step.last?.accuracy ? `±${Math.round(step.last.accuracy)} m (need ≤ ${target} m)` : "Acquiring GPS fix…"}
+          </AppText>
+        </Card>
+      </Screen>
+    );
+  }
 
-      {step.kind === "done" ? (
-        <>
-          <Banner
-            tone={step.result.review.needsReview ? "warning" : "success"}
-            message={step.result.review.employeeMessage ?? step.result.message}
-            testID="punch-result"
-          />
-          <Card style={styles.resultCard}>
-            <AppText variant="display">{formatTime(type === "IN" ? step.result.session.checkInAt : (step.result.session.checkOutAt ?? step.result.session.checkInAt))}</AppText>
-            <AppText color={colors.textSecondary}>
-              {step.result.fromOffice ? (step.result.locationName ?? "Office") : "Outside office"}
-              {step.result.distanceMeters !== null ? ` · ${Math.round(step.result.distanceMeters)} m` : ""}
+  // EMP-004: Weak GPS
+  if (step.kind === "weakGps") {
+    return (
+      <Screen>
+        <AppText variant="h2" style={styles.title}>
+          {title} · Step 1 / 3
+        </AppText>
+        <Card style={styles.centerCard}>
+          <View style={styles.accuracyRing}>
+            <AppText variant="h2" style={styles.accuracyNumber}>
+              ±{Math.round(step.fix?.accuracy ?? 0)} m
             </AppText>
-          </Card>
-          <Button title="Done" onPress={() => router.back()} testID="punch-done" />
-        </>
-      ) : null}
-    </Screen>
-  );
+            <AppText variant="caption" color={colors.textSecondary}>
+              need ≤ {target} m
+            </AppText>
+          </View>
+          <Banner tone="warning" message="GPS signal is too weak. Move near a window or door and try again." />
+        </Card>
+        <Card>
+          <AppText variant="bodyStrong">Tips for better GPS</AppText>
+          <AppText color={colors.textSecondary} style={styles.bullet}>• Move near an open door or window</AppText>
+          <AppText color={colors.textSecondary} style={styles.bullet}>• Step out from under metal-roof sheds</AppText>
+          <AppText color={colors.textSecondary} style={styles.bullet}>• Turn on Wi-Fi (helps indoor location accuracy)</AppText>
+        </Card>
+        <View style={styles.gap} />
+        <Button title="Try again" onPress={() => void startLocating()} />
+      </Screen>
+    );
+  }
+
+  // Step 2 & 3: Camera Scanner (EMP-005)
+  if (step.kind === "scanner") {
+    if (!camPerm?.granted) {
+      return (
+        <Screen>
+          <AppText variant="h2" style={styles.title}>
+            Camera permission needed
+          </AppText>
+          <Banner tone="warning" message="Camera access is needed to verify your face during attendance punch." />
+          <View style={styles.gap} />
+          <Button title="Allow camera" onPress={() => void requestCamPerm()} />
+        </Screen>
+      );
+    }
+
+    const office = offices.data ? nearestOffice(step.fix, offices.data) : null;
+
+    return (
+      <Screen>
+        <View style={styles.headerRow}>
+          <AppText variant="h2">{title}</AppText>
+          <AppText variant="caption" color={colors.primary}>
+            Step 2 / 3
+          </AppText>
+        </View>
+
+        {/* Location chip */}
+        <View style={styles.locationBadge}>
+          <AppText variant="caption" color={colors.textSecondary}>
+            📍 Location ±{Math.round(step.fix.accuracy ?? 0)} m{office ? ` · ${office.office.name}` : ""}
+          </AppText>
+        </View>
+
+        {/* Camera container with oval face guide */}
+        <View style={styles.cameraBox}>
+          <CameraView
+            ref={camera}
+            style={styles.camera}
+            facing="front"
+            onCameraReady={() => handleCameraReady(step.fix)}
+          />
+          <View style={styles.overlayContainer}>
+            <View style={styles.ovalGuide} />
+            <AppText variant="caption" style={styles.guideHint}>
+              Look at the camera · good light
+            </AppText>
+          </View>
+
+          {step.verifying ? (
+            <View style={styles.verifyingOverlay}>
+              <ActivityIndicator size="large" color={colors.white} />
+              <AppText variant="bodyStrong" color={colors.white} style={styles.verifyingText}>
+                Verifying face with server…
+              </AppText>
+            </View>
+          ) : null}
+        </View>
+
+        {step.error ? (
+          <>
+            <Banner tone="danger" message={step.error} />
+            <View style={styles.gap} />
+          </>
+        ) : null}
+
+        {/* Manual capture button (appears after 5s or on error) */}
+        {showManualCapture || step.error ? (
+          <Button
+            kind="primary"
+            title={step.verifying ? "Verifying…" : "Capture"}
+            loading={step.verifying}
+            disabled={step.verifying}
+            onPress={() => void captureAndSubmit(step.fix)}
+          />
+        ) : (
+          <View style={styles.autoHintBox}>
+            <ActivityIndicator size="small" color={colors.primary} />
+            <AppText variant="caption" color={colors.textSecondary} style={styles.autoHintText}>
+              Hold still · verifying automatically…
+            </AppText>
+          </View>
+        )}
+      </Screen>
+    );
+  }
+
+  // Done: Success (EMP-007) or Sent for Review (EMP-009)
+  if (step.kind === "done") {
+    const isReview = step.result.review.needsReview;
+    return (
+      <Screen>
+        <View style={styles.gap} />
+        <Banner
+          tone={isReview ? "warning" : "success"}
+          message={step.result.review.employeeMessage ?? step.result.message}
+          testID="punch-result"
+        />
+        <Card style={styles.resultCard}>
+          <AppText variant="display">
+            {formatTime(type === "IN" ? step.result.session.checkInAt : (step.result.session.checkOutAt ?? step.result.session.checkInAt))}
+          </AppText>
+          <AppText color={colors.textSecondary} style={styles.resultSub}>
+            {step.result.fromOffice ? (step.result.locationName ?? "Office") : "Outside office"}
+            {step.result.distanceMeters !== null ? ` · ${Math.round(step.result.distanceMeters)} m` : ""}
+          </AppText>
+        </Card>
+        <View style={styles.gap} />
+        <Button title="Done" onPress={() => router.back()} testID="punch-done" />
+      </Screen>
+    );
+  }
+
+  return null;
 }
 
 const styles = StyleSheet.create({
-  title: { marginTop: spacing.lg, marginBottom: spacing.lg },
+  title: { marginTop: spacing.md, marginBottom: spacing.md },
+  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: spacing.sm, marginBottom: spacing.sm },
   gap: { height: spacing.md },
-  center: { textAlign: "center", marginTop: spacing.md },
-  faceNote: { marginTop: spacing.sm },
-  cameraBox: { aspectRatio: 3 / 4, borderRadius: radius.lg, overflow: "hidden", marginBottom: spacing.lg, backgroundColor: colors.text },
+  subtext: { marginTop: spacing.xs },
+  bullet: { marginTop: spacing.xs },
+  centerCard: { alignItems: "center", paddingVertical: spacing.xl, marginBottom: spacing.md },
+  locatingText: { marginTop: spacing.md, marginBottom: spacing.xs },
+  accuracyRing: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    borderWidth: 8,
+    borderColor: colors.warningTint,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: spacing.md,
+  },
+  accuracyNumber: { fontWeight: "700" },
+  locationBadge: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    alignSelf: "flex-start",
+    marginBottom: spacing.md,
+  },
+  cameraBox: {
+    width: "100%",
+    aspectRatio: 3 / 4,
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    marginBottom: spacing.md,
+    backgroundColor: colors.text,
+    position: "relative",
+  },
   camera: { flex: 1 },
-  preview: { width: "100%", aspectRatio: 3 / 4, borderRadius: radius.lg, marginBottom: spacing.lg },
-  resultCard: { alignItems: "center", marginTop: spacing.lg },
+  overlayContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  ovalGuide: {
+    width: 220,
+    height: 290,
+    borderRadius: 110,
+    borderWidth: 3,
+    borderColor: colors.white,
+    borderStyle: "dashed",
+    backgroundColor: "transparent",
+  },
+  guideHint: {
+    color: colors.white,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.full,
+    marginTop: spacing.md,
+    overflow: "hidden",
+  },
+  verifyingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.65)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  verifyingText: {
+    marginTop: spacing.md,
+  },
+  autoHintBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.md,
+  },
+  autoHintText: {
+    marginLeft: spacing.sm,
+  },
+  resultCard: { alignItems: "center", marginTop: spacing.lg, paddingVertical: spacing.xl },
+  resultSub: { marginTop: spacing.xs },
 });
