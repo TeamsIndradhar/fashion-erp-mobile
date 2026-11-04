@@ -145,6 +145,18 @@ run("live ERP contract", () => {
       if (orders[0]) expect(typeof (await ep.productionOrder(orders[0].id)).progress.progressPercent).toBe("number");
     }
 
+    // Team attendance (SUP-002/003): reachable, and no pay fields on any person.
+    const PAY = ["fixedMonthlySalary", "travelAllowance", "dearnessAllowance", "overtimeRatePerHour"];
+    if (me.permissions.attendance.team) {
+      const td = await ep.teamDay(today.dateKey);
+      expect(typeof td.cards.total).toBe("number");
+      for (const r of td.rows) expect(Object.keys(r.employee).filter((k) => PAY.includes(k))).toEqual([]);
+    }
+    if (me.permissions.attendance.teamMonth) {
+      const tm = await ep.teamMonth(today.dateKey.slice(0, 7));
+      for (const e of tm.employees) expect(Object.keys(e.employee).filter((k) => PAY.includes(k))).toEqual([]);
+    }
+
     // Approve routes stay refused for a mobile token.
     await expect(api.post("/api/v1/leave-requests/00000000-0000-0000-0000-000000000000/approve")).rejects.toMatchObject({ status: 403 });
 

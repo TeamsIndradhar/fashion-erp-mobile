@@ -35,6 +35,8 @@ import type {
   SalaryAdvance,
   SalaryRun,
   SupportTicket,
+  TeamDay,
+  TeamMonth,
   TicketCategory,
 } from "./types";
 
@@ -148,6 +150,8 @@ export function createEndpoints(api: ApiClient) {
       api.post<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}/reject`, { approvalRemark }),
     correctEntry: (id: string, q: ProgressQuantities & { remarks?: string }) =>
       api.request<ProgressEntry>(`/api/v1/job-order-progress-entries/${encodeURIComponent(id)}`, { method: "PATCH", body: q }),
+    teamDay: (date: string) => api.get<TeamDay>(`/api/v1/attendance/team-day?date=${encodeURIComponent(date)}`),
+    teamMonth: (month: string) => api.get<TeamMonth>(`/api/v1/attendance/team-month?month=${encodeURIComponent(month)}&view=team`),
     productionOrders: () => api.get<ProductionOrderRow[]>("/api/v1/production-orders?pageSize=50&status=IN_PROGRESS"),
     productionOrder: (id: string) => api.get<ProductionOrderDetail>(`/api/v1/production-orders/${encodeURIComponent(id)}`),
 

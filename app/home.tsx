@@ -49,6 +49,8 @@ export default function Home() {
         {canApprove ? <Button title={pending.data?.length ? `Approvals (${pending.data.length} waiting)` : "Approvals"} onPress={() => router.push("/team/approvals")} testID="home-approvals" /> : null}
         {canApprove ? <View style={styles.gap} /> : null}
         {canApprove ? <Button kind="secondary" title="Team work status" onPress={() => router.push("/team/orders")} testID="home-team" /> : null}
+        {me.permissions.attendance.team ? <View style={styles.gap} /> : null}
+        {me.permissions.attendance.team ? <Button kind="secondary" title="Team attendance" onPress={() => router.push("/team/attendance")} testID="home-team-attendance" /> : null}
         <View style={styles.gap} />
         {me.employee ? <Button kind="secondary" title="My requests" onPress={() => router.push("/requests")} testID="home-requests" /> : null}
         <View style={styles.gap} />

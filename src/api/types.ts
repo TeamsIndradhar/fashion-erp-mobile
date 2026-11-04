@@ -56,7 +56,7 @@ export interface MeResponse {
   } | null;
   mustChangePassword: boolean;
   permissions: {
-    attendance: { view: boolean; punch: boolean };
+    attendance: { view: boolean; punch: boolean; team?: boolean; teamMonth?: boolean };
     /** Older servers do not send these. */
     production?: { view: boolean; approve: boolean };
     pieceRate?: { view: boolean };
@@ -477,4 +477,32 @@ export interface ProgressQuantities {
   rejectedQuantity: number;
   damagedQuantity: number;
   extraQuantity: number;
+}
+
+// ---- Team attendance (existing /api/v1/attendance/team-day, team-month; no pay fields) ----
+
+export type TeamDayStatus = "PRESENT" | "OUTSIDE" | "HALF_DAY" | "ON_LEAVE" | "ABSENT" | "NOT_PUNCHED" | "WEEKLY_OFF" | "HOLIDAY" | "NOT_JOINED";
+
+export interface TeamMember {
+  id: string;
+  employeeCode: string;
+  fullName: string;
+  shift: { name: string; startTime: string; endTime: string } | null;
+}
+
+export interface TeamDay {
+  dateKey: string;
+  isToday: boolean;
+  cards: { total: number; present: number; outside: number; halfDay: number; onLeave: number; absent: number; notPunched: number; off: number; late: number };
+  rows: { employee: TeamMember; status: TeamDayStatus; day: { firstIn: string | null; lastOut: string | null; workedHours: number; isLate: boolean; hasOpenSession: boolean; leaveLabel: string | null } }[];
+}
+
+export interface TeamMonth {
+  year: number;
+  month: number;
+  employees: {
+    employee: TeamMember;
+    days: { dateKey: string; code: string; workedHours: number; isOutside: boolean; isLate: boolean; firstIn: string | null; lastOut: string | null; leaveLabel: string | null; remark: string | null }[];
+    summary: AttendanceMonth["summary"];
+  }[];
 }
