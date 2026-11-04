@@ -59,6 +59,12 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-04 — Antigravity — Android Preview APK build #2 (EMP-005 face scanner UI/UX + auto-verify + 5s capture fallback + Android file upload fix)
+**Commits:** `bfeea58`.
+**Done:** Redesigned punch flow to match approved prototype `EMP-003` to `EMP-005`. Removed intermediate selfie preview card and manual confirm step. Implemented live camera face scanner with oval guide, automatic capture/verification with server, and 5-second manual "Capture" button fallback. Fixed Android `file://` URI formatting in `submitPunch.ts` and enhanced `client.ts` to surface detailed error causes.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/7b9c8e21-97a1-4603-a01b-d3c6fbcf94ef`
+**Verified:** `tsc --noEmit` clean, 183/183 tests passed. Build completed cleanly on EAS.
+
 ### Handoff — 2026-11-04 — Antigravity — Android Preview APK build generated
 **Commits:** `6d7e259` (EAS config, temporary owner `vrikshansh-tech-solutions` for testing; to be migrated to company account later per user request, preview APK profile).
 **Done:** Project linked to Expo account `@vrikshansh-tech-solutions/fashion-erp-mobile` (Project ID: `30cf7521-b26b-4025-a3fc-9b373ea4f838`). `eas.json` preview profile configured for standalone installable Android APK (`buildType: "apk"`), pointing to live backend `https://erp.indradhar.in`. Cloud build triggered and completed successfully on EAS.
