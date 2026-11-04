@@ -46,11 +46,15 @@ export default function Home() {
         {me.employee && attendanceAllowed ? <Button title="Attendance" onPress={() => router.push("/attendance")} testID="home-attendance" /> : null}
         <View style={styles.gap} />
         {me.employee && me.permissions.production?.view && !canApprove ? <Button title="My work" onPress={() => router.push("/work")} testID="home-work" /> : null}
-        {canApprove ? <Button title={pending.data?.length ? `Approvals (${pending.data.length} waiting)` : "Approvals"} onPress={() => router.push("/team/approvals")} testID="home-approvals" /> : null}
+        {canApprove ? <Button title={pending.data?.length ? `Production approvals (${pending.data.length} waiting)` : "Production approvals"} onPress={() => router.push("/team/approvals")} testID="home-approvals" /> : null}
         {canApprove ? <View style={styles.gap} /> : null}
         {canApprove ? <Button kind="secondary" title="Team work status" onPress={() => router.push("/team/orders")} testID="home-team" /> : null}
+        {me.permissions.approvals?.paymentRequest || me.permissions.approvals?.purchaseOrder || me.permissions.approvals?.materialRequest ? (
+          <Button title="Approvals" onPress={() => router.push("/approvals")} testID="home-approvals-inbox" />
+        ) : null}
+        <View style={styles.gap} />
         {Object.values(me.permissions.approvals ?? {}).some(Boolean) ? <View style={styles.gap} /> : null}
-        {Object.values(me.permissions.approvals ?? {}).some(Boolean) ? <Button kind="secondary" title="Team approvals" onPress={() => router.push("/team/reviews")} testID="home-team-reviews" /> : null}
+        {[me.permissions.approvals?.leave, me.permissions.approvals?.correction, me.permissions.approvals?.outdoor, me.permissions.approvals?.overtime].some(Boolean) ? <Button kind="secondary" title="Team approvals" onPress={() => router.push("/team/reviews")} testID="home-team-reviews" /> : null}
         {me.permissions.attendance.team ? <View style={styles.gap} /> : null}
         {me.permissions.attendance.team ? <Button kind="secondary" title="Team attendance" onPress={() => router.push("/team/attendance")} testID="home-team-attendance" /> : null}
         <View style={styles.gap} />

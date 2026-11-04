@@ -60,7 +60,7 @@ export interface MeResponse {
     /** Older servers do not send these. */
     production?: { view: boolean; approve: boolean };
     pieceRate?: { view: boolean };
-    approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean };
+    approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean; paymentRequest?: boolean; purchaseOrder?: boolean; materialRequest?: boolean };
   };
   modulesEnabled: { hrms: boolean };
   viewableModules: string[];
@@ -545,3 +545,73 @@ export interface OutsideSession {
 }
 
 export type TeamOutdoorRejection = OutdoorRejection & { employee: TeamPerson };
+
+// ---- Approvals inbox (Phase 5): payment requests, purchase orders, material requests ----
+
+export interface PaymentRequestForReview extends PaymentRequest {
+  requestGroup: string;
+  createdByUserId: string;
+  currentApprovalLevel: number | null;
+  requiredApprovalLevels: number | null;
+  createdBy: { id: string; fullName: string } | null;
+  supplier: { name: string } | null;
+  employee: { fullName: string; employeeCode: string } | null;
+  approvals?: { level: number; decision: string; remark: string | null; decidedAt: string; user: { fullName: string } }[];
+}
+
+export interface PurchaseOrderRow {
+  id: string;
+  orderNumber: string;
+  orderDate: string;
+  expectedDeliveryDate: string | null;
+  status: string;
+  totalAmount: string;
+  currencyCode: string;
+  supplier: { id: string; name: string } | null;
+  requestedBy: { id: string; fullName: string } | null;
+  requestedByUserId: string;
+}
+
+export interface PurchaseOrderDetail extends PurchaseOrderRow {
+  supplier: { id: string; name: string; code: string | null; phone: string | null; paymentTermsDays: number | null } | null;
+  items: {
+    id: string;
+    orderedQuantity: string;
+    unitPrice: string;
+    notes: string | null;
+    product: { styleName: string; styleCode: string | null } | null;
+    uom: { code: string } | null;
+    color: { name: string } | null;
+    materialRequestItem: { materialRequest: { requestNumber: string } } | null;
+  }[];
+}
+
+export interface MaterialRequestRow {
+  id: string;
+  requestNumber: string;
+  requestType: string;
+  status: string;
+  approvalStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
+  requiredDate: string | null;
+  purpose: string | null;
+  remarks: string | null;
+  createdAt: string;
+  requestedByUserId: string;
+  requestedBy: { id: string; fullName: string } | null;
+  warehouse: { name: string } | null;
+  department: { name: string } | null;
+}
+
+export interface MaterialRequestDetail extends MaterialRequestRow {
+  originalMaterialRequest: { id: string; requestNumber: string } | null;
+  lines: {
+    id: string;
+    requestedQuantity: string;
+    damageReason: string | null;
+    remarks: string | null;
+    availableStockQuantity?: number;
+    material: { styleName: string; styleCode: string | null } | null;
+    uom: { code: string } | null;
+    color: { name: string } | null;
+  }[];
+}

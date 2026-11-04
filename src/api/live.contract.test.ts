@@ -167,6 +167,16 @@ run("live ERP contract", () => {
     }
     if (ap?.overtime) for (const o of await ep.teamOvertime()) expect(o).not.toHaveProperty("employee.attendanceProfile");
 
+    // Approvals inbox (Phase 5) — reads only, plus read-only paths refuse writes.
+    if (ap?.paymentRequest) for (const r of await ep.paymentRequestsToApprove()) expect(r.createdByUserId).not.toBe(me.user.id);
+    if (ap?.purchaseOrder) {
+      const pos = await ep.purchaseOrdersToApprove();
+      if (pos[0]) expect(Array.isArray((await ep.purchaseOrder(pos[0].id)).items)).toBe(true);
+    }
+    if (ap?.materialRequest) for (const m of await ep.materialRequestsToApprove()) expect(m.approvalStatus).toBe("PENDING");
+    await expect(api.post("/api/v1/purchase-orders", {})).rejects.toMatchObject({ status: 403 });
+    await expect(api.request("/api/v1/material-requests/00000000-0000-0000-0000-000000000000", { method: "PATCH", body: {} })).rejects.toMatchObject({ status: 403 });
+
     // Routes outside the mobile allowlist stay refused for a mobile token.
     await expect(api.post("/api/v1/leave-requests/carry-forward", { fromYear: 2025 })).rejects.toMatchObject({ status: 403 });
     await expect(api.post("/api/v1/attendance/outdoor-rejections/00000000-0000-0000-0000-000000000000/cancel")).rejects.toMatchObject({ status: 403 });

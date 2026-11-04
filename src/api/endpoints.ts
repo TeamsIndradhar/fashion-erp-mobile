@@ -16,6 +16,8 @@ import type {
   LeaveRequest,
   LeaveType,
   LoginResponse,
+  MaterialRequestDetail,
+  MaterialRequestRow,
   LotDetail,
   MeResponse,
   MobileDevice,
@@ -24,12 +26,15 @@ import type {
   OutsideSession,
   OvertimeRow,
   PaymentRequest,
+  PaymentRequestForReview,
   PaymentRequestStatus,
   PieceRateEarning,
   ProductionOrderDetail,
   ProductionOrderRow,
   ProgressEntry,
   ProgressQuantities,
+  PurchaseOrderDetail,
+  PurchaseOrderRow,
   PunchChallenge,
   PunchResult,
   RecordAttachment,
@@ -172,6 +177,21 @@ export function createEndpoints(api: ApiClient) {
     teamClarifications: () => api.get<TeamOutdoorRejection[]>("/api/v1/attendance/outdoor-rejections?status=IN_PROCESS"),
     decideClarification: (id: string, decision: "approve" | "reject") =>
       api.post<unknown>(`/api/v1/attendance/outdoor-rejections/${encodeURIComponent(id)}/${decision}`),
+
+    // Approvals inbox (Phase 5)
+    paymentRequestsToApprove: () => api.get<PaymentRequestForReview[]>("/api/v1/payment-requests?view=approve&pageSize=100&sortBy=createdAt&sortOrder=asc"),
+    paymentRequestForReview: (id: string) => api.get<PaymentRequestForReview>(`/api/v1/payment-requests/${encodeURIComponent(id)}`),
+    approvePaymentRequest: (id: string, remark: string) =>
+      api.post<PaymentRequestForReview>(`/api/v1/payment-requests/${encodeURIComponent(id)}/approve`, remark ? { remark } : {}),
+    rejectPaymentRequest: (id: string, rejectionReason: string) =>
+      api.post<PaymentRequestForReview>(`/api/v1/payment-requests/${encodeURIComponent(id)}/reject`, { rejectionReason }),
+    purchaseOrdersToApprove: () => api.get<PurchaseOrderRow[]>("/api/v1/purchase-orders?status=DRAFT&pageSize=100"),
+    purchaseOrder: (id: string) => api.get<PurchaseOrderDetail>(`/api/v1/purchase-orders/${encodeURIComponent(id)}`),
+    approvePurchaseOrder: (id: string) => api.post<unknown>(`/api/v1/purchase-orders/${encodeURIComponent(id)}/approve`),
+    materialRequestsToApprove: () => api.get<MaterialRequestRow[]>("/api/v1/material-requests?approvalStatus=PENDING&pageSize=100"),
+    materialRequest: (id: string) => api.get<MaterialRequestDetail>(`/api/v1/material-requests/${encodeURIComponent(id)}`),
+    decideMaterialRequest: (id: string, decision: "approve" | "reject", approvalRemark: string) =>
+      api.post<unknown>(`/api/v1/material-requests/${encodeURIComponent(id)}/${decision}`, { approvalRemark: approvalRemark || null }),
 
     teamDay: (date: string) => api.get<TeamDay>(`/api/v1/attendance/team-day?date=${encodeURIComponent(date)}`),
     teamMonth: (month: string) => api.get<TeamMonth>(`/api/v1/attendance/team-month?month=${encodeURIComponent(month)}&view=team`),
