@@ -1,6 +1,6 @@
 # 14 — Mobile Project Status
 
-**Overall:** Phase 1 (backend mobile auth) and the **mobile punch backend** are on `fashion-erp` `main` (`b804bbcf`, `18dc32fe`). **Phase 2 (Expo app foundation) done.** Phase 3: login/session, profile, devices, attendance today/month/day + remark and the **punch flow (GPS → selfie → confirm → result, idempotent retries)** are done. **Punching from the phone works only for companies with "require face" off** — the face check (on-phone D-012 or server D-037, phase 1b) is not built, and the app never sends a fake face match. App not yet run on a real phone or emulator (no Android SDK on this PC, no developer accounts). D-039: no phase gates, agents push to `main`.
+**Overall:** On `fashion-erp` `main`: Phase 1 mobile auth (`b804bbcf`), mobile punch backend (`18dc32fe`) and **Phase 1b server face check (`2becc954`)**. On this repo: Phase 2 foundation and Phase 3 login/session, profile, devices, attendance screens and the **punch flow** — now usable also where the company requires a face check (the server compares the selfie; no match → punch recorded and sent to review). **Face-match accuracy on real faces is not tested yet** (needs volunteer photos; web punches stay in "monitor" mode until then). App not yet run on a real phone or emulator. D-039: no phase gates, agents push to `main`.
 
 Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fashion-erp-mobile`, branch `main`).
 
@@ -10,9 +10,9 @@ Last updated: 2026-11-03, repo `fashion-erp-mobile` (GitHub `TeamsIndradhar/fash
 |---|---|---|---|
 | 0 | Design & feasibility | 🔄 119 screens designed, release-1 screens (38) approved; Spike A partly done; Spike B desk research done; Spike C protocol ready, visit not done | waiting for user inputs (photos, accounts/phones, factory visit) |
 | 1 | Backend authentication (in `fashion-erp`) | ✅ Done — merged to `fashion-erp` `main` (`b804bbcf`); migration `20261103180000_mobile_auth` applied to the **dev DB only** | — (D-039) |
-| 1b | Server-side face verification (in `fashion-erp`) | ⬜ **next blocker for punching** in companies with "require face" on (the dev company has it on); accuracy threshold needs volunteer photos | user input (photos) |
+| 1b | Server-side face verification (in `fashion-erp`) | ✅ Built — `2becc954`: face-api + TF.js wasm on the server, descriptor cache table, mobile = enforce (no match → review), web = monitor until the accuracy test (`ATTENDANCE_SERVER_FACE_CHECK`). **Accuracy test still open** | user input (volunteer photos) to switch web to enforce |
 | 2 | Mobile foundation | ✅ Done — Expo SDK 58 app, expo-router, theme tokens, shared components, API client, SecureStore token store, single-flight refresh, app-config + Update Required, offline banner, Jest/ESLint/TS | — (D-039) |
-| 3 | Common employee features | 🔄 Login, password change, profile, devices, sign out, attendance today/month/day + remark, **punch flow** done; blocked when the company requires face (phase 1b); not built: notifications, settings/help/about, device integrity registration, optional update sheet | — |
+| 3 | Common employee features | 🔄 Login, password change, profile, devices, sign out, attendance today/month/day + remark, **punch flow incl. server face check** done; not built: notifications, settings/help/about, device integrity registration, optional update sheet | — |
 | 4 | Worker & supervisor | ⬜ | — |
 | 5 | Other authorized modules | ⬜ | — |
 | 6 | Admin & owner dashboards | ⬜ | — |
@@ -26,13 +26,13 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 17 topics were answered on 2026-11-03 (see the "User approvals" table at the top of `12_DECISION_LOG.md`). Still needed:
 
 1. ✅ Release-1 screen designs approved (38 screens). Phases now run without gates (D-039).
-1a. **Server deploy:** run migrations `20261103180000_mobile_auth` and `20261104090000_mobile_punch_meta` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`.
+1a. **Server deploy:** run migrations `20261103180000_mobile_auth`, `20261104090000_mobile_punch_meta` and `20261104120000_face_descriptors` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`; `npm ci` (new deps `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-wasm`); expect ~200 MB more RAM per server process once the first face check runs.
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
 ## Backend work identified
 
-✅ Done: B-01…B-05 (auth + punch-challenge, locations, punch routes), B-06 `hrms_attendance_punch_meta`, B-07 HMAC challenge, B-09 stub (records signals, always NORMAL), B-10 (auth codes + CHALLENGE_INVALID), B-11, B-12, B-13, B-15 (auth env vars; `MOBILE_CHALLENGE_SECRET` falls back to NEXTAUTH_SECRET — set its own in production), B-19, B-24. Next: B-18 (server face check), B-08 (integrity, needs accounts), B-09 real rules, B-17, B-14.
+✅ Done: B-01…B-05 (auth + punch-challenge, locations, punch routes), B-06 `hrms_attendance_punch_meta`, B-07 HMAC challenge, B-09 stub (records signals, always NORMAL), B-10 (auth codes + CHALLENGE_INVALID), B-11, B-12, B-13, B-15 (auth env vars; `MOBILE_CHALLENGE_SECRET` falls back to NEXTAUTH_SECRET — set its own in production), B-19, B-24. B-18 server face check (phase 1b). Next: B-08 (integrity, needs accounts), B-09 real rules, B-17, B-14.
 
 B-01 `mobile_sessions` · B-02 `mobile_devices` · B-03 mobile-auth module · B-04 bearer adapter + shared live checks + allowlist · B-05 new mobile routes · B-06 `hrms_attendance_punch_meta` · B-07 HMAC challenge · B-08 integrity verifiers · B-09 risk engine + policy columns · B-10 error codes · B-11 per-IP limit · B-12 audit · B-13 revoke on reset/suspend · B-14 cleanup job · B-15 env vars · ~~B-16~~ (dropped) · B-17 reviewer reasons in Outdoor screen · **B-18 server-side face verification (approved, D-037)** · B-19 `punch()` options param · B-20 device admin (optional) · ~~B-21~~ (not needed) · ~~B-22~~ (dropped) · **B-23 role permission changes (approved)** · **B-24 AGENTS.md pointer (approved)**. Details: `06`.
 
@@ -58,6 +58,13 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-04 — Claude Code — Phase 1b server face check
+**Commits:** `fashion-erp` `main` `2becc954` (face engine + service, `hrms_employee_face_descriptors` + rollback, `punch()` `faceCheck` option, mobile = enforce, web = monitor by `ATTENDANCE_SERVER_FACE_CHECK`, `serverExternalPackages`, new deps `@tensorflow/tfjs` + `@tensorflow/tfjs-backend-wasm` 4.22.0 as approved with D-037). App: punch screen no longer refuses when the company requires a face; it shows a selfie hint and a "no face photo enrolled" stop; sends no `facePhotoId`.
+**Verified (executed):** vitest — face service 7, punch 15 incl. 9 new face cases, mobile service 13; full suite 3935 passed, 0 failed; `tsc` (only the generated `LayoutProps` noise) and ESLint clean. Live in the Next dev server: engine loads inside Next (wasm, ~1.9 s first punch), descriptor of the enrolled photo computed and cached, selfie without a face → `FACE_NO_FACE` → recorded, sent to review, app message "face could not be confirmed"; with the photo file missing → `FACE_UNAVAILABLE` → also review (fail-safe). App `tsc`, `eslint`, jest 29/29.
+**Not verified:** a real face match (the dev enrolled "face photo" is a plain green square); false-accept / false-reject rates at threshold 0.45 — needs the volunteers' photos; behaviour on the production server's CPU/RAM.
+**Dev DB side effects:** two more admin punch sessions on 2026-11-04 (both sent to review), one descriptor row (empty, photo has no face). The OUT test selfie was written to the `happy-napier-55f9e2` worktree's `uploads` (temporary FILE_STORAGE_ROOT, reverted).
+**Next step:** user provides volunteer photos → accuracy run → set threshold → `ATTENDANCE_SERVER_FACE_CHECK=enforce` for web. Meanwhile: notifications (EMP-020/021), settings/help/about screens, then Phase 7 device testing once a phone / Android SDK is available.
 
 ### Handoff — 2026-11-04 — Claude Code — Mobile punch (backend + app)
 **Commits:** `fashion-erp` `main` `18dc32fe` (punch-challenge, locations, idempotent punch, `hrms_attendance_punch_meta`, `punch()` options param, CHALLENGE_INVALID; migration `20261104090000_mobile_punch_meta` applied to the dev DB). `fashion-erp-mobile` `main` (this commit).

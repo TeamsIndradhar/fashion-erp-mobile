@@ -116,19 +116,16 @@ export default function Punch() {
     );
   }
 
-  // Face check on the phone (D-012) and on the server (D-037, phase 1b) are not built yet —
-  // never send a punch that claims a face match the app didn't do.
-  if (rules?.requireFace) {
+  // Face check (D-037): the server compares the selfie with the enrolled photos.
+  // The app sends no facePhotoId of its own — it never claims a match it didn't make.
+  const faceRequired = !!rules?.requireFace;
+  if (faceRequired && today.data && today.data.facePhotoIds.length === 0) {
     return (
       <Screen>
         <AppText variant="h2" style={styles.title}>
           {title}
         </AppText>
-        <Banner
-          tone="info"
-          testID="punch-face-required"
-          message="Your company requires a face check for every punch. Face check from the phone is not ready yet — please punch from the web ERP for now."
-        />
+        <Banner tone="warning" testID="punch-no-face-photo" message="No face photo is enrolled for you yet. Ask HR to add your face photos, then punch." />
         <View style={styles.gap} />
         <Button kind="secondary" title="Back" onPress={() => router.back()} />
       </Screen>
@@ -147,6 +144,11 @@ export default function Punch() {
         <>
           <Card>
             <AppText>The app checks your location and takes a selfie. Location is used only for this punch.</AppText>
+            {faceRequired ? (
+              <AppText variant="caption" color={colors.textSecondary} style={styles.faceNote}>
+                Your face is checked from the selfie: look straight at the camera in good light, no mask or sunglasses.
+              </AppText>
+            ) : null}
           </Card>
           <Button title="Check my location" onPress={() => void locate()} testID="punch-start" />
         </>
@@ -254,6 +256,7 @@ const styles = StyleSheet.create({
   title: { marginTop: spacing.lg, marginBottom: spacing.lg },
   gap: { height: spacing.md },
   center: { textAlign: "center", marginTop: spacing.md },
+  faceNote: { marginTop: spacing.sm },
   cameraBox: { aspectRatio: 3 / 4, borderRadius: radius.lg, overflow: "hidden", marginBottom: spacing.lg, backgroundColor: colors.text },
   camera: { flex: 1 },
   preview: { width: "100%", aspectRatio: 3 / 4, borderRadius: radius.lg, marginBottom: spacing.lg },
