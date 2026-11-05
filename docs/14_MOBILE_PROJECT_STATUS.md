@@ -59,6 +59,12 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-05 — Antigravity — Verification & clean lint/test run
+**Commits:** `156fceb`.
+**Done:** Pulled latest commits (`2883304`, EMP-001/002/003 prototype styling updates). Installed new `@expo/vector-icons` and `expo-linear-gradient` deps. Excluded `.claude/` worktrees from `jest.config.js` to prevent duplicate test runs. Fixed ESLint warnings in `client.ts` and `punch.tsx`.
+**Verified:** `npm run typecheck` 0 errors, `npm run lint` 0 errors / 0 warnings, `npm test` 13 suites pass (66 tests passed).
+
+
 ### Handoff — 2026-11-04 — Claude Code — Android Preview APK build #4 (EMP-001/002/003 match the prototype)
 **Commits:** `6059001` (EMP-003 location permission), `ff14b94` (EMP-001 home, EMP-002 attendance, My Report, Office Locations).
 **Done:** Home, Attendance and Location-permission screens rebuilt to the approved prototype; adds `@expo/vector-icons` and `expo-linear-gradient` (D-042), so this APK is needed to see them.
