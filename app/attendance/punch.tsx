@@ -61,6 +61,7 @@ export default function Punch() {
   useEffect(() => {
     if (!enabled) return;
     void startLocating();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]);
 
   // Show manual capture button after 5 seconds if not already submitted.

@@ -82,7 +82,7 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
     if (text) {
       try {
         json = JSON.parse(text);
-      } catch (err: unknown) {
+      } catch {
         json = null;
       }
     }
