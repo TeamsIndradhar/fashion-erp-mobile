@@ -109,6 +109,17 @@ export interface AttendanceSession {
   hasOutSelfie: boolean;
 }
 
+export interface MissingPunchOut {
+  sessionId: string;
+  /** The day of the punch-in. */
+  dateKey: string;
+  checkInAt: string;
+  locationName: string | null;
+  /** Set once a Missed logout request is waiting for approval. */
+  requestId: string | null;
+  requestedPunchOut: string | null;
+}
+
 export interface AttendanceToday {
   employee: {
     id: string;
@@ -125,6 +136,8 @@ export interface AttendanceToday {
   liveHours: number;
   facePhotoIds: string[];
   hasLocations: boolean;
+  /** Earlier punches with no punch-out (newest first); each needs a Missed logout request before the next Punch In. Older servers omit it. */
+  missingPunchOuts?: MissingPunchOut[];
   rules: { requireFace: boolean; faceMatchThreshold: number; faceMatchFrames: number; gpsAccuracyMeters: number };
 }
 
@@ -143,6 +156,8 @@ export interface AttendanceMonthDay {
   firstIn: string | null;
   lastOut: string | null;
   hasOpenSession: boolean;
+  /** The day's punch-in has no punch-out and can no longer be punched out. Older servers omit it. */
+  punchOutMissing?: boolean;
   workedHours: number;
   present: number;
   leave: number;

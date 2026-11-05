@@ -14,6 +14,7 @@ export const TONE_COLOR: Record<Tone, string> = {
 /** One status label per day, colour always paired with text (design rule). */
 export function dayStatus(d: AttendanceMonthDay): { label: string; tone: Tone } {
   if (d.isFuture) return { label: "Upcoming", tone: "muted" };
+  if (d.punchOutMissing) return { label: "Punch-out missing", tone: "danger" };
   if (d.hasOpenSession) return { label: "Punched in", tone: "success" };
   if (d.isHoliday) return { label: d.holidayName ?? "Holiday", tone: "info" };
   if (d.leaveLabel) return { label: d.leaveLabel, tone: "info" };

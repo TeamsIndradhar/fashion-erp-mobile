@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react-native";
+import { fireEvent, render, screen } from "@testing-library/react-native";
 import type { ReactNode } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Att from "../../../app/attendance/index";
 import Home from "../../../app/home";
+import { MissingPunchOutForm, unreportedPunchOuts } from "./MissingPunchOutForm";
 
 const mockToday = {
   employee: { id: "e1", fullName: "Rohit Kumar", employeeCode: "EMP00123", shift: { id: "s1", name: "General", startTime: "09:30", endTime: "18:30", graceMinutes: 15 } },
@@ -34,6 +35,10 @@ const mockToday = {
   liveHours: 3.2,
   facePhotoIds: ["p1"],
   hasLocations: true,
+  missingPunchOuts: [
+    { sessionId: "old1", dateKey: "2026-11-03", checkInAt: "2026-11-03T04:00:00.000Z", locationName: "Main Factory", requestId: null, requestedPunchOut: null },
+    { sessionId: "old2", dateKey: "2026-11-02", checkInAt: "2026-11-02T04:00:00.000Z", locationName: null, requestId: "r1", requestedPunchOut: "2026-11-02T13:00:00.000Z" },
+  ],
   rules: { requireFace: true, faceMatchThreshold: 0.5, faceMatchFrames: 3, gpsAccuracyMeters: 50 },
 };
 
@@ -82,6 +87,9 @@ function wrap(node: ReactNode) {
   );
 }
 
+// The first render of a cold cache transforms the icon fonts and is slow.
+jest.setTimeout(30_000);
+
 describe("prototype screens EMP-001 / EMP-002", () => {
   it("home shows profile, punch hero, chips, today card, shortcuts and nav", async () => {
     await render(wrap(<Home />));
@@ -107,5 +115,26 @@ describe("prototype screens EMP-001 / EMP-002", () => {
     expect(screen.getByText("Present")).toBeTruthy();
     expect(screen.getByText("General 09:30 – 18:30 (15 min grace)")).toBeTruthy();
     expect(await screen.findByText("Main Factory")).toBeTruthy();
+  });
+});
+
+describe("missing punch-out (forgot to punch out)", () => {
+  it("only unreported days block the next Punch In", () => {
+    expect(unreportedPunchOuts(mockToday.missingPunchOuts).map((m) => m.sessionId)).toEqual(["old1"]);
+    expect(unreportedPunchOuts(undefined)).toEqual([]);
+  });
+
+  it("attendance shows the missing day and the one already sent for approval", async () => {
+    await render(wrap(<Att />));
+    expect(await screen.findByText("Punch-out missing · Tue, 3 Nov")).toBeTruthy();
+    expect(screen.getByText("Punch-out sent for approval · Mon, 2 Nov")).toBeTruthy();
+    expect(screen.getByText("In 09:30 AM · Out 06:30 PM (requested)")).toBeTruthy();
+  });
+
+  it("the form asks for the punch-out time and a remark before sending", async () => {
+    await render(wrap(<MissingPunchOutForm item={mockToday.missingPunchOuts[0]} remaining={1} />));
+    expect(screen.getByText("Tue, 3 Nov: no punch-out")).toBeTruthy();
+    await fireEvent.press(screen.getByTestId("missing-out-send"));
+    expect(await screen.findByText("Choose the time you punched out.")).toBeTruthy();
   });
 });

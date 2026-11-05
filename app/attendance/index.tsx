@@ -15,6 +15,7 @@ import { Screen } from "@/components/Screen";
 import { StatusBadge, type BadgeTone } from "@/components/StatusBadge";
 import { endpoints } from "@/core/services";
 import { AttendanceHero, PunchPair } from "@/features/attendance/AttendanceWidgets";
+import { MissingPunchOutBanners } from "@/features/attendance/MissingPunchOutForm";
 import { useLiveLocation } from "@/features/attendance/useLiveLocation";
 import { formatDateKey, formatHours, formatTime } from "@/lib/dates";
 import { colors } from "@/theme/tokens";
@@ -100,6 +101,7 @@ export default function AttendanceDashboard() {
             />
           ) : null}
           {!t.hasLocations ? <Banner tone="warning" message="No office location is set up yet. Ask HR to add one before punching." /> : null}
+          <MissingPunchOutBanners list={t.missingPunchOuts} />
 
           <Card style={styles.card}>
             <AppText variant="h3" style={styles.sech}>

@@ -12,6 +12,7 @@ import { Screen } from "@/components/Screen";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { gpsAccuracyText, PunchHero, TodayAttendanceCard, TrustChips } from "@/features/attendance/AttendanceWidgets";
+import { MissingPunchOutBanners } from "@/features/attendance/MissingPunchOutForm";
 import { useLiveLocation } from "@/features/attendance/useLiveLocation";
 import { unreadCount } from "@/features/notifications/links";
 import { formatTime, istDateKey } from "@/lib/dates";
@@ -110,6 +111,7 @@ export default function Home() {
           />
           <TrustChips gps={gpsAccuracyText(live)} deviceOk={device.ok} deviceText={device.text} />
           {today.error ? <Banner tone="danger" message={(today.error as Error).message} /> : null}
+          <MissingPunchOutBanners list={t?.missingPunchOuts} pendingToo={false} />
           <TodayAttendanceCard
             checkIn={firstIn ? formatTime(firstIn) : "--:--"}
             checkOut={!open && lastClosed ? formatTime(lastClosed) : "--:--"}

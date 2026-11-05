@@ -20,6 +20,7 @@ import { StateView } from "@/components/StateView";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { nearestOffice } from "@/features/attendance/estimate";
+import { MissingPunchOutForm, unreportedPunchOuts } from "@/features/attendance/MissingPunchOutForm";
 import { acquireFix, ensureLocationPermission, getLocationPermission, locationServicesOn, MAX_FIX_AGE_MS, type GpsFix } from "@/features/attendance/location";
 import { signalsFromFix, submitPunch } from "@/features/attendance/submitPunch";
 import { formatTime } from "@/lib/dates";
@@ -187,6 +188,12 @@ export default function Punch() {
         <Banner tone="danger" message={(today.error as Error).message} />
       </Screen>
     );
+  }
+
+  // A forgotten punch-out on an earlier day goes for approval before the next Punch In.
+  const unreported = type === "IN" ? unreportedPunchOuts(today.data?.missingPunchOuts) : [];
+  if (unreported.length > 0 && step.kind !== "done") {
+    return <MissingPunchOutForm key={unreported[0].sessionId} item={unreported[0]} remaining={unreported.length} />;
   }
 
   // Face enrolled check
