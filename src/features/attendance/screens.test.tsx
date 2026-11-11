@@ -101,7 +101,7 @@ describe("prototype screens EMP-001 / EMP-002", () => {
     expect(screen.getByText("Device verified")).toBeTruthy();
     expect(screen.getByText("Today's Attendance")).toBeTruthy();
     expect(await screen.findByText("09:15 AM")).toBeTruthy();
-    for (const t of ["My Report", "Add Remark", "My Requests", "Office Locations", "Home", "My Work", "Alerts", "Profile"]) expect(screen.getByText(t)).toBeTruthy();
+    for (const t of ["My Attendance", "My Leave", "My Report", "Add Remark", "My Requests", "Office Locations", "Home", "My Work", "Alerts", "Profile"]) expect(screen.getByText(t)).toBeTruthy();
   });
 
   it("home punch button opens Punch Out when already punched in", async () => {

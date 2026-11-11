@@ -69,7 +69,7 @@ export const strings = {
   home: {
     greeting: "Hello",
     noEmployee: "Your login is not linked to an employee record. Attendance is not available — contact HR.",
-    attendanceOff: "Attendance isn't enabled for your company.",
+    attendanceOff: "Attendance isn't enabled for your company or your role. Contact HR.",
     punchTitle: "Can't punch right now",
     noPunchPermission: "Your role is not allowed to punch from the app. Ask HR to give you attendance punch permission.",
   },

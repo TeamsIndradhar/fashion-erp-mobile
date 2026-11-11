@@ -14,6 +14,7 @@ import { InnerHeader } from "@/components/InnerHeader";
 import { ModuleGrid, type ModuleTile } from "@/components/ModuleGrid";
 import { Screen } from "@/components/Screen";
 import { StatusBadge, type BadgeTone } from "@/components/StatusBadge";
+import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { AttendanceHero, PunchPair } from "@/features/attendance/AttendanceWidgets";
 import { MissingPunchOutBanners } from "@/features/attendance/MissingPunchOutForm";
@@ -56,11 +57,15 @@ function SessionRow({ s }: { s: AttendanceSession }) {
 /** EMP-002 Attendance dashboard (prototype EMP-002): live location hero, In/Out pair, today's sessions, shift. */
 export default function AttendanceDashboard() {
   const auth = useAuth();
-  const enabled = auth.status === "signedIn";
+  const signedIn = auth.status === "signedIn";
+  const me = auth.me;
+  // Opened from Home for every employee: say why when attendance is not allowed instead of a raw error.
+  const allowed = !!(me?.employee && me.permissions.attendance.view && me.modulesEnabled.hrms);
+  const enabled = signedIn && allowed;
   const today = useQuery({ queryKey: ["attendance", "today"], queryFn: endpoints.attendanceToday, enabled });
   const { live, refresh } = useLiveLocation(enabled, today.data?.rules.gpsAccuracyMeters ?? 50);
 
-  if (!enabled) return <Redirect href="/" />;
+  if (!signedIn) return <Redirect href="/" />;
 
   const t = today.data;
   const open = t?.sessions.find((s) => s.id === t.openSessionId) ?? null;
@@ -78,7 +83,7 @@ export default function AttendanceDashboard() {
     { key: "outdoor", label: "Rejected Outdoor", icon: "pin", tone: "danger", onPress: () => router.push("/attendance/outdoor") },
   ];
   if (modules.has("hrms_attendance_regularization")) more.push({ key: "regularization", label: "Regularization", icon: "edit", tone: "warning", onPress: () => router.push("/attendance/regularizations") });
-  if (modules.has("hrms_leave")) more.push({ key: "leave", label: "Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
+  more.push({ key: "leave", label: "My Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
 
   return (
     <Screen
@@ -99,7 +104,8 @@ export default function AttendanceDashboard() {
         }
       />
 
-      {today.isPending ? <ActivityIndicator color={colors.primary} style={styles.loading} /> : null}
+      {!allowed ? <Banner tone="info" message={me?.employee ? strings.home.attendanceOff : strings.home.noEmployee} /> : null}
+      {enabled && today.isPending ? <ActivityIndicator color={colors.primary} style={styles.loading} /> : null}
       {today.error ? <Banner tone="danger" message={(today.error as Error).message} /> : null}
 
       {t ? (
@@ -146,7 +152,7 @@ export default function AttendanceDashboard() {
         </>
       ) : null}
 
-      <ModuleGrid tiles={more} />
+      <ModuleGrid tiles={allowed ? more : more.filter((m) => m.key === "leave")} />
       <InfoBanner tone="success" text="Your attendance is securely recorded with fraud prevention." />
     </Screen>
   );
