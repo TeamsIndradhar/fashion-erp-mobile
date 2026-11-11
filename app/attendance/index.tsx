@@ -78,12 +78,12 @@ export default function AttendanceDashboard() {
   const modules = new Set(auth.me?.viewableModules ?? []);
   const more: ModuleTile[] = [
     { key: "dashboard", label: "Monthly Dashboard", icon: "chart", tone: "info", onPress: () => router.push("/attendance/dashboard") },
-    { key: "report", label: "My Report", icon: "file", tone: "accent", onPress: () => router.push("/attendance/report") },
+    { key: "report", label: "Report", icon: "file", tone: "accent", onPress: () => router.push("/attendance/report") },
     { key: "overtime", label: "Overtime", icon: "clock", tone: "info", onPress: () => router.push("/attendance/overtime") },
     { key: "outdoor", label: "Rejected Outdoor", icon: "pin", tone: "danger", onPress: () => router.push("/attendance/outdoor") },
   ];
   if (modules.has("hrms_attendance_regularization")) more.push({ key: "regularization", label: "Regularization", icon: "edit", tone: "warning", onPress: () => router.push("/attendance/regularizations") });
-  more.push({ key: "leave", label: "My Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
+  more.push({ key: "leave", label: "Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
 
   return (
     <Screen

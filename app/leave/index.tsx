@@ -37,7 +37,7 @@ export default function LeaveHub() {
 
   const tiles: ModuleTile[] = [
     { key: "apply", label: "Apply Leave", icon: "edit", tone: "primary", onPress: () => router.push("/requests/leave") },
-    { key: "mine", label: "My Leaves", icon: "calendar", tone: "accent", onPress: () => router.push("/leave/list") },
+    { key: "mine", label: "Leaves", icon: "calendar", tone: "accent", onPress: () => router.push("/leave/list") },
     { key: "pending", label: "Pending Leaves", icon: "clock", tone: "warning", count: pendingCount || undefined, onPress: () => router.push({ pathname: "/leave/list", params: { status: "PENDING" } }) },
   ];
 
