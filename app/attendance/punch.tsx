@@ -5,7 +5,7 @@ import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as Linking from "expo-linking";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, ToastAndroid, View } from "react-native";
 import { ApiError } from "@/api/errors";
 import type { PunchResult } from "@/api/types";
 import { useAuth } from "@/auth/AuthProvider";
@@ -102,13 +102,9 @@ export default function Punch() {
       return setStep({ kind: "weakGps", fix });
     }
 
-    if (!camPerm?.granted) {
-      const res = await requestCamPerm();
-      if (!res.granted) {
-        // Wait for user to grant camera
-        return;
-      }
-    }
+    // Camera not allowed: the scanner step shows "Allow camera" / "Open settings"
+    // instead of leaving the screen stuck on "Checking location…".
+    if (!camPerm?.granted && camPerm?.canAskAgain !== false) await requestCamPerm();
 
     setStep({ kind: "scanner", fix, verifying: false, error: null });
     autoCaptureTriggered.current = false;
@@ -162,6 +158,15 @@ export default function Punch() {
       });
 
       await qc.invalidateQueries({ queryKey: ["attendance"] });
+      // Normal success: straight back (Home shows the new time). Only a punch sent
+      // for review keeps the result screen (EMP-009), so the employee sees why.
+      if (!result.review.needsReview) {
+        const at = formatTime(type === "IN" ? result.session.checkInAt : (result.session.checkOutAt ?? result.session.checkInAt));
+        if (Platform.OS === "android") ToastAndroid.show(type === "IN" ? strings.punch.successIn(at) : strings.punch.successOut(at), ToastAndroid.SHORT);
+        if (router.canGoBack()) router.back();
+        else router.replace("/home");
+        return;
+      }
       setStep({ kind: "done", result });
     } catch (err) {
       submittingRef.current = false;
@@ -318,14 +323,21 @@ export default function Punch() {
   // Step 2 & 3: Camera Scanner (EMP-005)
   if (step.kind === "scanner") {
     if (!camPerm?.granted) {
+      const blocked = camPerm?.canAskAgain === false;
       return (
         <Screen>
           <AppText variant="h2" style={styles.title}>
-            Camera permission needed
+            {strings.punch.cameraTitle}
           </AppText>
-          <Banner tone="warning" message="Camera access is needed to verify your face during attendance punch." />
+          <Banner tone="warning" message={blocked ? strings.punch.cameraBlocked : strings.punch.cameraBody} testID="punch-camera-needed" />
           <View style={styles.gap} />
-          <Button title="Allow camera" onPress={() => void requestCamPerm()} />
+          <Button
+            title={blocked ? strings.punch.openSettings : strings.punch.allowCamera}
+            testID="punch-allow-camera"
+            onPress={() => (blocked ? void Linking.openSettings() : void requestCamPerm())}
+          />
+          <View style={styles.gap} />
+          <Button kind="secondary" title="Back" onPress={() => router.back()} />
         </Screen>
       );
     }
@@ -401,7 +413,7 @@ export default function Punch() {
     );
   }
 
-  // Done: Success (EMP-007) or Sent for Review (EMP-009)
+  // Done: only a punch sent for review (EMP-009) stops here; normal success goes straight back (D-044)
   if (step.kind === "done") {
     const isReview = step.result.review.needsReview;
     return (

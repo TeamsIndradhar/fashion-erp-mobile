@@ -104,6 +104,15 @@ describe("prototype screens EMP-001 / EMP-002", () => {
     for (const t of ["My Report", "Add Remark", "My Requests", "Office Locations", "Home", "My Work", "Alerts", "Profile"]) expect(screen.getByText(t)).toBeTruthy();
   });
 
+  it("home punch button opens Punch Out when already punched in", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { router } = require("expo-router");
+    await render(wrap(<Home />));
+    expect(await screen.findByText("09:15 AM")).toBeTruthy();
+    await fireEvent.press(screen.getByTestId("home-punch"));
+    expect(router.push).toHaveBeenCalledWith({ pathname: "/attendance/punch", params: { type: "OUT" } });
+  });
+
   it("attendance shows hero ring, punch pair, today's sessions and shift", async () => {
     await render(wrap(<Att />));
     expect(await screen.findByText("Checked In")).toBeTruthy();

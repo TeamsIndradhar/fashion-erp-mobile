@@ -60,6 +60,10 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-11 — Claude Code — D-044 punch + requests fixes
+**Done:** `app/home.tsx` punch button always active (alert with the reason; reloads today's attendance if missing); `app/attendance/punch.tsx` camera-denied step (Allow / Open settings, Back) instead of an endless "Checking location…", normal success → back + Android toast (EMP-009 review screen kept); `app/requests/index.tsx` "New request" card; Home "My Requests" tile always shown.
+**Verified:** typecheck, lint, jest (76 tests, incl. new home punch test). **Not verified on a phone** — needs a new preview APK.
+
 ### Handoff — 2026-11-11 — Claude Code — D-043 Developer options / mock location lock
 **Done:** App: `modules/device-signals` (local Expo module, Android: `Settings.Global` development settings, ADB, wireless ADB), `src/device/deviceSecurity.ts` (check, guard on/off per variant, mocked-fix events), `AuthProvider` status `securityBlocked` (checked after `/me`, on app foreground, on any mocked fix), `SecurityBlockedScreen` (10 s countdown, back button disabled) mounted instead of the whole router, punch signals now send the native flags. Backend (`fashion-erp`): `mobile_security_events` table + `POST /api/mobile/v1/security/violation` (saves user name/email, device, signals, IP; revokes the session), punch refuses `mocked`/`developerOptions` = true.
 **Verified:** app typecheck / lint / jest (75 tests) pass; backend vitest (mobile modules) and `tsc` pass.

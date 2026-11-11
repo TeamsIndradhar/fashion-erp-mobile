@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, router } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { useAuth } from "@/auth/AuthProvider";
 import { AppHeader } from "@/components/AppHeader";
 import { Banner } from "@/components/Banner";
@@ -58,7 +58,8 @@ export default function Home() {
       onPress: () => router.push({ pathname: "/attendance/day/[date]", params: { date: istDateKey() } }),
     });
   }
-  if (me.employee) tiles.push({ key: "requests", label: "My Requests", icon: "rupee", tone: "warning", onPress: () => router.push("/requests") });
+  // Shown to everyone: the hub explains when the login has no employee record or no request permission.
+  tiles.push({ key: "requests", label: "My Requests", icon: "rupee", tone: "warning", onPress: () => router.push("/requests") });
   if (attendanceAllowed) tiles.push({ key: "offices", label: "Office Locations", icon: "pin", tone: "primary", onPress: () => router.push("/attendance/offices") });
   if (me.employee && me.permissions.production?.view && !canApprove) tiles.push({ key: "work", label: "My Work", icon: "brief", tone: "primary", onPress: () => router.push("/work") });
   if (canApprove) {
@@ -75,7 +76,17 @@ export default function Home() {
   if (modules.has("reports")) tiles.push({ key: "dashboard", label: "Business Dashboard", icon: "chart", tone: "info", onPress: () => router.push("/dashboard") });
   if (modules.has("inventory") || modules.has("fg_inventory")) tiles.push({ key: "inventory", label: "Inventory", icon: "box", tone: "warning", onPress: () => router.push("/inventory") });
 
-  const punch = () => router.push({ pathname: "/attendance/punch", params: { type: t?.isPunchedIn ? "OUT" : "IN" } });
+  // Always tappable: a reason is shown instead of a silent grey button (today not loaded yet, failed, or no punch permission).
+  const punch = async () => {
+    if (!canPunch) return Alert.alert(strings.home.punchTitle, strings.home.noPunchPermission);
+    let data = t;
+    if (!data) {
+      const res = await today.refetch();
+      data = res.data;
+      if (!data) return Alert.alert(strings.home.punchTitle, (res.error as Error | null)?.message ?? strings.errors.generic);
+    }
+    router.push({ pathname: "/attendance/punch", params: { type: data.isPunchedIn ? "OUT" : "IN" } });
+  };
 
   return (
     <Screen
@@ -106,8 +117,7 @@ export default function Home() {
             hasLocations={t?.hasLocations ?? true}
             label="Tap to Punch"
             sub="In / Out"
-            disabled={!canPunch || !t}
-            onPunch={canPunch ? punch : undefined}
+            onPunch={() => void punch()}
           />
           <TrustChips gps={gpsAccuracyText(live)} deviceOk={device.ok} deviceText={device.text} />
           {today.error ? <Banner tone="danger" message={(today.error as Error).message} /> : null}

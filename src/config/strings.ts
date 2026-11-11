@@ -70,6 +70,17 @@ export const strings = {
     greeting: "Hello",
     noEmployee: "Your login is not linked to an employee record. Attendance is not available — contact HR.",
     attendanceOff: "Attendance isn't enabled for your company.",
+    punchTitle: "Can't punch right now",
+    noPunchPermission: "Your role is not allowed to punch from the app. Ask HR to give you attendance punch permission.",
+  },
+  punch: {
+    cameraTitle: "Allow the camera",
+    cameraBody: "A selfie is needed to punch. Allow the camera for Fashion ERP.",
+    cameraBlocked: "The camera is blocked for Fashion ERP. Open Settings → Permissions → Camera → Allow, then come back.",
+    allowCamera: "Allow camera",
+    openSettings: "Open settings",
+    successIn: (time: string) => `Punched in at ${time}`,
+    successOut: (time: string) => `Punched out at ${time}`,
   },
   profile: {
     title: "My profile",
