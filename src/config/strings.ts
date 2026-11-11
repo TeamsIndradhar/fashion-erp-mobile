@@ -83,8 +83,8 @@ export const strings = {
     successOut: (time: string) => `Punched out at ${time}`,
   },
   profile: {
-    title: "My profile",
-    devices: "My devices",
+    title: "Profile",
+    devices: "Devices",
     signOut: "Sign out",
     signOutAll: "Sign out of all phones",
     confirmSignOut: "Sign out of Fashion ERP on this phone?",

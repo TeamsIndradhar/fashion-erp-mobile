@@ -96,9 +96,9 @@ export default function AttendanceDashboard() {
       }}
     >
       <InnerHeader
-        title="My Attendance"
+        title="Attendance"
         right={
-          <Pressable testID="attendance-report" accessibilityRole="button" accessibilityLabel="My report" hitSlop={8} onPress={() => router.push("/attendance/report")} style={styles.ib}>
+          <Pressable testID="attendance-report" accessibilityRole="button" accessibilityLabel="Report" hitSlop={8} onPress={() => router.push("/attendance/report")} style={styles.ib}>
             <Icon name="calendar" tone="text" size={22} />
           </Pressable>
         }

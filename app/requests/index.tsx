@@ -37,7 +37,7 @@ export default function RequestsHub() {
   return (
     <Screen>
       <AppText variant="h2" style={styles.title}>
-        My requests
+        Requests
       </AppText>
       {!auth.me.employee ? <Banner tone="warning" message="Your login is not linked to an employee record, so requests are not available. Contact HR." /> : null}
       {auth.me.employee && tiles.length === 0 ? <Banner tone="info" message="No requests are enabled for your role." /> : null}

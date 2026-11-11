@@ -34,7 +34,7 @@ export default function AttendanceReport() {
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={month.isRefetching} onRefresh={() => void month.refetch()} />}
       >
-        <InnerHeader title="My Report" />
+        <InnerHeader title="Report" />
 
         <View style={styles.monthHead}>
           <Pressable accessibilityRole="button" accessibilityLabel="Previous month" onPress={() => setMonthDelta((d) => d - 1)} style={styles.arrow}>

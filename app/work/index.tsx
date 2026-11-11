@@ -33,7 +33,7 @@ export default function MyWork() {
         refreshControl={<RefreshControl refreshing={list.isRefetching} onRefresh={() => void Promise.all([list.refetch(), entries.refetch()])} />}
       >
         <AppText variant="h2" style={styles.title}>
-          My work
+          Work
         </AppText>
         {off ? (
           <Banner
@@ -45,11 +45,11 @@ export default function MyWork() {
           <>
             <View style={styles.links}>
               <View style={styles.cell}>
-                <Button kind="secondary" title="My entries" onPress={() => router.push("/work/history")} />
+                <Button kind="secondary" title="Entries" onPress={() => router.push("/work/history")} />
               </View>
               {auth.me?.permissions.pieceRate?.view ? (
                 <View style={styles.cell}>
-                  <Button kind="secondary" title="My earnings" onPress={() => router.push("/work/earnings")} />
+                  <Button kind="secondary" title="Earnings" onPress={() => router.push("/work/earnings")} />
                 </View>
               ) : null}
             </View>

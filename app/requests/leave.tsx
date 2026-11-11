@@ -91,7 +91,7 @@ export default function Leave() {
       </Card>
 
       <AppText variant="h3" style={styles.section}>
-        My leave requests
+        Leave requests
       </AppText>
       {mine.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {mine.data?.length === 0 ? <AppText color={colors.textSecondary}>No leave requests yet.</AppText> : null}

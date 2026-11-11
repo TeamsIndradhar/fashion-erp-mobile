@@ -50,7 +50,7 @@ export default function Help() {
       ))}
 
       <AppText variant="h3" style={styles.section}>
-        My support tickets
+        Support tickets
       </AppText>
       {form ? (
         <TicketForm onDone={() => setForm(false)} />

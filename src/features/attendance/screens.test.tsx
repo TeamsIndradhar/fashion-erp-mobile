@@ -116,7 +116,7 @@ describe("prototype screens EMP-001 / EMP-002", () => {
   it("attendance shows hero ring, punch pair, today's sessions and shift", async () => {
     await render(wrap(<Att />));
     expect(await screen.findByText("Checked In")).toBeTruthy();
-    expect(screen.getByText("My Attendance")).toBeTruthy();
+    expect(screen.getByText("Attendance")).toBeTruthy();
     expect(screen.getByText("Punch In")).toBeTruthy();
     expect(screen.getByText("Punch Out")).toBeTruthy();
     expect(screen.getByText("In 09:15 AM · Main Factory")).toBeTruthy();

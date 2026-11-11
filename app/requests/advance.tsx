@@ -81,7 +81,7 @@ export default function Advance() {
       </Card>
 
       <AppText variant="h3" style={styles.section}>
-        My advances
+        Advances
       </AppText>
       {list.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {list.error ? <Banner tone="danger" message={(list.error as Error).message} /> : null}

@@ -116,7 +116,7 @@ export default function Correction() {
       </Card>
 
       <AppText variant="h3" style={styles.section}>
-        My corrections
+        Corrections
       </AppText>
       {mine.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {mine.data?.length === 0 ? <AppText color={colors.textSecondary}>No corrections yet.</AppText> : null}

@@ -21,7 +21,7 @@ export default function WorkHistory() {
   return (
     <Screen>
       <AppText variant="h2" style={styles.title}>
-        My entries
+        Entries
       </AppText>
       {list.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {list.error ? <Banner tone="danger" message={(list.error as Error).message} /> : null}

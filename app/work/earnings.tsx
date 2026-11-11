@@ -22,7 +22,7 @@ export default function Earnings() {
   return (
     <Screen>
       <AppText variant="h2" style={styles.title}>
-        My earnings
+        Earnings
       </AppText>
       {list.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {list.error ? <Banner tone="danger" message={(list.error as Error).message} /> : null}

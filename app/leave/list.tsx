@@ -38,7 +38,7 @@ export default function LeaveList() {
 
   return (
     <Screen refreshing={list.isRefetching} onRefresh={() => void list.refetch()}>
-      <InnerHeader title={pendingView ? "Pending leaves" : "My leaves"} />
+      <InnerHeader title={pendingView ? "Pending leaves" : "Leaves"} />
       <Button icon="calendar" title="Apply for leave" onPress={() => router.push("/requests/leave")} testID="leave-list-apply" />
       <View style={styles.gap} />
       <ListFilters f={f} statuses={STATUSES} testID="leave" />
