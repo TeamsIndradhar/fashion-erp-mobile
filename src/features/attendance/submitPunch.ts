@@ -1,6 +1,7 @@
 import { ApiError } from "../../api/errors";
 import { appendFile } from "../../api/formFile";
 import type { PunchChallenge, PunchResult, PunchSignals } from "../../api/types";
+import { getNativeDeviceSignals } from "../../../modules/device-signals";
 import type { GpsFix } from "./location";
 
 export interface PunchApi {
@@ -49,13 +50,13 @@ export async function submitPunch(api: PunchApi, req: PunchRequest): Promise<Pun
   }
 }
 
-export function signalsFromFix(fix: GpsFix): PunchSignals {
-  // Only what this build can read; the rest stays null = unknown (D-035 module not built yet).
+export function signalsFromFix(fix: GpsFix, native = getNativeDeviceSignals()): PunchSignals {
+  // Only what this build can read; the rest stays null = unknown.
   return {
     mocked: fix.mocked,
-    developerOptions: null,
-    adbEnabled: null,
-    adbWifiEnabled: null,
+    developerOptions: native?.developerOptions ?? null,
+    adbEnabled: native?.adbEnabled ?? null,
+    adbWifiEnabled: native?.adbWifiEnabled ?? null,
     emulatorHeuristic: null,
     rootHeuristic: null,
     jailbreakHeuristic: null,

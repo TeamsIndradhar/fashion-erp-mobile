@@ -48,6 +48,7 @@ import type {
   ReportCategoryGroup,
   ReportDescriptor,
   SalaryAdvance,
+  SecurityViolationInput,
   StockMovementDetail,
   StockMovementRow,
   SalaryRun,
@@ -72,6 +73,7 @@ export function createEndpoints(api: ApiClient) {
     logout: () => api.post<{ ok: true }>("/api/mobile/v1/auth/logout"),
     logoutAll: () => api.post<{ revoked: number }>("/api/mobile/v1/auth/logout-all"),
     me: () => api.get<MeResponse>("/api/mobile/v1/me"),
+    reportSecurityViolation: (body: SecurityViolationInput) => api.post<{ id: string; signedOut: true }>("/api/mobile/v1/security/violation", body),
     devices: () => api.get<MobileDevice[]>("/api/mobile/v1/devices"),
     removeDevice: (id: string) => api.del<{ ok: true }>(`/api/mobile/v1/devices/${encodeURIComponent(id)}`),
     changePassword: (currentPassword: string, newPassword: string) =>

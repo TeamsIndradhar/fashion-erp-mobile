@@ -27,6 +27,7 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⏳ waiting for user 
 
 1. ✅ Release-1 screen designs approved (38 screens). Phases now run without gates (D-039).
 1a. **Server deploy:** run migrations `20261103180000_mobile_auth`, `20261104090000_mobile_punch_meta` and `20261104120000_face_descriptors` on the production/staging DB when `fashion-erp` `main` is deployed (only applied to the dev DB so far); set `MOBILE_CHALLENGE_SECRET`; `npm ci` (new deps `@tensorflow/tfjs`, `@tensorflow/tfjs-backend-wasm`); expect ~200 MB more RAM per server process once the first face check runs. Then run `node --experimental-strip-types --no-warnings scripts/grant-own-expense-requests.mjs --apply` (B-23) and the same with `--set supervisor-team-approver --apply` (D-D06), then restart the app.
+1b. **D-043 (unsafe phone lock):** run migration `20261114090000_mobile_security_events` on the dev DB (the agent was not allowed to) and on production when deployed; then build a **new APK** (`eas build -p android --profile preview`) — the Developer-options check is native code (`modules/device-signals`), so older APKs only catch a mocked GPS fix. Test on a phone: Developer options ON → sign in → warning 10 s → signed out, and a row in `mobile_security_events`.
 2. **Inputs for Phase 0 spikes:** 3–5 volunteers' photos (face accuracy test, D-037); developer accounts + test phones (Spike B); factory visit with the filled GPS sheet (Spike C).
 3. Remaining questions: Q-07 phone fleet / minimum OS, Q-12 crash reporting, Q-13 weak-GPS fallback (after Spike C), Q-15 selfie retention & privacy notice owner, Q-19 employee ↔ office assignment, Q-20 what flagged employees see, Q-21 fixed temporary password (web ERP), store app name.
 
@@ -58,6 +59,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 - Pointer lines in `fashion-erp/AGENTS.md`/`fashion-erp/GEMINI.md` (only if Q-17 approves).
 
 ## Handoff log (newest first)
+
+### Handoff — 2026-11-11 — Claude Code — D-043 Developer options / mock location lock
+**Done:** App: `modules/device-signals` (local Expo module, Android: `Settings.Global` development settings, ADB, wireless ADB), `src/device/deviceSecurity.ts` (check, guard on/off per variant, mocked-fix events), `AuthProvider` status `securityBlocked` (checked after `/me`, on app foreground, on any mocked fix), `SecurityBlockedScreen` (10 s countdown, back button disabled) mounted instead of the whole router, punch signals now send the native flags. Backend (`fashion-erp`): `mobile_security_events` table + `POST /api/mobile/v1/security/violation` (saves user name/email, device, signals, IP; revokes the session), punch refuses `mocked`/`developerOptions` = true.
+**Verified:** app typecheck / lint / jest (75 tests) pass; backend vitest (mobile modules) and `tsc` pass.
+**Not verified:** the Kotlin module has not been compiled (no Android SDK here) — the next EAS build compiles it; nothing tested on a phone; migration not applied anywhere. The warning screen is not in `design/approvals` (built from existing components on the user's direct request).
 
 ### Handoff — 2026-11-05 — Antigravity — Verification & clean lint/test run
 **Commits:** `156fceb`.

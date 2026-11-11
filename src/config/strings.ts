@@ -22,6 +22,20 @@ export const strings = {
     expired: "Your session has ended. Please sign in again.",
     revoked: "You were signed out on this phone. Please sign in again.",
   },
+  security: {
+    title: "This phone is not safe to use",
+    body: "Fashion ERP can't be used while these are on. Turn them off first, then sign in again.",
+    reasons: {
+      DEVELOPER_OPTIONS_ON: "Developer options is ON",
+      USB_DEBUGGING_ON: "USB debugging is ON",
+      WIRELESS_DEBUGGING_ON: "Wireless debugging is ON",
+      MOCK_LOCATION: "A mock / fake GPS location is being used",
+    },
+    howTo: "How to fix: Settings → System (or Additional settings) → Developer options → switch it OFF. Uninstall or stop any fake GPS app.",
+    recorded: "Your name and this phone's details have been sent to HR.",
+    countdown: (s: number) => `Signing you out in ${s} s…`,
+    loginNotice: "You were signed out: turn off Developer options and any fake GPS app, then sign in again.",
+  },
   login: {
     title: "Sign in",
     subtitle: "Use your Fashion ERP email and password.",

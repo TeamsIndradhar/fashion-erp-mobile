@@ -1,4 +1,5 @@
 import * as Location from "expo-location";
+import { reportMockedFix } from "../../device/deviceSecurity";
 
 export interface GpsFix {
   latitude: number;
@@ -66,6 +67,8 @@ export async function acquireFix(targetAccuracy: number, timeoutMs: number, onFi
     const timer = setTimeout(finish, timeoutMs);
     Location.watchPositionAsync({ accuracy: Location.Accuracy.BestForNavigation, timeInterval: 1000, distanceInterval: 0 }, (l) => {
       const fix = toFix(l);
+      // D-043: a fake GPS fix locks the app (warning, then sign-out).
+      if (fix.mocked === true) reportMockedFix({ latitude: fix.latitude, longitude: fix.longitude });
       if (!best || (fix.accuracy ?? Infinity) <= (best.accuracy ?? Infinity)) best = fix;
       onFix(fix);
       if (fix.accuracy !== null && fix.accuracy <= targetAccuracy) finish();

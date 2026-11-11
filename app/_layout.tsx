@@ -3,7 +3,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { AuthProvider } from "@/auth/AuthProvider";
+import { AuthProvider, useAuth } from "@/auth/AuthProvider";
+import { SecurityBlockedScreen } from "@/components/SecurityBlockedScreen";
 import { ApiError } from "@/api/errors";
 import { colors } from "@/theme/tokens";
 
@@ -19,6 +20,15 @@ function makeQueryClient() {
   });
 }
 
+/** D-043: a blocked phone gets only the warning — the app's screens are not mounted at all. */
+function AppOrSecurityLock() {
+  const auth = useAuth();
+  if (auth.status === "securityBlocked") {
+    return <SecurityBlockedScreen reasons={auth.security?.reasons ?? []} onDone={() => void auth.finishSecurityLock()} />;
+  }
+  return <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />;
+}
+
 export default function RootLayout() {
   const [queryClient] = useState(makeQueryClient);
   return (
@@ -26,7 +36,7 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <StatusBar style="dark" />
-          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />
+          <AppOrSecurityLock />
         </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

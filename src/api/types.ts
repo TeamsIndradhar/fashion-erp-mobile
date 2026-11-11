@@ -32,6 +32,24 @@ export interface DeviceInfo {
   appVersion?: string;
 }
 
+/** POST /api/mobile/v1/security/violation (D-043). */
+export interface SecurityViolationInput {
+  reasons: ("DEVELOPER_OPTIONS_ON" | "USB_DEBUGGING_ON" | "WIRELESS_DEBUGGING_ON" | "MOCK_LOCATION")[];
+  device: {
+    installationId: string;
+    platform: Platform;
+    manufacturer: string | null;
+    brand: string | null;
+    model: string | null;
+    deviceName: string | null;
+    osVersion: string | null;
+    appVersion: string | null;
+    isPhysicalDevice: boolean | null;
+  };
+  signals: { developerOptions: boolean | null; adbEnabled: boolean | null; adbWifiEnabled: boolean | null; mocked: boolean | null };
+  location: { latitude: number; longitude: number } | null;
+}
+
 export interface LoginResponse extends TokenSet {
   mustChangePassword: boolean;
   user: { id: string; fullName: string; email: string };
