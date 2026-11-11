@@ -60,6 +60,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-11 — Claude Code — Android Preview APK build #5 (D-043 security lock + D-044 punch/requests fixes)
+**Commit:** `24f50b9`. Built on EAS (preview profile, live backend `https://erp.indradhar.in`); the local `modules/device-signals` Kotlin module compiled.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/ff73c3b7-8959-480e-a5bc-d767876f9d1a` (APK: `https://expo.dev/artifacts/eas/kDv391mxm3Y-XZ1QD6UGxU1ObpWQ1B8ikyIbBZO9VOc.apk`)
+**Not verified:** not installed on a phone yet. Live server does not have `fashion-erp` `526c1db0` + migration `20261114090000_mobile_security_events` until deployed — until then the violation report fails silently (warning + sign-out still happen) and the server-side punch refusal is missing.
+
 ### Handoff — 2026-11-11 — Claude Code — D-044 punch + requests fixes
 **Done:** `app/home.tsx` punch button always active (alert with the reason; reloads today's attendance if missing); `app/attendance/punch.tsx` camera-denied step (Allow / Open settings, Back) instead of an endless "Checking location…", normal success → back + Android toast (EMP-009 review screen kept); `app/requests/index.tsx` "New request" card; Home "My Requests" tile always shown.
 **Verified:** typecheck, lint, jest (76 tests, incl. new home punch test). **Not verified on a phone** — needs a new preview APK.
