@@ -11,6 +11,7 @@ import { DataListCard } from "@/components/DataListCard";
 import { Icon } from "@/components/Icon";
 import { InfoBanner } from "@/components/InfoBanner";
 import { InnerHeader } from "@/components/InnerHeader";
+import { ModuleGrid, type ModuleTile } from "@/components/ModuleGrid";
 import { Screen } from "@/components/Screen";
 import { StatusBadge, type BadgeTone } from "@/components/StatusBadge";
 import { endpoints } from "@/core/services";
@@ -68,10 +69,21 @@ export default function AttendanceDashboard() {
   const ringTime = open ? formatTime(open.checkInAt) : lastOut ? formatTime(lastOut) : "--:--";
   const shift = t?.employee.shift;
   const canPunch = !!auth.me?.permissions.attendance.punch;
+  // D-045: My Attendance is the module; punch is one part, these are the others.
+  const modules = new Set(auth.me?.viewableModules ?? []);
+  const more: ModuleTile[] = [
+    { key: "dashboard", label: "Monthly Dashboard", icon: "chart", tone: "info", onPress: () => router.push("/attendance/dashboard") },
+    { key: "report", label: "My Report", icon: "file", tone: "accent", onPress: () => router.push("/attendance/report") },
+    { key: "overtime", label: "Overtime", icon: "clock", tone: "info", onPress: () => router.push("/attendance/overtime") },
+    { key: "outdoor", label: "Rejected Outdoor", icon: "pin", tone: "danger", onPress: () => router.push("/attendance/outdoor") },
+  ];
+  if (modules.has("hrms_attendance_regularization")) more.push({ key: "regularization", label: "Regularization", icon: "edit", tone: "warning", onPress: () => router.push("/attendance/regularizations") });
+  if (modules.has("hrms_leave")) more.push({ key: "leave", label: "Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
 
   return (
     <Screen
-      footer={<BottomNavigation active="My Work" />}
+      // "My Work" points here only for users without production work; for the others no tab is current.
+      footer={<BottomNavigation active={auth.me?.employee && auth.me.permissions.production?.view ? null : "My Work"} />}
       refreshing={today.isRefetching}
       onRefresh={() => {
         void today.refetch();
@@ -134,6 +146,7 @@ export default function AttendanceDashboard() {
         </>
       ) : null}
 
+      <ModuleGrid tiles={more} />
       <InfoBanner tone="success" text="Your attendance is securely recorded with fraud prevention." />
     </Screen>
   );

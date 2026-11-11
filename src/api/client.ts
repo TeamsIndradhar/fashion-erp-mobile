@@ -19,6 +19,21 @@ export interface RequestOptions {
   auth?: boolean;
   timeoutMs?: number;
   signal?: AbortSignal;
+  /** Return the whole envelope (`{ data, meta }`) instead of only `data` — paged lists. */
+  envelope?: boolean;
+}
+
+/** Server list meta (fashion-erp buildListMeta). */
+export interface ListMeta {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface Paged<T> {
+  data: T[];
+  meta: ListMeta;
 }
 
 const DEFAULT_TIMEOUT_MS = 15_000;
@@ -87,6 +102,7 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
       }
     }
     if (!res.ok) throw toApiError(res.status, json as ApiErrorBody | null);
+    if (opts.envelope) return json as T;
     return ((json as { data?: T } | null)?.data ?? (json as T)) as T;
   }
 
@@ -111,6 +127,7 @@ export function createApiClient(config: ClientConfig, getSession: () => Session 
   return {
     request,
     get: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) => request<T>(path, { ...opts, method: "GET" }),
+    getPage: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body" | "envelope">) => request<Paged<T>>(path, { ...opts, method: "GET", envelope: true }),
     post: <T>(path: string, body?: unknown, opts?: Omit<RequestOptions, "method" | "body">) => request<T>(path, { ...opts, method: "POST", body }),
     del: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) => request<T>(path, { ...opts, method: "DELETE" }),
   };

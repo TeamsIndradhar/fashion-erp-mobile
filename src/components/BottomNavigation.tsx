@@ -15,7 +15,7 @@ export type NavTab = "Home" | "My Work" | "Alerts" | "Profile";
  * NAVIGATION.md bottom navigation (employee set: Home · My Work · Alerts · Profile).
  * My Work opens production work for users who have it, otherwise attendance.
  */
-export function BottomNavigation({ active }: { active: NavTab }) {
+export function BottomNavigation({ active }: { active: NavTab | null }) {
   const auth = useAuth();
   const insets = useSafeAreaInsets();
   const signedIn = auth.status === "signedIn";

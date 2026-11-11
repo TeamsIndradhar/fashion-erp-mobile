@@ -60,6 +60,10 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-11 — Claude Code — D-045 attendance summaries, leave module, monthly dashboard
+**Done:** see D-045. Also fixed in `fashion-erp`: the D-043 security service selected `User.name` (the field is `fullName`) — `526c1db0` did **not** typecheck, so a production build of that commit would fail; an earlier "tsc passed" report was wrong (exit code of `tail`). Fixed in the D-045 backend commit, full `tsc` now 0 errors.
+**Verified:** app typecheck / lint / jest (84 tests incl. paging tests); backend `tsc` 0 errors, vitest hrms + mobile (251) pass, eslint on changed files. **Not verified on a phone**; needs a backend deploy (new `from`/`to` filters) and a new APK.
+
 ### Handoff — 2026-11-11 — Claude Code — Android Preview APK build #5 (D-043 security lock + D-044 punch/requests fixes)
 **Commit:** `24f50b9`. Built on EAS (preview profile, live backend `https://erp.indradhar.in`); the local `modules/device-signals` Kotlin module compiled.
 **Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/ff73c3b7-8959-480e-a5bc-d767876f9d1a` (APK: `https://expo.dev/artifacts/eas/kDv391mxm3Y-XZ1QD6UGxU1ObpWQ1B8ikyIbBZO9VOc.apk`)

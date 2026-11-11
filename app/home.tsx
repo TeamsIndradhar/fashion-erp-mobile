@@ -60,6 +60,7 @@ export default function Home() {
   }
   // Shown to everyone: the hub explains when the login has no employee record or no request permission.
   tiles.push({ key: "requests", label: "My Requests", icon: "rupee", tone: "warning", onPress: () => router.push("/requests") });
+  if (me.employee && modules.has("hrms_leave")) tiles.push({ key: "leave", label: "Leave", icon: "calendar", tone: "success", onPress: () => router.push("/leave") });
   if (attendanceAllowed) tiles.push({ key: "offices", label: "Office Locations", icon: "pin", tone: "primary", onPress: () => router.push("/attendance/offices") });
   if (me.employee && me.permissions.production?.view && !canApprove) tiles.push({ key: "work", label: "My Work", icon: "brief", tone: "primary", onPress: () => router.push("/work") });
   if (canApprove) {

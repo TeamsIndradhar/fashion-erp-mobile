@@ -111,6 +111,11 @@ export function createEndpoints(api: ApiClient) {
     leaveBalance: (employeeId: string, leaveTypeId: string, year: number) =>
       api.get<LeaveBalance>(`/api/v1/leave-requests/balance?employeeId=${encodeURIComponent(employeeId)}&leaveTypeId=${encodeURIComponent(leaveTypeId)}&year=${year}`),
     myLeaveRequests: () => api.get<LeaveRequest[]>("/api/v1/leave-requests?mine=true&pageSize=50"),
+    /** D-045 summaries: `query` = from, to, status, page, pageSize (summaries.rangeQuery). */
+    myLeavePage: (query: string) => api.getPage<LeaveRequest>(`/api/v1/leave-requests?mine=true&${query}`),
+    myCorrectionsPage: (query: string) => api.getPage<CorrectionRequest>(`/api/v1/attendance-corrections?mine=true&${query}`),
+    myOutdoorRejections: (query: string) => api.get<OutdoorRejection[]>(`/api/v1/attendance/outdoor-rejections?mine=true&${query}`),
+    myOvertime: (query: string) => api.get<OvertimeRow[]>(`/api/v1/attendance/overtime?mine=true&${query}`),
     applyLeave: (input: { leaveTypeId: string; days: { date: string; duration: LeaveDuration }[]; reason: string }) =>
       api.post<LeaveRequest>("/api/v1/leave-requests", input),
 
