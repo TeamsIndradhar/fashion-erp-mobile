@@ -15,7 +15,7 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { DataListCard } from "@/components/DataListCard";
 import { InnerHeader } from "@/components/InnerHeader";
-import { Screen } from "@/components/Screen";
+import { BottomSheet } from "@/components/BottomSheet";
 import { StateView } from "@/components/StateView";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
@@ -53,6 +53,10 @@ export default function Punch() {
   const [showManualCapture, setShowManualCapture] = useState(false);
   const autoCaptureTriggered = useRef(false);
   const submittingRef = useRef(false);
+
+  // D-046: the punch flow is a sheet over the screen it was opened from; the dimmed
+  // area closes it, except while the selfie is being checked.
+  const closeSheet = step.kind === "scanner" && step.verifying ? undefined : () => (router.canGoBack() ? router.back() : router.replace("/home"));
 
   const rules = today.data?.rules;
   const target = rules?.gpsAccuracyMeters ?? 50;
@@ -181,17 +185,17 @@ export default function Punch() {
 
   if (today.isPending) {
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <ActivityIndicator color={colors.primary} />
-      </Screen>
+      </BottomSheet>
     );
   }
 
   if (today.error) {
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <Banner tone="danger" message={(today.error as Error).message} />
-      </Screen>
+      </BottomSheet>
     );
   }
 
@@ -205,14 +209,14 @@ export default function Punch() {
   const faceRequired = !!rules?.requireFace;
   if (faceRequired && today.data && today.data.facePhotoIds.length === 0) {
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <AppText variant="h2" style={styles.title}>
           {title}
         </AppText>
         <Banner tone="warning" testID="punch-no-face-photo" message="No face photo is enrolled for you yet. Ask HR to add your face photos, then punch." />
         <View style={styles.gap} />
         <Button kind="secondary" title="Back" onPress={() => router.back()} />
-      </Screen>
+      </BottomSheet>
     );
   }
 
@@ -220,7 +224,7 @@ export default function Punch() {
   if (step.kind === "permission") {
     const openSettings = () => void Linking.openSettings();
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <InnerHeader title="Location needed" />
         <View style={styles.permSpacer} />
         <StateView
@@ -266,14 +270,14 @@ export default function Punch() {
             />
           </Card>
         </StateView>
-      </Screen>
+      </BottomSheet>
     );
   }
 
   // Step 1: Locating (EMP-004)
   if (step.kind === "locating") {
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <AppText variant="h2" style={styles.title}>
           {title} · Step 1 / 3
         </AppText>
@@ -286,14 +290,14 @@ export default function Punch() {
             {step.last?.accuracy ? `±${Math.round(step.last.accuracy)} m (need ≤ ${target} m)` : "Acquiring GPS fix…"}
           </AppText>
         </Card>
-      </Screen>
+      </BottomSheet>
     );
   }
 
   // EMP-004: Weak GPS
   if (step.kind === "weakGps") {
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <AppText variant="h2" style={styles.title}>
           {title} · Step 1 / 3
         </AppText>
@@ -316,7 +320,7 @@ export default function Punch() {
         </Card>
         <View style={styles.gap} />
         <Button title="Try again" onPress={() => void startLocating()} />
-      </Screen>
+      </BottomSheet>
     );
   }
 
@@ -325,7 +329,7 @@ export default function Punch() {
     if (!camPerm?.granted) {
       const blocked = camPerm?.canAskAgain === false;
       return (
-        <Screen>
+        <BottomSheet onClose={closeSheet}>
           <AppText variant="h2" style={styles.title}>
             {strings.punch.cameraTitle}
           </AppText>
@@ -338,14 +342,14 @@ export default function Punch() {
           />
           <View style={styles.gap} />
           <Button kind="secondary" title="Back" onPress={() => router.back()} />
-        </Screen>
+        </BottomSheet>
       );
     }
 
     const office = offices.data ? nearestOffice(step.fix, offices.data) : null;
 
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <View style={styles.headerRow}>
           <AppText variant="h2">{title}</AppText>
           <AppText variant="caption" color={colors.primary}>
@@ -396,7 +400,7 @@ export default function Punch() {
         {showManualCapture || step.error ? (
           <Button
             kind="primary"
-            title={step.verifying ? "Verifying…" : "Capture"}
+            title={step.verifying ? "Verifying…" : step.error ? "Try again" : "Capture"}
             loading={step.verifying}
             disabled={step.verifying}
             onPress={() => void captureAndSubmit(step.fix)}
@@ -409,7 +413,7 @@ export default function Punch() {
             </AppText>
           </View>
         )}
-      </Screen>
+      </BottomSheet>
     );
   }
 
@@ -417,7 +421,7 @@ export default function Punch() {
   if (step.kind === "done") {
     const isReview = step.result.review.needsReview;
     return (
-      <Screen>
+      <BottomSheet onClose={closeSheet}>
         <View style={styles.gap} />
         <Banner
           tone={isReview ? "warning" : "success"}
@@ -435,7 +439,7 @@ export default function Punch() {
         </Card>
         <View style={styles.gap} />
         <Button title="Done" onPress={() => router.back()} testID="punch-done" />
-      </Screen>
+      </BottomSheet>
     );
   }
 
@@ -470,7 +474,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   cameraBox: {
-    width: "100%",
+    width: "82%",
+    alignSelf: "center",
     aspectRatio: 3 / 4,
     borderRadius: radius.lg,
     overflow: "hidden",
@@ -489,9 +494,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ovalGuide: {
-    width: 220,
-    height: 290,
-    borderRadius: 110,
+    width: 180,
+    height: 240,
+    borderRadius: 90,
     borderWidth: 3,
     borderColor: colors.white,
     borderStyle: "dashed",

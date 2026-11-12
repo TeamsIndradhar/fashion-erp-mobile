@@ -26,7 +26,12 @@ function AppOrSecurityLock() {
   if (auth.status === "securityBlocked") {
     return <SecurityBlockedScreen reasons={auth.security?.reasons ?? []} onDone={() => void auth.finishSecurityLock()} />;
   }
-  return <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+      {/* D-046: punch opens as a sheet over Home / Attendance, not as a new page. */}
+      <Stack.Screen name="attendance/punch" options={{ presentation: "transparentModal", animation: "slide_from_bottom", contentStyle: { backgroundColor: "transparent" } }} />
+    </Stack>
+  );
 }
 
 export default function RootLayout() {

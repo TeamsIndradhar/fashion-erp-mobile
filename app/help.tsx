@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Redirect } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { ApiError } from "@/api/errors";
-import type { TicketCategory } from "@/api/types";
+import type { TicketCategory, TicketUpload } from "@/api/types";
 import { useAuth } from "@/auth/AuthProvider";
 import { AppText } from "@/components/AppText";
 import { Banner } from "@/components/Banner";
@@ -11,13 +11,19 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Screen } from "@/components/Screen";
 import { TextField } from "@/components/TextField";
+import type { VoiceNote } from "@/components/VoiceNoteField";
 import { strings } from "@/config/strings";
 import { endpoints } from "@/core/services";
 import { FAQ, TICKET_CATEGORIES, TICKET_STATUS_LABEL, validateTicket } from "@/features/help/help";
+import { TicketUploads, uploadsOf } from "@/features/help/TicketParts";
 import { formatDateTime } from "@/lib/dates";
 import { colors, radius, spacing } from "@/theme/tokens";
 
-/** EMP-026 Help & support: FAQ + my support tickets + raise a ticket (existing ERP tickets). */
+/**
+ * EMP-026 Help & support: FAQ + tickets + raise a ticket. D-048: a ticket can carry
+ * screenshots and a voice note, goes to the company's ticket desk first, and opens
+ * to its conversation (replies, status, desk actions).
+ */
 export default function Help() {
   const auth = useAuth();
   const enabled = auth.status === "signedIn";
@@ -61,21 +67,26 @@ export default function Help() {
       {tickets.isPending ? <ActivityIndicator color={colors.primary} /> : null}
       {tickets.error ? <Banner tone="danger" message={(tickets.error as Error).message} /> : null}
       {tickets.data?.tickets.length === 0 ? <AppText color={colors.textSecondary}>No tickets yet.</AppText> : null}
-      {tickets.data?.tickets.map((t) => (
-        <Card key={t.id}>
-          <AppText variant="bodyStrong">
-            {t.ticketNumber} · {t.subject}
-          </AppText>
-          <AppText variant="caption" color={colors.textSecondary}>
-            {TICKET_STATUS_LABEL[t.status]} · {formatDateTime(t.lastMessageAt ?? t.createdAt)}
-          </AppText>
-        </Card>
-      ))}
-      {tickets.data && tickets.data.tickets.length > 0 ? (
-        <AppText variant="caption" color={colors.textSecondary}>
-          To read replies, open Support on the Fashion ERP website.
-        </AppText>
+      {tickets.data?.isTicketDesk ? (
+        <Banner tone="info" message="You are your company's ticket desk: you see every ticket. Open one to reply, resolve it, or forward it to the support team." />
       ) : null}
+      {tickets.data?.tickets.map((t) => (
+        <Pressable key={t.id} accessibilityRole="button" onPress={() => router.push({ pathname: "/ticket/[id]", params: { id: t.id } })} testID={`ticket-${t.id}`}>
+          <Card>
+            <AppText variant="bodyStrong">
+              {t.ticketNumber} · {t.subject}
+            </AppText>
+            <AppText variant="caption" color={colors.textSecondary}>
+              {TICKET_STATUS_LABEL[t.status]} · {t.stage === "PLATFORM" ? "With the support team" : "With your company's ticket desk"} · {formatDateTime(t.lastMessageAt ?? t.createdAt)}
+            </AppText>
+            {tickets.data?.isTicketDesk && t.createdBy ? (
+              <AppText variant="caption" color={colors.textSecondary}>
+                Raised by {t.createdBy.fullName}
+              </AppText>
+            ) : null}
+          </Card>
+        </Pressable>
+      ))}
     </Screen>
   );
 }
@@ -85,9 +96,11 @@ function TicketForm({ onDone }: { onDone: () => void }) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [category, setCategory] = useState<TicketCategory>("GENERAL");
+  const [screenshots, setScreenshots] = useState<TicketUpload[]>([]);
+  const [voice, setVoice] = useState<VoiceNote | null>(null);
   const [errors, setErrors] = useState<{ subject?: string; body?: string }>({});
   const raise = useMutation({
-    mutationFn: () => endpoints.raiseTicket({ subject: subject.trim(), category, body: body.trim() }),
+    mutationFn: () => endpoints.raiseTicket({ subject: subject.trim(), category, body: body.trim(), files: uploadsOf(screenshots, voice) }),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["tickets"] });
       onDone();
@@ -95,7 +108,7 @@ function TicketForm({ onDone }: { onDone: () => void }) {
   });
 
   function submit() {
-    const v = validateTicket(subject, body);
+    const v = validateTicket(subject, body, !!voice);
     setErrors(v);
     if (!v.subject && !v.body) raise.mutate();
   }
@@ -121,7 +134,8 @@ function TicketForm({ onDone }: { onDone: () => void }) {
         ))}
       </View>
       <TextField label="Subject" value={subject} onChangeText={setSubject} error={errors.subject} maxLength={200} testID="ticket-subject" />
-      <TextField label="What happened?" value={body} onChangeText={setBody} multiline error={errors.body} maxLength={10000} testID="ticket-body" />
+      <TextField label="What happened? (or record a voice note below)" value={body} onChangeText={setBody} multiline error={errors.body} maxLength={10000} testID="ticket-body" />
+      <TicketUploads screenshots={screenshots} onScreenshots={setScreenshots} voice={voice} onVoice={setVoice} />
       {raise.error ? <Banner tone="danger" message={raise.error instanceof ApiError ? raise.error.message : strings.errors.generic} /> : null}
       <View style={styles.gap} />
       <Button title="Send ticket" onPress={submit} loading={raise.isPending} testID="ticket-send" />

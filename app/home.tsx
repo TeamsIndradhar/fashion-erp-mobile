@@ -78,6 +78,7 @@ export default function Home() {
   if ([me.permissions.approvals?.leave, me.permissions.approvals?.correction, me.permissions.approvals?.outdoor, me.permissions.approvals?.overtime].some(Boolean)) {
     tiles.push({ key: "team-reviews", label: "Team Approvals", icon: "users", tone: "success", onPress: () => router.push("/team/reviews") });
   }
+  if (me.permissions.approvals?.faceVerification) tiles.push({ key: "face", label: "Face Verification", icon: "shield", tone: "danger", onPress: () => router.push("/team/face") });
   if (me.permissions.attendance.team) tiles.push({ key: "team-attendance", label: "Team Attendance", icon: "users", tone: "primary", onPress: () => router.push("/team/attendance") });
   if (modules.has("reports")) tiles.push({ key: "dashboard", label: "Business Dashboard", icon: "chart", tone: "info", onPress: () => router.push("/dashboard") });
   if (modules.has("inventory") || modules.has("fg_inventory")) tiles.push({ key: "inventory", label: "Inventory", icon: "box", tone: "warning", onPress: () => router.push("/inventory") });

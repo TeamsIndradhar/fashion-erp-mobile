@@ -45,9 +45,17 @@ export const TICKET_STATUS_LABEL: Record<SupportTicket["status"], string> = {
 };
 
 /** Mirrors createTicketSchema: subject 5–200, body 10–10000 characters. */
-export function validateTicket(subject: string, body: string): { subject?: string; body?: string } {
+/** A recorded voice note can stand in for the written description (D-048). */
+export function validateTicket(subject: string, body: string, hasVoice = false): { subject?: string; body?: string } {
   const e: { subject?: string; body?: string } = {};
   if (subject.trim().length < 5) e.subject = "Subject must be at least 5 characters.";
-  if (body.trim().length < 10) e.body = "Describe the problem (at least 10 characters).";
+  if (body.trim().length < 10 && !hasVoice) e.body = "Describe the problem (at least 10 characters) or record a voice note.";
   return e;
+}
+
+/** Who wrote a message, as the app shows it (the platform team is always "Support team"). */
+export function ticketAuthor(m: { authorType: string; authorUserId: string | null; authorUser: { fullName: string } | null }, myUserId: string | null): string {
+  if (m.authorType === "PLATFORM") return "Support team";
+  if (myUserId && m.authorUserId === myUserId) return "You";
+  return m.authorUser?.fullName ?? "Company";
 }

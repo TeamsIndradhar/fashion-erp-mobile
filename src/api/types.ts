@@ -32,6 +32,28 @@ export interface DeviceInfo {
   appVersion?: string;
 }
 
+/** D-047 Face Verification row (GET /api/v1/attendance/face-verifications). */
+export interface FaceVerificationRow {
+  id: string;
+  dateKey: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  inFaceStatus: string | null;
+  outFaceStatus: string | null;
+  inDistance: number | null;
+  outDistance: number | null;
+  threshold: number | null;
+  remark: string | null;
+  decidedAt: string | null;
+  originalCheckIn: string | null;
+  originalCheckOut: string | null;
+  manualMode: "TIMES" | "HOURS" | null;
+  manualHours: number | null;
+  employee: { id: string; fullName: string; employeeCode: string; shift: { name: string; startTime: string; endTime: string } | null };
+  session: { id: string; checkInAt: string; checkOutAt: string | null; hasInSelfie: boolean; hasOutSelfie: boolean };
+}
+
+export type FaceRejectInput = { remark: string; mode: "TIMES"; checkIn: string; checkOut: string } | { remark: string; mode: "HOURS"; hours: number };
+
 /** POST /api/mobile/v1/security/violation (D-043). */
 export interface SecurityViolationInput {
   reasons: ("DEVELOPER_OPTIONS_ON" | "USB_DEBUGGING_ON" | "WIRELESS_DEBUGGING_ON" | "MOCK_LOCATION")[];
@@ -79,7 +101,7 @@ export interface MeResponse {
     production?: { view: boolean; approve: boolean };
     pieceRate?: { view: boolean };
     inventory?: { receive: boolean; scan: boolean };
-    approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean; paymentRequest?: boolean; purchaseOrder?: boolean; materialRequest?: boolean };
+    approvals?: { leave: boolean; correction: boolean; outdoor: boolean; overtime: boolean; paymentRequest?: boolean; purchaseOrder?: boolean; materialRequest?: boolean; faceVerification?: boolean };
   };
   modulesEnabled: { hrms: boolean };
   viewableModules: string[];
@@ -245,7 +267,7 @@ export interface AppNotification {
   createdAt: string;
 }
 
-// ---- Support tickets (existing /api/v1/support-tickets, list + create only on mobile) ----
+// ---- Support tickets (/api/v1/support-tickets; D-048: company desk first, then the platform) ----
 
 export type TicketCategory = "GENERAL" | "BUG" | "BILLING" | "ACCOUNT" | "DATA" | "FEATURE_REQUEST";
 
@@ -257,6 +279,47 @@ export interface SupportTicket {
   category: TicketCategory;
   createdAt: string;
   lastMessageAt: string | null;
+  /** COMPANY = with the company's ticket desk, PLATFORM = forwarded to the support team. */
+  stage?: "COMPANY" | "PLATFORM";
+  createdBy?: { fullName: string };
+}
+
+export interface TicketList {
+  tickets: SupportTicket[];
+  /** The caller is the company's ticket desk (sees every ticket, can resolve / forward). */
+  isTicketDesk?: boolean;
+}
+
+export interface TicketAttachment {
+  id: string;
+  fileName: string;
+  mimeType: string;
+  fileSizeBytes: number;
+}
+
+export interface TicketMessage {
+  id: string;
+  authorType: "CUSTOMER" | "PLATFORM";
+  authorUserId: string | null;
+  authorUser: { fullName: string } | null;
+  body: string;
+  createdAt: string;
+  attachments: TicketAttachment[];
+}
+
+export interface TicketDetail extends SupportTicket {
+  priority: string;
+  createdByUserId: string;
+  forwardRemark: string | null;
+  forwardedAt: string | null;
+  messages: TicketMessage[];
+}
+
+/** A local file to send with a ticket message: screenshot or voice note. */
+export interface TicketUpload {
+  uri: string;
+  name: string;
+  type: string;
 }
 
 // ---- Leave (existing /api/v1/leave-*) ----

@@ -49,6 +49,11 @@ import type {
   ReportDescriptor,
   SalaryAdvance,
   SecurityViolationInput,
+  TicketDetail,
+  TicketList,
+  TicketUpload,
+  FaceRejectInput,
+  FaceVerificationRow,
   StockMovementDetail,
   StockMovementRow,
   SalaryRun,
@@ -91,14 +96,26 @@ export function createEndpoints(api: ApiClient) {
     markNotificationRead: (id: string) => api.request<{ id: string }>(`/api/v1/notifications/${encodeURIComponent(id)}/read`, { method: "PATCH" }),
     markAllNotificationsRead: () => api.post<{ ok: true }>("/api/v1/notifications/mark-all-read"),
 
-    myTickets: () => api.get<{ tickets: SupportTicket[] }>("/api/v1/support-tickets"),
-    raiseTicket: (input: { subject: string; category: TicketCategory; body: string }) => {
+    myTickets: () => api.get<TicketList>("/api/v1/support-tickets"),
+    /** D-048: screenshots and a voice note go as "files"; the text may be empty when a voice note is attached. */
+    raiseTicket: (input: { subject: string; category: TicketCategory; body: string; files?: TicketUpload[] }) => {
       const form = new FormData();
       form.append("subject", input.subject);
       form.append("category", input.category);
       form.append("body", input.body);
-      return api.request<SupportTicket>("/api/v1/support-tickets", { method: "POST", body: form });
+      for (const f of input.files ?? []) appendFile(form, "files", f);
+      return api.request<SupportTicket>("/api/v1/support-tickets", { method: "POST", body: form, timeoutMs: 60_000 });
     },
+    ticket: (id: string) => api.get<TicketDetail>(`/api/v1/support-tickets/${encodeURIComponent(id)}`),
+    replyTicket: (id: string, body: string, files: TicketUpload[] = []) => {
+      const form = new FormData();
+      form.append("body", body);
+      for (const f of files) appendFile(form, "files", f);
+      return api.request<unknown>(`/api/v1/support-tickets/${encodeURIComponent(id)}/messages`, { method: "POST", body: form, timeoutMs: 60_000 });
+    },
+    closeTicket: (id: string) => api.post<unknown>(`/api/v1/support-tickets/${encodeURIComponent(id)}/close`),
+    deskTicket: (id: string, action: "IN_PROGRESS" | "RESOLVED" | "FORWARD", remark: string) =>
+      api.post<unknown>(`/api/v1/support-tickets/${encodeURIComponent(id)}/desk`, { action, remark }),
 
     setDayRemark: (date: string, remark: string) =>
       api.request<{ dateKey: string; remark: string | null; remarkAt: string | null }>("/api/v1/attendance/me/remark", {
@@ -115,6 +132,9 @@ export function createEndpoints(api: ApiClient) {
     myLeavePage: (query: string) => api.getPage<LeaveRequest>(`/api/v1/leave-requests?mine=true&${query}`),
     myCorrectionsPage: (query: string) => api.getPage<CorrectionRequest>(`/api/v1/attendance-corrections?mine=true&${query}`),
     myOutdoorRejections: (query: string) => api.get<OutdoorRejection[]>(`/api/v1/attendance/outdoor-rejections?mine=true&${query}`),
+    faceVerificationsPage: (query: string) => api.getPage<FaceVerificationRow>(`/api/v1/attendance/face-verifications?${query}`),
+    approveFace: (id: string, remark: string | null) => api.post<{ ok: true }>(`/api/v1/attendance/face-verifications/${encodeURIComponent(id)}/approve`, { remark }),
+    rejectFace: (id: string, input: FaceRejectInput) => api.post<{ ok: true }>(`/api/v1/attendance/face-verifications/${encodeURIComponent(id)}/reject`, input),
     myOvertime: (query: string) => api.get<OvertimeRow[]>(`/api/v1/attendance/overtime?mine=true&${query}`),
     applyLeave: (input: { leaveTypeId: string; days: { date: string; duration: LeaveDuration }[]; reason: string }) =>
       api.post<LeaveRequest>("/api/v1/leave-requests", input),

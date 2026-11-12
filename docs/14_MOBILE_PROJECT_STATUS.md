@@ -60,6 +60,10 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-11 — Claude Code — D-046 punch sheet + compulsory face match, D-047 Face Verification module, D-048 support ticket desk + voice notes (committed and pushed 2026-11-12 after a local test; no APK built yet)
+**Done (working tree only, both repos):** see D-046, D-047 and D-048. **After deploy:** run migrations `20261115090000_face_mismatch_to_review`, `20261115100000_face_verifications` and `20261115110000_support_ticket_stage`, then `node --experimental-strip-types --no-warnings scripts/sync-permission-catalog.mjs` so existing companies get the new `hrms_attendance_face_review` and `support_tickets` permissions on their system roles.
+**Verified:** app typecheck / lint / jest (88); backend production build, tsc, full vitest; on the local web app: Face Verification approve / reject (hours), the employee toggle, ticket with voice note + screenshot, desk forward / resolve, platform inbox and resolve, all 97 sidebar pages without errors. **Not verified:** on a phone (no APK yet); production deploy.
+
 ### Handoff — 2026-11-11 — Claude Code — Android Preview APK build #6 (D-045 attendance summaries, leave, monthly dashboard)
 **Commit:** `b2fb34f`. EAS preview profile, live backend `https://erp.indradhar.in`.
 **Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/ea52b8ae-eb09-4e2f-af03-d6f53aa01e05` (APK: `https://expo.dev/artifacts/eas/t2w17lf_KLL67dmqQEBg1XLca6-bRpxipempLmgNrPc.apk`)
