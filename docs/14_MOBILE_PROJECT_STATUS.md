@@ -60,6 +60,11 @@ SW-1 face match client-trusted · SW-2 client-reported GPS/accuracy · SW-3 in-m
 
 ## Handoff log (newest first)
 
+### Handoff — 2026-11-12 — Claude Code — Android Preview APK build #7 (D-044…D-048: home tiles, punch sheet, Face Verification, ticket desk + voice notes)
+**Commit:** `016f8ce`. EAS preview profile, live backend `https://erp.indradhar.in`.
+**Build Download Link:** `https://expo.dev/accounts/vrikshansh-tech-solutions/projects/fashion-erp-mobile/builds/6d3ad22e-c89b-4726-abdb-507e2190ba94` (APK: `https://expo.dev/artifacts/eas/a9pPWiEF2hMop2i9JZkxEtdcrrzIutbuJEu-jq8GgGY.apk`)
+**Not verified:** not installed on a phone. Needs `fashion-erp` `4122ce5c` deployed with its 3 migrations, the permission sync and an app restart; until then face verification, ticket desk / detail and the date filters fail or fall back on the live server.
+
 ### Handoff — 2026-11-11 — Claude Code — D-046 punch sheet + compulsory face match, D-047 Face Verification module, D-048 support ticket desk + voice notes (committed and pushed 2026-11-12 after a local test; no APK built yet)
 **Done (working tree only, both repos):** see D-046, D-047 and D-048. **After deploy:** run migrations `20261115090000_face_mismatch_to_review`, `20261115100000_face_verifications` and `20261115110000_support_ticket_stage`, then `node --experimental-strip-types --no-warnings scripts/sync-permission-catalog.mjs` so existing companies get the new `hrms_attendance_face_review` and `support_tickets` permissions on their system roles.
 **Verified:** app typecheck / lint / jest (88); backend production build, tsc, full vitest; on the local web app: Face Verification approve / reject (hours), the employee toggle, ticket with voice note + screenshot, desk forward / resolve, platform inbox and resolve, all 97 sidebar pages without errors. **Not verified:** on a phone (no APK yet); production deploy.
